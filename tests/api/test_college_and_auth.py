@@ -79,3 +79,46 @@ def test_admin_department_faculty_hierarchy():
     assert "No Access (Hidden)" in policies["Teacher (Faculty)"]["admin_portal"]
     assert "No Access (Hidden)" in policies["Student"]["admin_portal"]
 
+
+def test_capstone_project_assignment_and_allocation():
+    # Test assigning/enrolling in a project
+    res = client.post("/api/v1/projects/assign", json={
+        "project_id": "proj-01",
+        "student_name": "Priyanshu Pandey",
+        "mentor_name": "Dr. Ananya Sharma",
+        "notes": "Milestone 1 Architecture"
+    })
+    assert res.status_code == 200
+    data = res.json()["data"]
+    assert data["assigned_to"] == "Priyanshu Pandey"
+    assert "Priyanshu Pandey" in data["all_assigned"]
+
+
+def test_capstone_faculty_document_management():
+    # Test fetching initial documents
+    res = client.get("/api/v1/projects/documents")
+    assert res.status_code == 200
+    docs = res.json()["data"]
+    assert len(docs) >= 3
+    assert any(d["file_type"] == "PDF" for d in docs)
+
+    # Test uploading a new faculty document
+    upload_res = client.post("/api/v1/projects/documents", json={
+        "title": "NEP_2020_Evaluation_Rubric_v2.pdf",
+        "project_id": "proj-01",
+        "project_title": "Smart Campus Student-Success & Placement Intelligence OS",
+        "uploaded_by": "Dr. Ananya Sharma",
+        "uploaded_role": "Faculty Mentor",
+        "size": "2.1 MB",
+        "file_type": "PDF"
+    })
+    assert upload_res.status_code == 200
+    new_doc = upload_res.json()["data"]
+    assert new_doc["title"] == "NEP_2020_Evaluation_Rubric_v2.pdf"
+    assert new_doc["uploaded_by"] == "Dr. Ananya Sharma"
+
+    # Test deleting the document
+    del_res = client.delete(f"/api/v1/projects/documents/{new_doc['id']}")
+    assert del_res.status_code == 200
+
+

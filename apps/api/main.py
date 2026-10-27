@@ -1280,6 +1280,7 @@ PROJECT_BANK_ITEMS = [
         "partner": "KPMG India Challenge",
         "description": "Explainable student success analytics with deterministic formula execution, EWMA momentum, and hard-floor pinning.",
         "assigned_students": 2,
+        "assigned_to": ["Priyanshu Pandey", "Aarav Sharma"],
     },
     {
         "id": "proj-02",
@@ -1290,6 +1291,7 @@ PROJECT_BANK_ITEMS = [
         "partner": "CampusPulse Cloud Infrastructure",
         "description": "High-throughput log consumer tracking video watch time, assignment dropoffs, and quiz telemetry.",
         "assigned_students": 1,
+        "assigned_to": ["Sneha Patel"],
     },
     {
         "id": "proj-03",
@@ -1300,6 +1302,7 @@ PROJECT_BANK_ITEMS = [
         "partner": "CampusPulse Labs",
         "description": "Offline deterministic rubric grading for coding submissions and technical explanation clarity.",
         "assigned_students": 3,
+        "assigned_to": ["Rohan Gupta", "Ananya Rao", "Kabir Mehta"],
     },
     {
         "id": "proj-04",
@@ -1310,7 +1313,47 @@ PROJECT_BANK_ITEMS = [
         "partner": "CampusPulse Enterprise",
         "description": "Tamper-evident SHA-256 state tracking for student profile changes and audit compliance.",
         "assigned_students": 2,
+        "assigned_to": ["Divya Nair", "Aditya Verma"],
     },
+]
+
+CAPSTONE_DOCUMENTS = [
+    {
+        "id": "doc-01",
+        "title": "2026_Capstone_Curriculum_Guidelines_and_Rubric.pdf",
+        "project_id": "all",
+        "project_title": "All Projects (General Guidelines)",
+        "uploaded_by": "Dr. Ananya Sharma",
+        "uploaded_role": "Faculty Mentor",
+        "uploaded_at": "2026-10-24 10:30 AM",
+        "size": "2.4 MB",
+        "file_type": "PDF",
+        "file_data": None
+    },
+    {
+        "id": "doc-02",
+        "title": "KPMG_Smart_Campus_Technical_Specification.pdf",
+        "project_id": "proj-01",
+        "project_title": "Smart Campus Student-Success & Placement Intelligence OS",
+        "uploaded_by": "Dr. Ananya Sharma",
+        "uploaded_role": "Faculty Mentor",
+        "uploaded_at": "2026-10-25 03:15 PM",
+        "size": "1.8 MB",
+        "file_type": "PDF",
+        "file_data": None
+    },
+    {
+        "id": "doc-03",
+        "title": "NEP_2020_Capstone_Credit_Evaluation_Framework.pdf",
+        "project_id": "all",
+        "project_title": "All Projects (Accreditation Document)",
+        "uploaded_by": "Dr. S. K. Venkatraman",
+        "uploaded_role": "HOD CSE",
+        "uploaded_at": "2026-10-26 11:45 AM",
+        "size": "3.1 MB",
+        "file_type": "PDF",
+        "file_data": None
+    }
 ]
 
 # ── College Reports Login Activity & Telemetry ───────────────────────────────
@@ -1516,11 +1559,75 @@ def get_project_bank():
 async def assign_project_to_student(request: Request):
     body = await request.json()
     proj_id = body.get("project_id")
+    student_name = body.get("student_name", "Student")
     for p in PROJECT_BANK_ITEMS:
         if p["id"] == proj_id:
-            p["assigned_students"] += 1
-            return make_envelope({"project": p, "assigned_to": body.get("student_name", "Student")})
+            assigned_list = p.setdefault("assigned_to", [])
+            if student_name not in assigned_list:
+                assigned_list.append(student_name)
+            p["assigned_students"] = len(assigned_list)
+            return make_envelope({
+                "project": p,
+                "assigned_to": student_name,
+                "assigned_students": p["assigned_students"],
+                "all_assigned": assigned_list
+            })
     raise HTTPException(status_code=404, detail="Project not found")
+
+
+@app.post("/api/v1/projects/create")
+async def create_capstone_project(request: Request):
+    body = await request.json()
+    proj_id = f"proj-{uuid.uuid4().hex[:4]}"
+    tech_stack = body.get("tech_stack", ["Python", "FastAPI"])
+    if isinstance(tech_stack, str):
+        tech_stack = [t.strip() for t in tech_stack.split(",") if t.strip()]
+
+    new_proj = {
+        "id": proj_id,
+        "title": body.get("title", "Untitled Capstone Project"),
+        "domain": body.get("domain", "Full-Stack & Analytics"),
+        "difficulty": body.get("difficulty", "Intermediate"),
+        "tech_stack": tech_stack,
+        "partner": body.get("partner", "CampusPulse Industry Lab"),
+        "description": body.get("description", "Industry-grade capstone initiative."),
+        "assigned_students": 0,
+        "assigned_to": []
+    }
+    PROJECT_BANK_ITEMS.insert(0, new_proj)
+    return make_envelope(new_proj)
+
+
+@app.get("/api/v1/projects/documents")
+def get_capstone_documents():
+    return make_envelope(CAPSTONE_DOCUMENTS)
+
+
+@app.post("/api/v1/projects/documents")
+async def upload_capstone_document(request: Request):
+    body = await request.json()
+    doc_id = f"doc-{uuid.uuid4().hex[:6]}"
+    doc = {
+        "id": doc_id,
+        "title": body.get("title", "Capstone_Document.pdf"),
+        "project_id": body.get("project_id", "all"),
+        "project_title": body.get("project_title", "All Projects (General Guidelines)"),
+        "uploaded_by": body.get("uploaded_by", "Faculty Mentor"),
+        "uploaded_role": body.get("uploaded_role", "Faculty"),
+        "uploaded_at": datetime.datetime.now().strftime("%Y-%m-%d %I:%M %p"),
+        "size": body.get("size", "1.5 MB"),
+        "file_type": body.get("file_type", "PDF"),
+        "file_data": body.get("file_data")
+    }
+    CAPSTONE_DOCUMENTS.insert(0, doc)
+    return make_envelope(doc)
+
+
+@app.delete("/api/v1/projects/documents/{doc_id}")
+def delete_capstone_document(doc_id: str):
+    global CAPSTONE_DOCUMENTS
+    CAPSTONE_DOCUMENTS = [d for d in CAPSTONE_DOCUMENTS if d["id"] != doc_id]
+    return make_envelope({"deleted": doc_id})
 
 
 # ── Enterprise Admin Portal Endpoints ─────────────────────────────────────────

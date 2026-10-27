@@ -2480,6 +2480,11 @@
           <span class="nav-label">Assign Lab Sessions</span>
           <span class="nav-badge" style="background:rgba(16,185,129,0.15); color:#10b981;">New</span>
         </a>
+        <a class="nav-item" data-roles="teacher advisor admin hod dean" onclick="switchNav('project-bank')">
+          <span class="nav-icon">📁</span>
+          <span class="nav-label">Capstone Projects</span>
+          <span class="nav-badge" style="background:rgba(59,130,246,0.15); color:#2563eb;">Faculty</span>
+        </a>
 
         <!-- RECRUITER PORTAL -->
         <div class="nav-section-title" data-roles="recruiter">Recruiter Portal</div>
@@ -4214,13 +4219,124 @@ Available Nimbus Shell commands:
           </div>
 
           <!-- ════════════════════════════════════════════════════════════════════ -->
-          <!-- VIEW 14: PROJECT BANK -->
+          <!-- VIEW 14: CAPSTONE PROJECT BANK & MENTORSHIP WORKSTATION -->
           <!-- ════════════════════════════════════════════════════════════════════ -->
           <div id="view-project-bank" class="tab-view">
-            <div class="breadcrumbs"><span>Home</span> / <span class="current">Project Bank</span></div>
-            <div class="page-title" style="margin-bottom:16px;"><span>Project Bank</span> <span class="subtitle-tag">| Capstone &amp; Industry Portfolios</span></div>
+            <div class="breadcrumbs"><span>Home</span> / <span class="current">Capstone Project Bank</span></div>
+            
+            <!-- Dynamic Role Perspective Banner -->
+            <div id="capstone-role-banner" style="background:linear-gradient(135deg, #1e293b, #0f172a); color:#ffffff; padding:22px 24px; border-radius:12px; margin-bottom:20px; box-shadow:0 4px 20px rgba(0,0,0,0.15); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+              <div style="flex:1; min-width:280px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span id="capstone-role-badge-tag" style="background:#2563eb; color:#ffffff; font-size:0.68rem; font-weight:800; padding:2px 8px; border-radius:4px; letter-spacing:0.04em; text-transform:uppercase;">Student Capstone Hub</span>
+                  <span id="capstone-banner-title" style="font-size:1.2rem; font-weight:800; letter-spacing:-0.01em;">Industry Portfolios &amp; Capstone Experience</span>
+                </div>
+                <div id="capstone-banner-desc" style="font-size:0.83rem; color:#cbd5e1; margin-top:6px; line-height:1.45;">
+                  Select an industry-sponsored capstone portfolio to fulfill your graduation requirement. Review guidelines and collaborate directly with assigned faculty mentors.
+                </div>
+                <!-- Student enrollment status indicator -->
+                <div id="student-capstone-enrollment-info" style="margin-top:12px; display:flex; align-items:center; gap:8px;">
+                  <span style="font-size:0.75rem; color:#94a3b8;">Your Current Status:</span>
+                  <span id="student-enrollment-status-pill" style="font-size:0.78rem; font-weight:700; background:rgba(16,185,129,0.2); color:#34d399; border:1px solid rgba(16,185,129,0.3); padding:3px 10px; border-radius:12px; display:inline-flex; align-items:center; gap:5px;">
+                    <span>✓</span> Enrolled: Smart Campus Student-Success &amp; Placement Intelligence OS
+                  </span>
+                </div>
+              </div>
 
+              <!-- Faculty Action Controls (visible only for faculty) -->
+              <div id="capstone-faculty-actions" style="display:none; gap:10px; flex-wrap:wrap; align-items:center;">
+                <button class="btn btn-sm btn-primary" onclick="openFacultyAssignModal()" style="display:flex; align-items:center; gap:6px; box-shadow:0 2px 10px rgba(37,99,235,0.4);">
+                  <span>👤</span> Assign Project to Student
+                </button>
+                <button class="btn btn-sm btn-outline" onclick="openCreateProjectModal()" style="background:rgba(255,255,255,0.08); color:#ffffff; border-color:rgba(255,255,255,0.2); display:flex; align-items:center; gap:6px;">
+                  <span>➕</span> Add Project
+                </button>
+                <button class="btn btn-sm" onclick="scrollToCapstoneDocs()" style="background:#0ea5e9; color:#ffffff; border:none; display:flex; align-items:center; gap:6px; font-weight:700;">
+                  <span>📄</span> Upload PDF / Docs
+                </button>
+              </div>
+            </div>
+
+            <!-- Toolbar: Search & Difficulty Filter -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <h3 style="margin:0; font-size:1.05rem; font-weight:700; color:var(--text-main);" id="capstone-grid-heading">Available Capstone Projects</h3>
+                <span class="reason-chip" id="capstone-count-badge" style="font-weight:700;">4 Projects</span>
+              </div>
+              <div style="display:flex; gap:10px; align-items:center;">
+                <input type="text" id="capstone-search-input" oninput="filterCapstoneProjects()" placeholder="Search project title or tech..." style="padding:6px 12px; font-size:0.8rem; border-radius:6px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main); min-width:220px;">
+                <select id="capstone-difficulty-filter" onchange="filterCapstoneProjects()" style="padding:6px 10px; font-size:0.8rem; border-radius:6px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main);">
+                  <option value="all">All Difficulties</option>
+                  <option value="Intermediate">Intermediate</option>
+                  <option value="Advanced">Advanced</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Projects Grid -->
             <div id="project-bank-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px;"></div>
+
+            <!-- ════════════════════════════════════════════════════════════════════ -->
+            <!-- FACULTY & STUDENT CAPSTONE DOCUMENTS & RUBRICS REPOSITORY -->
+            <!-- ════════════════════════════════════════════════════════════════════ -->
+            <div class="card" id="capstone-documents-section" style="margin-top:28px; border:1px solid var(--border-color);">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+                <div>
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:1.3rem;">📑</span>
+                    <h3 style="font-size:1.05rem; font-weight:800; color:var(--text-main); margin:0;">Capstone Documents, Guidelines &amp; Rubrics Hub</h3>
+                  </div>
+                  <div style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;">
+                    Official departmental curriculum briefs, partner problem statements, and evaluation matrices.
+                  </div>
+                </div>
+                <div id="doc-upload-status-tag">
+                  <span class="badge" style="background:rgba(59,130,246,0.1); color:#2563eb; font-weight:700; font-size:0.75rem; padding:4px 10px; border-radius:12px;">
+                    📄 Institutional Resource Hub
+                  </span>
+                </div>
+              </div>
+
+              <!-- Faculty Upload Form (visible to faculty) -->
+              <div id="capstone-faculty-upload-box" style="background:rgba(241,245,249,0.5); border:2px dashed #94a3b8; border-radius:8px; padding:18px; margin-bottom:20px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                  <span style="font-weight:700; font-size:0.85rem; color:var(--text-main); display:flex; align-items:center; gap:6px;">
+                    <span>📤</span> Faculty Document Uploader (Upload PDF / DOCX / Rubrics)
+                  </span>
+                  <span style="font-size:0.72rem; color:var(--text-dim);">Authorized for Faculty Mentors &amp; Admins</span>
+                </div>
+
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px; margin-bottom:14px;">
+                  <div>
+                    <label style="font-size:0.75rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Document Title / File Name</label>
+                    <input type="text" id="capstone-doc-title" placeholder="e.g. KPMG_Capstone_Milestone_Rubric_2026.pdf" style="width:100%; padding:8px 10px; font-size:0.8rem; border-radius:6px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main);">
+                  </div>
+                  <div>
+                    <label style="font-size:0.75rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Associated Capstone Project</label>
+                    <select id="capstone-doc-project" style="width:100%; padding:8px 10px; font-size:0.8rem; border-radius:6px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main);">
+                      <option value="all">All Projects (General Guidelines &amp; Rubrics)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style="font-size:0.75rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Select PDF or Document</label>
+                    <input type="file" id="capstone-doc-file" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt" onchange="handleFileSelectionChange(this)" style="width:100%; font-size:0.78rem; color:var(--text-muted);">
+                  </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                  <span id="capstone-file-preview-info" style="font-size:0.75rem; color:#0284c7; font-weight:600;"></span>
+                  <button class="btn btn-primary btn-sm" onclick="handleFacultyDocumentUpload()" style="display:flex; align-items:center; gap:6px;">
+                    <span>📤</span> Upload Document
+                  </button>
+                </div>
+              </div>
+
+              <!-- Documents List Grid -->
+              <div id="capstone-docs-container">
+                <div style="font-size:0.8rem; font-weight:700; color:var(--text-main); margin-bottom:10px;">Published Capstone Documents &amp; Rubrics</div>
+                <div id="capstone-docs-list" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:12px;"></div>
+              </div>
+            </div>
           </div>
 
           <!-- ════════════════════════════════════════════════════════════════════ -->
@@ -5981,6 +6097,107 @@ Available Nimbus Shell commands:
     </div>
   </div>
 
+  <!-- MODAL: FACULTY ASSIGN CAPSTONE PROJECT TO STUDENT -->
+  <div id="modal-assign-capstone" class="drawer-overlay" onclick="closeDrawer('modal-assign-capstone')" style="align-items:center; justify-content:center; padding:20px;">
+    <div style="background:var(--card-bg, #ffffff); border:1px solid var(--border-color); border-radius:var(--radius-md); width:520px; max-width:92vw; padding:24px; box-shadow:0 16px 40px rgba(0,0,0,0.25);" onclick="event.stopPropagation()">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--border-color); padding-bottom:12px; margin-bottom:16px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:1.4rem;">👤</span>
+          <div>
+            <h3 style="font-size:1.05rem; font-weight:800; color:var(--text-main); margin:0;">Assign Capstone Project to Student</h3>
+            <div style="font-size:0.75rem; color:var(--text-muted);">Allocate a portfolio capstone to an enrolled student mentee</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="closeDrawer('modal-assign-capstone')">✕</button>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:12px; font-size:0.82rem;">
+        <div>
+          <label style="font-weight:700; color:var(--text-main); display:block; margin-bottom:4px;">Selected Capstone Project</label>
+          <select id="modal-assign-project-select" style="width:100%; padding:8px 10px; font-size:0.82rem; border-radius:6px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main);"></select>
+        </div>
+
+        <div>
+          <label style="font-weight:700; color:var(--text-main); display:block; margin-bottom:4px;">Select Student to Assign</label>
+          <select id="modal-assign-student-select" style="width:100%; padding:8px 10px; font-size:0.82rem; border-radius:6px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main);"></select>
+          <div style="font-size:0.72rem; color:var(--text-dim); margin-top:4px;">Students sourced dynamically from institutional roster cache</div>
+        </div>
+
+        <div>
+          <label style="font-weight:700; color:var(--text-main); display:block; margin-bottom:4px;">Supervising Faculty Mentor</label>
+          <input type="text" id="modal-assign-faculty-name" readonly style="width:100%; padding:8px 10px; font-size:0.82rem; border-radius:6px; border:1px solid var(--border-color); background:rgba(0,0,0,0.03); color:var(--text-main); font-weight:600;">
+        </div>
+
+        <div>
+          <label style="font-weight:700; color:var(--text-main); display:block; margin-bottom:4px;">Milestone Note / Evaluation Instruction (Optional)</label>
+          <textarea id="modal-assign-note" rows="2" placeholder="e.g. Phase 1 Architecture & Database Schema submission due by Week 6." style="width:100%; padding:8px 10px; font-size:0.8rem; border-radius:6px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main); resize:none;"></textarea>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:14px; margin-top:16px;">
+        <span style="font-size:0.72rem; color:var(--text-muted);">Allocation syncs to student record</span>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-outline btn-sm" onclick="closeDrawer('modal-assign-capstone')">Cancel</button>
+          <button class="btn btn-primary btn-sm" onclick="submitFacultyProjectAssignment()">Confirm &amp; Allocate Project</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CREATE NEW CAPSTONE PROJECT -->
+  <div id="modal-create-capstone" class="drawer-overlay" onclick="closeDrawer('modal-create-capstone')" style="align-items:center; justify-content:center; padding:20px;">
+    <div style="background:var(--card-bg, #ffffff); border:1px solid var(--border-color); border-radius:var(--radius-md); width:520px; max-width:92vw; padding:24px; box-shadow:0 16px 40px rgba(0,0,0,0.25);" onclick="event.stopPropagation()">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--border-color); padding-bottom:12px; margin-bottom:16px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:1.4rem;">➕</span>
+          <div>
+            <h3 style="font-size:1.05rem; font-weight:800; color:var(--text-main); margin:0;">Create Capstone Project</h3>
+            <div style="font-size:0.75rem; color:var(--text-muted);">Add a new industry or research capstone offering</div>
+          </div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="closeDrawer('modal-create-capstone')">✕</button>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:10px; font-size:0.82rem;">
+        <div>
+          <label style="font-weight:700; color:var(--text-main); display:block; margin-bottom:4px;">Project Title</label>
+          <input type="text" id="new-proj-title" placeholder="e.g. Autonomous Robotic Navigation in ROS2" style="width:100%; padding:8px 10px; font-size:0.82rem; border-radius:6px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main);">
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div>
+            <label style="font-weight:700; color:var(--text-main); display:block; margin-bottom:4px;">Domain</label>
+            <input type="text" id="new-proj-domain" placeholder="e.g. AI & Robotics" style="width:100%; padding:8px 10px; font-size:0.82rem; border-radius:6px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main);">
+          </div>
+          <div>
+            <label style="font-weight:700; color:var(--text-main); display:block; margin-bottom:4px;">Difficulty</label>
+            <select id="new-proj-diff" style="width:100%; padding:8px 10px; font-size:0.82rem; border-radius:6px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main);">
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
+              <option value="Expert">Expert</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label style="font-weight:700; color:var(--text-main); display:block; margin-bottom:4px;">Industry Partner / Sponsor</label>
+          <input type="text" id="new-proj-partner" placeholder="e.g. KPMG / CampusPulse Labs / Microsoft" style="width:100%; padding:8px 10px; font-size:0.82rem; border-radius:6px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main);">
+        </div>
+        <div>
+          <label style="font-weight:700; color:var(--text-main); display:block; margin-bottom:4px;">Tech Stack (comma-separated)</label>
+          <input type="text" id="new-proj-tech" placeholder="e.g. Python, ROS2, OpenCV, Docker" style="width:100%; padding:8px 10px; font-size:0.82rem; border-radius:6px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main);">
+        </div>
+        <div>
+          <label style="font-weight:700; color:var(--text-main); display:block; margin-bottom:4px;">Project Description</label>
+          <textarea id="new-proj-desc" rows="3" placeholder="Explain scope, deliverables, and architecture requirements..." style="width:100%; padding:8px 10px; font-size:0.8rem; border-radius:6px; border:1px solid var(--border-color); background:var(--card-bg); color:var(--text-main); resize:none;"></textarea>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:8px; border-top:1px solid var(--border-color); padding-top:14px; margin-top:16px;">
+        <button class="btn btn-outline btn-sm" onclick="closeDrawer('modal-create-capstone')">Cancel</button>
+        <button class="btn btn-primary btn-sm" onclick="submitCreateCapstoneProject()">Create Project</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: FIREBASE AUTHENTICATION CONFIG -->
   <div id="modal-firebase-config" class="drawer-overlay" onclick="closeDrawer('modal-firebase-config')" style="align-items:center; justify-content:center; padding:20px;">
     <div style="background:#ffffff; border:1px solid var(--border-color); border-radius:var(--radius-md); width:500px; max-width:92vw; padding:24px; box-shadow:0 16px 40px rgba(0,0,0,0.2);" onclick="event.stopPropagation()">
@@ -6408,7 +6625,8 @@ Available Nimbus Shell commands:
           'competitive-advantage',
           'assign-lab-sessions',
           'lab-practice',
-          'code-editor'
+          'code-editor',
+          'project-bank'
         ]
       },
       hod: {
@@ -6438,7 +6656,8 @@ Available Nimbus Shell commands:
           'trainers-schedule',
           'assign-lab-sessions',
           'lab-practice',
-          'code-editor'
+          'code-editor',
+          'project-bank'
         ]
       },
       teacher: {
@@ -6466,7 +6685,8 @@ Available Nimbus Shell commands:
           'trainers-schedule',
           'assign-lab-sessions',
           'lab-practice',
-          'code-editor'
+          'code-editor',
+          'project-bank'
         ],
       },
       student: {
@@ -6787,6 +7007,7 @@ Available Nimbus Shell commands:
       } else {
         if (currentViewId === 'student-reports') loadStudentReportsOverview();
         else if (currentViewId === 'whatif-sandbox') populateWhatIfDropdown();
+        else if (currentViewId === 'project-bank') loadProjectBank();
       }
 
       // Test Papers nav item visibility based on permissions
@@ -9109,56 +9330,660 @@ Available Nimbus Shell commands:
       }
     }
 
-    // Project Bank
+    // ══════════════════════════════════════════════════════════════════════════
+    // CAPSTONE PROJECTS & FACULTY MENTORSHIP WORKSTATION MODULE
+    // Student POV: Enroll in capstone projects, view active status & peer stats
+    // Faculty POV: Assign projects to specific students, supervise allocations,
+    //              and upload curriculum guidelines, rubrics, & PDF documents
+    // ══════════════════════════════════════════════════════════════════════════
+
+    let cachedCapstoneProjects = [];
+    let selectedDocDataUrl = null;
+    let selectedDocFileName = '';
+    let selectedDocFileSize = '';
+
     async function loadProjectBank() {
       try {
+        const role = window.currentActiveRole || 'teacher';
+        const isStudent = (role === 'student');
+
+        // Retrieve current authenticated user profile
+        let userDisplayName = isStudent ? 'Priyanshu Pandey' : 'Dr. Ananya Sharma';
+        try {
+          const su = JSON.parse(localStorage.getItem('campuspulse_auth_user'));
+          if (su && su.displayName) userDisplayName = su.displayName;
+        } catch (e) {}
+
+        // Configure Role Perspective Banner & Action Bar
+        const roleBadgeTag = document.getElementById('capstone-role-badge-tag');
+        const bannerTitle = document.getElementById('capstone-banner-title');
+        const bannerDesc = document.getElementById('capstone-banner-desc');
+        const facultyActions = document.getElementById('capstone-faculty-actions');
+        const studentEnrollInfo = document.getElementById('student-capstone-enrollment-info');
+        const uploadBox = document.getElementById('capstone-faculty-upload-box');
+        const docStatusTag = document.getElementById('doc-upload-status-tag');
+        const gridHeading = document.getElementById('capstone-grid-heading');
+
+        if (isStudent) {
+          if (roleBadgeTag) {
+            roleBadgeTag.innerText = 'Student Capstone Portal';
+            roleBadgeTag.style.background = '#2563eb';
+          }
+          if (bannerTitle) bannerTitle.innerText = 'Industry Portfolios & Degree Capstones';
+          if (bannerDesc) bannerDesc.innerText = 'Select an industry-sponsored capstone portfolio to fulfill your semester capstone requirement. Review guidelines and collaborate directly with assigned faculty mentors.';
+          if (facultyActions) facultyActions.style.display = 'none';
+          if (studentEnrollInfo) studentEnrollInfo.style.display = 'flex';
+          if (uploadBox) uploadBox.style.display = 'none';
+          if (docStatusTag) docStatusTag.innerHTML = `<span class="badge" style="background:rgba(59,130,246,0.1); color:#2563eb; font-weight:700; font-size:0.75rem; padding:4px 10px; border-radius:12px;">📄 Student Guidelines &amp; Rubrics</span>`;
+          if (gridHeading) gridHeading.innerText = 'Select Your Capstone Project';
+        } else {
+          if (roleBadgeTag) {
+            roleBadgeTag.innerText = 'Faculty Mentorship & Allocation Hub';
+            roleBadgeTag.style.background = '#7c3aed';
+          }
+          if (bannerTitle) bannerTitle.innerText = 'Faculty Capstone Supervision & Student Allocation';
+          if (bannerDesc) bannerDesc.innerText = 'Assign capstone projects directly to students, supervise progress across student batches, and publish curriculum rubrics, partner briefs, and PDF documents.';
+          if (facultyActions) facultyActions.style.display = 'flex';
+          if (studentEnrollInfo) studentEnrollInfo.style.display = 'none';
+          if (uploadBox) uploadBox.style.display = 'block';
+          if (docStatusTag) docStatusTag.innerHTML = `<span class="badge" style="background:rgba(16,185,129,0.15); color:#10b981; font-weight:700; font-size:0.75rem; padding:4px 10px; border-radius:12px;">📤 Faculty Uploader Enabled</span>`;
+          if (gridHeading) gridHeading.innerText = 'Capstone Project Catalog & Assignments';
+        }
+
+        // Fetch Projects from API
         const res = await fetch('/api/v1/projects/bank');
         const json = await res.json();
-        const projs = json.data;
+        const projs = json.data || [];
+        cachedCapstoneProjects = projs;
 
-        document.getElementById('project-bank-grid').innerHTML = projs.map(p => `
-          <div class="card">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-              <div>
-                <div style="font-weight:700; font-size:0.95rem;">${p.title}</div>
-                <div style="font-size:0.75rem; color:var(--primary-blue); font-weight:600; margin-top:2px;">${p.partner}</div>
-              </div>
-              <span class="reason-chip">${p.difficulty}</span>
-            </div>
-            <p style="font-size:0.78rem; color:var(--text-muted); margin:10px 0;">${p.description}</p>
-            <div style="margin-bottom:12px;">
-              ${p.tech_stack.map(t => `<span class="reason-chip">${t}</span>`).join('')}
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:10px;">
-              <span style="font-size:0.75rem; color:var(--text-dim);">${p.assigned_students} Students Assigned</span>
-              <button class="btn btn-primary btn-sm" onclick="assignProject('${p.id}')">Assign to Student</button>
-            </div>
-          </div>
-        `).join('');
+        // Populate modal and document project dropdowns
+        populateCapstoneProjectDropdowns(projs);
+
+        // Check student enrollment status
+        let enrolledProjId = localStorage.getItem('campuspulse_enrolled_project');
+        // Check if student's name is in any project's assigned_to list
+        const foundAssigned = projs.find(p => p.assigned_to && p.assigned_to.some(name => name.toLowerCase().includes(userDisplayName.toLowerCase().split(' ')[0])));
+        if (foundAssigned && !enrolledProjId) {
+          enrolledProjId = foundAssigned.id;
+          localStorage.setItem('campuspulse_enrolled_project', enrolledProjId);
+        }
+
+        const enrolledProject = projs.find(p => p.id === enrolledProjId);
+        const statusPill = document.getElementById('student-enrollment-status-pill');
+        if (statusPill) {
+          if (enrolledProject) {
+            statusPill.style.background = 'rgba(16,185,129,0.2)';
+            statusPill.style.color = '#34d399';
+            statusPill.style.borderColor = 'rgba(16,185,129,0.3)';
+            statusPill.innerHTML = `<span>✓</span> Enrolled: <strong>${enrolledProject.title}</strong> (${enrolledProject.partner})`;
+          } else {
+            statusPill.style.background = 'rgba(245,158,11,0.2)';
+            statusPill.style.color = '#f59e0b';
+            statusPill.style.borderColor = 'rgba(245,158,11,0.3)';
+            statusPill.innerHTML = `<span>⏳</span> Not Yet Enrolled — Select a Capstone Project Below`;
+          }
+        }
+
+        const countBadge = document.getElementById('capstone-count-badge');
+        if (countBadge) countBadge.innerText = `${projs.length} Projects`;
+
+        // Render project cards
+        renderCapstoneGrid(projs, isStudent, enrolledProjId);
+
+        // Load Documents
+        loadCapstoneDocuments();
 
       } catch (err) {
-        console.error(err);
+        console.error('Error loading project bank:', err);
       }
     }
 
-    async function assignProject(projId) {
-      try {
-        let currentStudentName = 'Priyanshu Pandey';
-        try {
-          const su = JSON.parse(localStorage.getItem('campuspulse_auth_user'));
-          if (su && su.displayName) currentStudentName = su.displayName;
-        } catch (e) {}
+    function renderCapstoneGrid(projs, isStudent, enrolledProjId) {
+      const grid = document.getElementById('project-bank-grid');
+      if (!grid) return;
 
-        await fetch('/api/v1/projects/assign', {
+      if (!projs || projs.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1; padding:32px; text-align:center; color:var(--text-muted);">No capstone projects available.</div>`;
+        return;
+      }
+
+      grid.innerHTML = projs.map(p => {
+        const isCurrentEnrolled = (p.id === enrolledProjId);
+        const assignedCount = (p.assigned_to && p.assigned_to.length) || p.assigned_students || 0;
+        const assignedStudents = p.assigned_to || [];
+
+        if (isStudent) {
+          // ── STUDENT PERSPECTIVE ──
+          return `
+            <div class="card" style="display:flex; flex-direction:column; justify-content:space-between; ${isCurrentEnrolled ? 'border:2px solid #10b981; background:linear-gradient(to bottom, rgba(16,185,129,0.02), var(--card-bg));' : ''}">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+                  <div>
+                    <div style="font-weight:700; font-size:0.95rem; color:var(--text-main); line-height:1.35;">${p.title}</div>
+                    <div style="font-size:0.75rem; color:var(--primary-blue); font-weight:600; margin-top:3px;">🏢 ${p.partner}</div>
+                  </div>
+                  <span class="reason-chip" style="font-weight:700; font-size:0.7rem; flex-shrink:0;">${p.difficulty}</span>
+                </div>
+
+                ${isCurrentEnrolled ? `
+                  <div style="margin-top:10px;">
+                    <span style="background:#dcfce7; color:#15803d; font-weight:700; font-size:0.75rem; padding:3px 10px; border-radius:12px; display:inline-flex; align-items:center; gap:5px;">
+                      ★ Your Enrolled Capstone
+                    </span>
+                  </div>
+                ` : ''}
+
+                <p style="font-size:0.78rem; color:var(--text-muted); margin:12px 0; line-height:1.45;">${p.description}</p>
+                
+                <div style="margin-bottom:14px; display:flex; flex-wrap:wrap; gap:4px;">
+                  ${p.tech_stack.map(t => `<span class="reason-chip" style="font-size:0.7rem;">${t}</span>`).join('')}
+                </div>
+              </div>
+
+              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:12px; margin-top:8px;">
+                <span style="font-size:0.75rem; color:var(--text-dim); display:flex; align-items:center; gap:4px;">
+                  <span>👥</span> ${assignedCount} Peers Enrolled
+                </span>
+                ${isCurrentEnrolled ? `
+                  <button class="btn btn-sm" style="background:#16a34a; color:#ffffff; font-weight:700; border:none; display:flex; align-items:center; gap:6px; cursor:default;" onclick="studentEnrollProject('${p.id}', true)">
+                    <span>✓</span> Enrolled in Project
+                  </button>
+                ` : `
+                  <button class="btn btn-primary btn-sm" onclick="studentEnrollProject('${p.id}', false)">
+                    Enroll in Project
+                  </button>
+                `}
+              </div>
+            </div>
+          `;
+        } else {
+          // ── FACULTY PERSPECTIVE ──
+          return `
+            <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+                  <div>
+                    <div style="font-weight:700; font-size:0.95rem; color:var(--text-main); line-height:1.35;">${p.title}</div>
+                    <div style="font-size:0.75rem; color:var(--primary-blue); font-weight:600; margin-top:3px;">🏢 ${p.partner}</div>
+                  </div>
+                  <span class="reason-chip" style="font-weight:700; font-size:0.7rem; flex-shrink:0;">${p.difficulty}</span>
+                </div>
+
+                <p style="font-size:0.78rem; color:var(--text-muted); margin:10px 0; line-height:1.45;">${p.description}</p>
+                
+                <div style="margin-bottom:10px; display:flex; flex-wrap:wrap; gap:4px;">
+                  ${p.tech_stack.map(t => `<span class="reason-chip" style="font-size:0.7rem;">${t}</span>`).join('')}
+                </div>
+
+                <!-- Assigned Students Roster Box -->
+                <div style="margin-bottom:12px; padding:8px 10px; background:rgba(0,0,0,0.02); border:1px solid var(--border-color); border-radius:6px;">
+                  <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); margin-bottom:4px;">
+                    Assigned Students (${assignedStudents.length}):
+                  </div>
+                  <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                    ${assignedStudents.length > 0 
+                      ? assignedStudents.map(s => `<span class="reason-chip" style="background:#e0f2fe; color:#0369a1; font-weight:600; font-size:0.7rem;">👤 ${s}</span>`).join('') 
+                      : '<span style="font-size:0.72rem; color:var(--text-dim); font-style:italic;">No students assigned yet</span>'}
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:10px; margin-top:6px;">
+                <button class="btn btn-outline btn-sm" onclick="openDocUploadWithProject('${p.id}')" title="Upload PDF/Doc for this project" style="font-size:0.74rem;">
+                  📎 Upload Doc
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="openFacultyAssignModal('${p.id}')" style="display:flex; align-items:center; gap:5px;">
+                  <span>👤</span> Assign to Student
+                </button>
+              </div>
+            </div>
+          `;
+        }
+      }).join('');
+    }
+
+    function populateCapstoneProjectDropdowns(projs) {
+      const docSel = document.getElementById('capstone-doc-project');
+      const assignSel = document.getElementById('modal-assign-project-select');
+
+      if (docSel) {
+        docSel.innerHTML = `
+          <option value="all">All Projects (General Guidelines &amp; Rubrics)</option>
+          ${projs.map(p => `<option value="${p.id}">${p.title} (${p.partner})</option>`).join('')}
+        `;
+      }
+      if (assignSel) {
+        assignSel.innerHTML = projs.map(p => `<option value="${p.id}">${p.title} (${p.partner})</option>`).join('');
+      }
+    }
+
+    function filterCapstoneProjects() {
+      const query = (document.getElementById('capstone-search-input')?.value || '').toLowerCase().trim();
+      const diff = document.getElementById('capstone-difficulty-filter')?.value || 'all';
+
+      const filtered = cachedCapstoneProjects.filter(p => {
+        const matchesQuery = !query || 
+          p.title.toLowerCase().includes(query) || 
+          p.partner.toLowerCase().includes(query) || 
+          p.description.toLowerCase().includes(query) ||
+          p.tech_stack.some(t => t.toLowerCase().includes(query));
+        const matchesDiff = (diff === 'all') || (p.difficulty.toLowerCase() === diff.toLowerCase());
+        return matchesQuery && matchesDiff;
+      });
+
+      const role = window.currentActiveRole || 'teacher';
+      const isStudent = (role === 'student');
+      const enrolledProjId = localStorage.getItem('campuspulse_enrolled_project');
+      renderCapstoneGrid(filtered, isStudent, enrolledProjId);
+    }
+
+    // ── Student Enrollment Action ──
+    async function studentEnrollProject(projId, isAlreadyEnrolled) {
+      if (isAlreadyEnrolled) {
+        showToast('ℹ️ You are already actively enrolled in this capstone project!');
+        return;
+      }
+
+      let currentStudentName = 'Priyanshu Pandey';
+      try {
+        const su = JSON.parse(localStorage.getItem('campuspulse_auth_user'));
+        if (su && su.displayName) currentStudentName = su.displayName;
+      } catch (e) {}
+
+      try {
+        const res = await fetch('/api/v1/projects/assign', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ project_id: projId, student_name: currentStudentName })
         });
-        showToast(`Project assigned to ${currentStudentName}!`);
+        const json = await res.json();
+        const projectTitle = json.data && json.data.project ? json.data.project.title : 'Capstone Project';
+
+        localStorage.setItem('campuspulse_enrolled_project', projId);
+        showToast(`🎉 You have enrolled in: ${projectTitle}!`);
         loadProjectBank();
       } catch (err) {
-        console.error(err);
+        console.error('Enrollment error:', err);
+        showToast('⚠️ Failed to enroll in project. Please retry.');
       }
+    }
+
+    // ── Faculty Assign Project Modal & Submission ──
+    async function openFacultyAssignModal(preselectedProjId) {
+      // Ensure studentListCache is available
+      if (!studentListCache || studentListCache.length === 0) {
+        try {
+          const res = await fetch('/api/v1/advisors/me/action-list?limit=50');
+          const json = await res.json();
+          studentListCache = json.data.action_list || [];
+        } catch (e) {}
+      }
+
+      // Populate students dropdown
+      const stuSel = document.getElementById('modal-assign-student-select');
+      if (stuSel) {
+        if (studentListCache && studentListCache.length > 0) {
+          stuSel.innerHTML = studentListCache.map(s => `
+            <option value="${s.name}">${s.name} (${s.student_ref || ''} • ${s.department || 'CSE'} • Score: ${s.success_score || 0})</option>
+          `).join('');
+        } else {
+          stuSel.innerHTML = `
+            <option value="Priyanshu Pandey">Priyanshu Pandey (2023CSE001 • CSE Sec A)</option>
+            <option value="Aarav Sharma">Aarav Sharma (2023CSE002 • CSE Sec A)</option>
+            <option value="Sneha Patel">Sneha Patel (2023CSE003 • CSE Sec B)</option>
+            <option value="Ananya Rao">Ananya Rao (2023CSE004 • CSE Sec B)</option>
+            <option value="Rohan Gupta">Rohan Gupta (2023CSE005 • CSE Sec C)</option>
+          `;
+        }
+      }
+
+      // Pre-select project
+      const projSel = document.getElementById('modal-assign-project-select');
+      if (projSel && preselectedProjId) {
+        projSel.value = preselectedProjId;
+      }
+
+      // Pre-fill faculty mentor name
+      let facultyName = 'Dr. Ananya Sharma';
+      try {
+        const su = JSON.parse(localStorage.getItem('campuspulse_auth_user'));
+        if (su && su.displayName) facultyName = su.displayName;
+      } catch (e) {}
+      const facInput = document.getElementById('modal-assign-faculty-name');
+      if (facInput) facInput.value = `${facultyName} (Faculty Supervisor)`;
+
+      // Open modal
+      const modal = document.getElementById('modal-assign-capstone');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    async function submitFacultyProjectAssignment() {
+      const projId = document.getElementById('modal-assign-project-select')?.value;
+      const studentName = document.getElementById('modal-assign-student-select')?.value;
+      const facultyName = document.getElementById('modal-assign-faculty-name')?.value;
+      const note = document.getElementById('modal-assign-note')?.value;
+
+      if (!projId || !studentName) {
+        alert('Please select both a project and a student.');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/v1/projects/assign', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            project_id: projId,
+            student_name: studentName,
+            mentor_name: facultyName,
+            notes: note
+          })
+        });
+        const json = await res.json();
+        closeDrawer('modal-assign-capstone');
+        showToast(`✅ Capstone project allocated to ${studentName}!`);
+        loadProjectBank();
+      } catch (err) {
+        console.error('Assignment error:', err);
+        showToast('⚠️ Failed to assign project');
+      }
+    }
+
+    // ── Create New Capstone Project ──
+    function openCreateProjectModal() {
+      const modal = document.getElementById('modal-create-capstone');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    async function submitCreateCapstoneProject() {
+      const title = document.getElementById('new-proj-title')?.value.trim();
+      const domain = document.getElementById('new-proj-domain')?.value.trim();
+      const difficulty = document.getElementById('new-proj-diff')?.value;
+      const partner = document.getElementById('new-proj-partner')?.value.trim();
+      const tech = document.getElementById('new-proj-tech')?.value.trim();
+      const desc = document.getElementById('new-proj-desc')?.value.trim();
+
+      if (!title || !desc) {
+        alert('Please fill in at least Project Title and Description.');
+        return;
+      }
+
+      try {
+        await fetch('/api/v1/projects/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title,
+            domain: domain || 'Full-Stack & Analytics',
+            difficulty: difficulty || 'Intermediate',
+            partner: partner || 'CampusPulse Labs',
+            tech_stack: tech ? tech.split(',').map(t => t.trim()) : ['Python', 'FastAPI'],
+            description: desc
+          })
+        });
+
+        closeDrawer('modal-create-capstone');
+        showToast(`✅ New Capstone Project "${title}" published!`);
+        // Clear inputs
+        document.getElementById('new-proj-title').value = '';
+        document.getElementById('new-proj-desc').value = '';
+        loadProjectBank();
+      } catch (err) {
+        console.error('Project creation error:', err);
+        showToast('⚠️ Failed to create project');
+      }
+    }
+
+    // ── Faculty Documents & PDF Management Hub ──
+    function handleFileSelectionChange(input) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        selectedDocFileName = file.name;
+        selectedDocFileSize = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+        if (file.size < 1024 * 1024) {
+          selectedDocFileSize = (file.size / 1024).toFixed(1) + ' KB';
+        }
+
+        const titleInput = document.getElementById('capstone-doc-title');
+        if (titleInput && !titleInput.value) {
+          titleInput.value = file.name;
+        }
+
+        const previewInfo = document.getElementById('capstone-file-preview-info');
+        if (previewInfo) {
+          previewInfo.innerText = `📎 Selected: ${file.name} (${selectedDocFileSize})`;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          selectedDocDataUrl = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    async function handleFacultyDocumentUpload() {
+      const titleInput = document.getElementById('capstone-doc-title');
+      const projectSel = document.getElementById('capstone-doc-project');
+      const fileInput = document.getElementById('capstone-doc-file');
+
+      let title = titleInput ? titleInput.value.trim() : '';
+      if (!title && selectedDocFileName) title = selectedDocFileName;
+      if (!title) {
+        alert('Please specify a document title or select a file to upload.');
+        return;
+      }
+
+      const projId = projectSel ? projectSel.value : 'all';
+      const projText = projectSel && projectSel.options[projectSel.selectedIndex] ? projectSel.options[projectSel.selectedIndex].text : 'All Projects';
+
+      let facultyName = 'Dr. Ananya Sharma';
+      try {
+        const su = JSON.parse(localStorage.getItem('campuspulse_auth_user'));
+        if (su && su.displayName) facultyName = su.displayName;
+      } catch (e) {}
+
+      const fileType = title.toLowerCase().endsWith('.pdf') ? 'PDF' : (title.toLowerCase().endsWith('.doc') || title.toLowerCase().endsWith('.docx') ? 'DOCX' : 'DOCUMENT');
+
+      const payload = {
+        title: title,
+        project_id: projId,
+        project_title: projText,
+        uploaded_by: facultyName,
+        uploaded_role: 'Faculty Mentor',
+        size: selectedDocFileSize || '1.8 MB',
+        file_type: fileType,
+        file_data: selectedDocDataUrl
+      };
+
+      try {
+        await fetch('/api/v1/projects/documents', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        showToast(`📄 Document "${title}" uploaded successfully!`);
+
+        // Reset inputs
+        if (titleInput) titleInput.value = '';
+        if (fileInput) fileInput.value = '';
+        const previewInfo = document.getElementById('capstone-file-preview-info');
+        if (previewInfo) previewInfo.innerText = '';
+        selectedDocDataUrl = null;
+        selectedDocFileName = '';
+        selectedDocFileSize = '';
+
+        loadCapstoneDocuments();
+      } catch (err) {
+        console.error('Doc upload error:', err);
+        showToast('⚠️ Failed to upload document');
+      }
+    }
+
+    async function loadCapstoneDocuments() {
+      const container = document.getElementById('capstone-docs-list');
+      if (!container) return;
+
+      try {
+        const res = await fetch('/api/v1/projects/documents');
+        const json = await res.json();
+        const docs = json.data || [];
+
+        const role = window.currentActiveRole || 'teacher';
+        const isFaculty = (role !== 'student');
+
+        if (docs.length === 0) {
+          container.innerHTML = `<div style="grid-column:1/-1; padding:20px; text-align:center; color:var(--text-muted); font-size:0.82rem;">No documents uploaded yet.</div>`;
+          return;
+        }
+
+        container.innerHTML = docs.map(d => {
+          const isPdf = (d.file_type || '').toUpperCase() === 'PDF' || d.title.toLowerCase().endsWith('.pdf');
+          const icon = isPdf ? '📕' : '📘';
+
+          return `
+            <div style="background:var(--card-bg); border:1px solid var(--border-color); border-radius:8px; padding:14px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+              <div>
+                <div style="display:flex; align-items:flex-start; gap:10px;">
+                  <span style="font-size:1.6rem; line-height:1;">${icon}</span>
+                  <div style="flex:1; overflow:hidden;">
+                    <div style="font-weight:700; font-size:0.86rem; color:var(--text-main); word-break:break-word;">${d.title}</div>
+                    <div style="font-size:0.72rem; color:var(--primary-blue); font-weight:600; margin-top:2px;">${d.project_title || 'General Guidelines'}</div>
+                  </div>
+                </div>
+
+                <div style="font-size:0.72rem; color:var(--text-muted); margin-top:10px; display:flex; flex-direction:column; gap:2px;">
+                  <div>Uploaded by: <strong>${d.uploaded_by}</strong> (${d.uploaded_role || 'Faculty'})</div>
+                  <div style="display:flex; justify-content:space-between; margin-top:2px;">
+                    <span>📅 ${d.uploaded_at || 'Recently'}</span>
+                    <span style="font-weight:600; color:var(--text-dim);">${d.size || '1.5 MB'}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:10px; margin-top:12px;">
+                <button class="btn btn-outline btn-sm" onclick="viewOrDownloadDocument('${d.id}')" style="font-size:0.75rem; display:flex; align-items:center; gap:5px;">
+                  <span>👁️</span> View / Download
+                </button>
+                ${isFaculty ? `
+                  <button class="btn btn-sm" onclick="deleteCapstoneDocument('${d.id}')" style="background:#fee2e2; color:#991b1b; border:none; font-size:0.72rem; padding:4px 8px;" title="Delete Document">
+                    🗑️ Delete
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+      } catch (err) {
+        console.error('Error loading capstone documents:', err);
+      }
+    }
+
+    async function viewOrDownloadDocument(docId) {
+      try {
+        const res = await fetch('/api/v1/projects/documents');
+        const json = await res.json();
+        const docs = json.data || [];
+        const doc = docs.find(d => d.id === docId);
+
+        if (doc && doc.file_data) {
+          const win = window.open();
+          win.document.write(`<iframe src="${doc.file_data}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+        } else {
+          const docTitle = doc ? doc.title : 'Capstone Document';
+          const docBy = doc ? doc.uploaded_by : 'Faculty Mentor';
+          const docDate = doc ? doc.uploaded_at : '2026-10-27';
+          const docProj = doc ? doc.project_title : 'General Guidelines';
+
+          const win = window.open('', '_blank');
+          win.document.write(\`
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <title>\${docTitle} - CampusPulse OS</title>
+              <style>
+                body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; color: #1e293b; line-height: 1.6; }
+                .header { border-bottom: 2px solid #2563eb; padding-bottom: 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
+                .badge { background: #eff6ff; color: #1d4ed8; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; }
+                h1 { margin: 0 0 6px 0; color: #0f172a; font-size: 1.6rem; }
+                .meta { font-size: 0.85rem; color: #64748b; }
+                .section { margin: 24px 0; padding: 20px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+                .rubric-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.85rem; }
+                .rubric-table th, .rubric-table td { border: 1px solid #cbd5e1; padding: 8px 12px; text-align: left; }
+                .rubric-table th { background: #e2e8f0; font-weight: 700; }
+                .print-btn { background: #2563eb; color: #ffffff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+              </style>
+            </head>
+            <body>
+              <div class="header">
+                <div>
+                  <h1>\${docTitle}</h1>
+                  <div class="meta">Project: <strong>\${docProj}</strong> • Uploaded by: <strong>\${docBy}</strong> • Date: \${docDate}</div>
+                </div>
+                <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+              </div>
+
+              <div class="section">
+                <h3>1. Executive Overview &amp; Learning Objectives</h3>
+                <p>This document constitutes the official institutional capstone brief and evaluation matrix for the academic year 2026-2027 in alignment with NAAC RAF Criteria 1.3 &amp; NEP 2020 Experiential Learning directives.</p>
+                <ul>
+                  <li><strong>Core Focus:</strong> Industry-grade architecture, unit-test determinism, AST compliance, and end-to-end integration.</li>
+                  <li><strong>Supervision:</strong> Regular weekly sprints and sprint reviews with designated faculty mentors.</li>
+                </ul>
+              </div>
+
+              <div class="section">
+                <h3>2. Milestone Assessment Rubric (100 Marks Total)</h3>
+                <table class="rubric-table">
+                  <thead>
+                    <tr><th>Milestone</th><th>Weightage</th><th>Deliverables</th><th>Verification Method</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>Phase 1: Architecture &amp; Schema</td><td>25%</td><td>System design doc, ER diagram, API contracts</td><td>Faculty review &amp; peer demo</td></tr>
+                    <tr><td>Phase 2: Core Implementation</td><td>35%</td><td>Functional backend, UI integration, Docker container</td><td>Automated testing &amp; AST scanner</td></tr>
+                    <tr><td>Phase 3: Rigor &amp; Verification</td><td>20%</td><td>Coverage &gt; 90%, load testing, benchmark telemetry</td><td>CI/CD automated execution</td></tr>
+                    <tr><td>Phase 4: Final Presentation &amp; Viva</td><td>20%</td><td>Live industry demo, code walkthrough, Q&amp;A</td><td>Faculty + Industry Evaluator Panel</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </body>
+            </html>
+          \`);
+        }
+      } catch (e) {
+        console.error('Document view error:', e);
+      }
+    }
+
+    async function deleteCapstoneDocument(docId) {
+      if (!confirm('Are you sure you want to delete this capstone document?')) return;
+      try {
+        await fetch(\`/api/v1/projects/documents/\${docId}\`, { method: 'DELETE' });
+        showToast('Document deleted successfully.');
+        loadCapstoneDocuments();
+      } catch (err) {
+        console.error('Delete doc error:', err);
+      }
+    }
+
+    function scrollToCapstoneDocs() {
+      const sec = document.getElementById('capstone-documents-section');
+      if (sec) {
+        sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        sec.style.transition = 'box-shadow 0.4s ease';
+        sec.style.boxShadow = '0 0 0 3px rgba(37,99,235,0.4)';
+        setTimeout(() => { sec.style.boxShadow = 'none'; }, 2000);
+      }
+    }
+
+    function openDocUploadWithProject(projId) {
+      const sel = document.getElementById('capstone-doc-project');
+      if (sel) sel.value = projId;
+      scrollToCapstoneDocs();
+      const titleInput = document.getElementById('capstone-doc-title');
+      if (titleInput) titleInput.focus();
     }
 
     // ══════════════════════════════════════════════════════════════════════════
