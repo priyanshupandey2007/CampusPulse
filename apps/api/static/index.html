@@ -2080,6 +2080,7 @@
   <!-- FIREBASE AUTHENTICATION SCREEN OVERLAY — DARK THEME -->
   <!-- ════════════════════════════════════════════════════════════════════ -->
   <div id="auth-overlay-screen">
+    <button type="button" onclick="hideAuthOverlay()" style="position:fixed; top:20px; right:24px; background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); color:#ffffff; border-radius:50%; width:38px; height:38px; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:9999;" title="Close & Return to Workspace">✕</button>
     <div class="auth-outer">
 
       <!-- Hero -->
@@ -2090,6 +2091,14 @@
         </div>
         <h1>Sign In to CampusPulse</h1>
         <p>Choose your account type to access your tailored dashboard and tools.</p>
+        <div style="display:flex; justify-content:center; gap:10px; margin-top:14px; flex-wrap:wrap;">
+          <button type="button" class="btn btn-sm" onclick="quickDemoLogin('student')" style="background:#2563eb; color:#ffffff; font-weight:700; border-radius:20px; padding:6px 16px; border:none; cursor:pointer; box-shadow:0 2px 10px rgba(37,99,235,0.3); font-size:0.8rem;">
+            🎓 Enter as Student (Priyanshu)
+          </button>
+          <button type="button" class="btn btn-sm" onclick="quickDemoLogin('teacher')" style="background:#16a34a; color:#ffffff; font-weight:700; border-radius:20px; padding:6px 16px; border:none; cursor:pointer; box-shadow:0 2px 10px rgba(22,163,74,0.3); font-size:0.8rem;">
+            👩‍🏫 Enter as Faculty (Dr. Ananya)
+          </button>
+        </div>
       </div>
 
       <!-- Role Tab switcher -->
@@ -2600,18 +2609,33 @@
           <!-- Divider -->
           <div style="height: 24px; width: 1px; background: var(--border-color); margin: 0 4px;"></div>
 
+          <!-- Direct Quick Persona Switcher (Student vs Faculty) -->
+          <div class="topbar-persona-switcher" style="display:flex; align-items:center; gap:4px; background:var(--card-bg, #ffffff); padding:3px 4px; border-radius:20px; border:1px solid var(--border-color); box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+            <button type="button" id="pill-switch-student" onclick="quickDemoLogin('student')" title="Switch to Student Persona (Priyanshu Pandey)" style="font-size:0.75rem; font-weight:700; border-radius:16px; padding:4px 10px; border:none; cursor:pointer; display:flex; align-items:center; gap:4px; transition:all 0.15s ease;">
+              <span>🎓</span> Student
+            </button>
+            <button type="button" id="pill-switch-teacher" onclick="quickDemoLogin('teacher')" title="Switch to Faculty Persona (Dr. Ananya Sharma)" style="font-size:0.75rem; font-weight:700; border-radius:16px; padding:4px 10px; border:none; cursor:pointer; display:flex; align-items:center; gap:4px; transition:all 0.15s ease;">
+              <span>👩‍🏫</span> Faculty
+            </button>
+          </div>
+
           <!-- Active Role Indicator (Click to Switch Account) -->
           <div style="display:flex; align-items:center; gap:6px;">
-            <div class="active-role-pill role-pill-teacher" id="topbar-role-badge" onclick="toggleUserDropdown()" style="cursor:pointer;" title="Click to Switch Account Persona">
+            <div class="active-role-pill role-pill-teacher" id="topbar-role-badge" onclick="toggleUserDropdown(event)" style="cursor:pointer;" title="Click to Switch Account Persona">
               <span id="topbar-role-icon">👩‍🏫</span>
               <span id="topbar-role-text">Faculty Mentor</span>
               <span style="font-size:0.6rem; opacity:0.7; margin-left:2px;">▾</span>
             </div>
           </div>
 
+          <!-- Direct Sign Out Button in Header -->
+          <button type="button" class="btn btn-sm btn-outline signout-topbar-btn" onclick="handleFirebaseSignOut()" style="border-radius:18px; padding:5px 11px; font-size:0.74rem; font-weight:700; color:#dc2626; border-color:#fca5a5; display:flex; align-items:center; gap:5px; background:rgba(254,242,242,0.8); cursor:pointer;" title="Sign out of current account">
+            <span>🚪</span> Sign Out
+          </button>
+
           <!-- User Profile Dropdown Badge -->
           <div class="user-profile-wrapper">
-            <div class="user-profile-badge" id="user-profile-badge" onclick="toggleUserDropdown()" title="Account & Profile Settings">
+            <div class="user-profile-badge" id="user-profile-badge" onclick="toggleUserDropdown(event)" title="Account & Profile Settings">
               <div class="user-avatar" id="nav-user-avatar">AS</div>
               <span class="user-name-label" id="nav-user-name">Dr. Ananya</span>
               <span style="font-size:0.65rem; color:var(--text-dim); margin-left:2px;">▾</span>
@@ -6326,59 +6350,38 @@ Available Nimbus Shell commands:
         console.warn('Firebase init fallback:', err);
       }
 
-      // Restore existing authenticated session if present, otherwise show auth overlay
+      // Check if user has explicitly signed out
+      const isExplicitlySignedOut = sessionStorage.getItem('campuspulse_explicitly_signed_out') === '1';
       const existingUser = localStorage.getItem('campuspulse_auth_user');
-      if (existingUser) {
-        hideAuthOverlay();
-      } else {
+
+      if (isExplicitlySignedOut || !existingUser) {
         showAuthOverlay();
+      } else {
+        hideAuthOverlay();
       }
 
       // If Firebase Auth is active, listen for its own token-verified session
       if (fbAuthInstance && fbAuthInstance.onAuthStateChanged) {
         fbAuthInstance.onAuthStateChanged((fbUser) => {
-          // Only auto-restore if Firebase itself confirms an active signed-in user
-          // AND the login overlay is still visible (user hasn't manually signed in yet)
+          // DO NOT auto-restore if user clicked sign out or is actively signing out
+          if (window.isSigningOut || sessionStorage.getItem('campuspulse_explicitly_signed_out') === '1') {
+            return;
+          }
+
           const overlay = document.getElementById('auth-overlay-screen');
           const overlayVisible = overlay && overlay.style.display !== 'none';
-          if (fbUser && overlayVisible) {
+          const storedSession = localStorage.getItem('campuspulse_auth_user');
+
+          if (fbUser && overlayVisible && storedSession) {
             let user = null;
-            const storedSession = localStorage.getItem('campuspulse_auth_user');
-            if (storedSession) {
-              try {
-                user = JSON.parse(storedSession);
-              } catch (e) { /* ignore */ }
-            }
-            if (!user) {
-              const email = fbUser.email || '';
-              const isStudent = email.includes('student') || email.includes('priyanshu') || !!email.match(/[0-9]{4}/);
-              let displayName = fbUser.displayName;
-              if (!displayName && email) {
-                if (email.toLowerCase().includes('priyanshu')) displayName = 'Priyanshu Pandey';
-                else displayName = email.split('@')[0];
-              }
-              if (!displayName) displayName = isStudent ? 'Priyanshu Pandey' : 'Faculty Member';
+            try {
+              user = JSON.parse(storedSession);
+            } catch (e) { /* ignore */ }
 
-              const initials = displayName
-                .split(' ')
-                .filter(Boolean)
-                .map(n => n[0])
-                .join('')
-                .substring(0, 2)
-                .toUpperCase() || 'PP';
-
-              user = {
-                uid: fbUser.uid,
-                email: email || (isStudent ? 'priyanshupandey2864@gmail.com' : 'faculty@campuspulse.edu'),
-                displayName: displayName,
-                role: isStudent ? 'student' : 'teacher',
-                roleTitle: isStudent ? 'Student (CSE Sec A • Roll #001)' : 'Faculty Mentor',
-                avatarInitials: initials,
-                provider: 'firebase'
-              };
+            if (user) {
+              applyAuthenticatedUser(user);
+              hideAuthOverlay();
             }
-            applyAuthenticatedUser(user);
-            hideAuthOverlay();
           }
         });
       }
@@ -7001,6 +7004,36 @@ Available Nimbus Shell commands:
         }
       }
 
+      // Synchronize Quick Persona Switcher Pills in Topbar
+      const pillStudent = document.getElementById('pill-switch-student');
+      const pillTeacher = document.getElementById('pill-switch-teacher');
+      if (pillStudent) {
+        if (role === 'student') {
+          pillStudent.style.background = '#2563eb';
+          pillStudent.style.color = '#ffffff';
+          pillStudent.style.fontWeight = '800';
+          pillStudent.style.boxShadow = '0 2px 6px rgba(37,99,235,0.3)';
+        } else {
+          pillStudent.style.background = 'transparent';
+          pillStudent.style.color = 'var(--text-muted)';
+          pillStudent.style.fontWeight = '600';
+          pillStudent.style.boxShadow = 'none';
+        }
+      }
+      if (pillTeacher) {
+        if (role === 'teacher' || role === 'advisor') {
+          pillTeacher.style.background = '#16a34a';
+          pillTeacher.style.color = '#ffffff';
+          pillTeacher.style.fontWeight = '800';
+          pillTeacher.style.boxShadow = '0 2px 6px rgba(22,163,74,0.3)';
+        } else {
+          pillTeacher.style.background = 'transparent';
+          pillTeacher.style.color = 'var(--text-muted)';
+          pillTeacher.style.fontWeight = '600';
+          pillTeacher.style.boxShadow = 'none';
+        }
+      }
+
       if (roleIndicator) {
         roleIndicator.className = `active-role-pill ${meta.badgeClass}`;
         if (roleIcon) roleIcon.innerText = meta.badgeIcon;
@@ -7081,12 +7114,16 @@ Available Nimbus Shell commands:
     }
 
     function quickDemoLogin(role) {
+      sessionStorage.removeItem('campuspulse_explicitly_signed_out');
+      window.isSigningOut = false;
       applyRoleRBAC(role);
       hideAuthOverlay();
     }
 
     function applyAuthenticatedUser(user) {
       if (!user) return;
+      sessionStorage.removeItem('campuspulse_explicitly_signed_out');
+      window.isSigningOut = false;
       applyRoleRBAC(user.role || 'teacher', user);
     }
 
@@ -7094,21 +7131,35 @@ Available Nimbus Shell commands:
       applyRoleRBAC(newRole);
     }
 
-    function handleFirebaseSignOut() {
+    async function handleFirebaseSignOut() {
+      window.isSigningOut = true;
+      sessionStorage.setItem('campuspulse_explicitly_signed_out', '1');
+      localStorage.removeItem('campuspulse_auth_user');
+      localStorage.removeItem('campuspulse_active_role');
+
       try {
         if (fbAuthInstance && fbAuthInstance.signOut) {
-          fbAuthInstance.signOut();
+          await fbAuthInstance.signOut();
         }
-      } catch (e) {}
+      } catch (e) {
+        console.warn('Firebase signout note:', e);
+      }
 
-      localStorage.removeItem('campuspulse_auth_user');
       const dropdown = document.getElementById('user-profile-dropdown');
       if (dropdown) dropdown.style.display = 'none';
+
       showAuthOverlay();
-      showToast('🚪 Signed out of Firebase session');
+      showToast('🚪 Signed out successfully. Select an account to sign back in.');
+
+      setTimeout(() => {
+        window.isSigningOut = false;
+      }, 1000);
     }
 
-    function toggleUserDropdown() {
+    function toggleUserDropdown(e) {
+      if (e && e.stopPropagation) {
+        e.stopPropagation();
+      }
       const dropdown = document.getElementById('user-profile-dropdown');
       if (!dropdown) return;
       dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
@@ -7117,8 +7168,12 @@ Available Nimbus Shell commands:
     // Close user dropdown on outside click
     document.addEventListener('click', (e) => {
       const wrapper = document.querySelector('.user-profile-wrapper');
+      const roleBadge = document.getElementById('topbar-role-badge');
       const dropdown = document.getElementById('user-profile-dropdown');
-      if (wrapper && dropdown && !wrapper.contains(e.target)) {
+      if (dropdown && dropdown.style.display === 'flex') {
+        if (wrapper && wrapper.contains(e.target)) return;
+        if (roleBadge && roleBadge.contains(e.target)) return;
+        if (e.target.closest && e.target.closest('.signout-topbar-btn')) return;
         dropdown.style.display = 'none';
       }
     });
@@ -12076,6 +12131,7 @@ Available Nimbus Shell commands:
       // Default is always light mode; only use saved preference if explicitly set
       document.documentElement.setAttribute("data-theme", savedTheme || "light");
 
+      const isExplicitlySignedOut = sessionStorage.getItem('campuspulse_explicitly_signed_out') === '1';
       const savedRole = localStorage.getItem('campuspulse_active_role') || 'teacher';
       let savedUser = null;
       try {
@@ -12083,7 +12139,12 @@ Available Nimbus Shell commands:
         if (raw) savedUser = JSON.parse(raw);
       } catch (e) {}
 
-      applyRoleRBAC(savedUser && savedUser.role ? savedUser.role : savedRole, savedUser);
+      if (isExplicitlySignedOut || (!savedUser && !localStorage.getItem('campuspulse_auth_user'))) {
+        showAuthOverlay();
+      } else {
+        applyRoleRBAC(savedUser && savedUser.role ? savedUser.role : savedRole, savedUser);
+        hideAuthOverlay();
+      }
       initFirebaseAuth();
     });
   </script>
