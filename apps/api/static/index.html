@@ -3856,9 +3856,9 @@
               <div class="card" id="lab-problem-panel" style="flex:0 0 340px; min-width:260px; max-width:380px;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
                   <span style="font-size:0.7rem; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:var(--primary-blue); background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.25); border-radius:6px; padding:3px 9px;">PROBLEM</span>
-                  <span id="editor-problem-label" style="font-size:0.82rem; font-weight:700; color:var(--text-primary);">Lab Challenge</span>
+                  <span id="editor-problem-label" style="font-size:0.82rem; font-weight:700; color:#e2e8f0;">Lab Challenge</span>
                 </div>
-                <div id="editor-problem-statement" style="font-size:0.8rem; line-height:1.65; color:var(--text-secondary); white-space:pre-wrap; font-family:monospace; background:var(--surface-2,#0f0f1a); border-radius:8px; padding:12px; max-height:420px; overflow-y:auto;">Select a lab from Lab Practice and click Launch Lab to load the problem here.</div>
+                <div id="editor-problem-statement" style="font-size:0.8rem; line-height:1.65; color:#c8d6f0; white-space:pre-wrap; font-family:monospace; background:#0f0f1a; border-radius:8px; padding:12px; max-height:420px; overflow-y:auto;">Select a lab from Lab Practice and click <strong style="color:#93c5fd;">Launch Lab</strong> to load the problem here.</div>
                 <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border,#252540);">
                   <div style="font-size:0.7rem; font-weight:700; color:var(--text-muted); margin-bottom:4px;">DIFFICULTY</div>
                   <span id="editor-problem-difficulty" class="reason-chip">—</span>
@@ -8144,7 +8144,15 @@ Available Nimbus Shell commands:
         const submitBtn = document.getElementById('btn-submit-lab');
 
         if (problemLabel) problemLabel.textContent = lab.problem_label || lab.title;
-        if (problemStatement) problemStatement.textContent = lab.problem_statement || lab.description;
+        if (problemStatement) {
+          // Escape HTML entities then convert newlines to <br> for display
+          const rawText = lab.problem_statement || lab.description || '';
+          const escaped = rawText
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+          problemStatement.innerHTML = escaped.replace(/\n/g, '<br>');
+        }
         if (problemDifficulty) {
           problemDifficulty.textContent = lab.difficulty || '—';
           // Colour by difficulty
