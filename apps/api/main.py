@@ -896,6 +896,9 @@ LABS_CATALOG = [
         "status": "Completed",
         "points": 50,
         "description": "Implement efficient anagram detection and palindrome verification using frequency dictionaries.",
+        "problem_label": "Lab 1 — String Algorithms & Anagrams",
+        "problem_statement": """Given two strings s and t, return True if t is an anagram of s, and False otherwise.\nAlso implement is_palindrome(s) that returns True if s reads the same forwards and backwards.\n\nConstraints:\n- 1 <= len(s), len(t) <= 5 * 10^4\n- s and t consist of lowercase English letters\n\nExamples:\n  is_anagram('anagram', 'nagaram') -> True\n  is_anagram('rat', 'car')         -> False\n  is_palindrome('racecar')         -> True\n  is_palindrome('hello')           -> False""",
+        "starter_code": """# Lab 1: String Algorithms & Anagrams\n# CampusPulse Coding Lab — Python 3.11\n\ndef is_anagram(s: str, t: str) -> bool:\n    \"\"\"Return True if t is an anagram of s.\"\"\"\n    # TODO: Implement using frequency dictionaries\n    pass\n\n\ndef is_palindrome(s: str) -> bool:\n    \"\"\"Return True if s is a palindrome.\"\"\"\n    # TODO: Implement efficiently\n    pass\n\n\n# --- Test Cases ---\nprint(is_anagram('anagram', 'nagaram'))  # True\nprint(is_anagram('rat', 'car'))          # False\nprint(is_palindrome('racecar'))          # True\nprint(is_palindrome('hello'))            # False""",
     },
     {
         "id": "lab-02",
@@ -907,6 +910,9 @@ LABS_CATALOG = [
         "status": "In Progress",
         "points": 75,
         "description": "Find the rotation pivot index in O(log N) time and perform binary search in logarithmic complexity.",
+        "problem_label": "Lab 2 — Binary Search & Rotated Arrays",
+        "problem_statement": """There is an integer array nums sorted in ascending order (with distinct values) that has been rotated at an unknown pivot index k.\n\nTask 1 — find_pivot(nums): Return the index of the minimum element (rotation pivot) in O(log N).\nTask 2 — search_rotated(nums, target): Return the index of target in the rotated array, or -1 if not found. Must run in O(log N).\n\nConstraints:\n- 1 <= len(nums) <= 5000\n- All values are distinct\n\nExamples:\n  find_pivot([4,5,6,7,0,1,2])          -> 4\n  search_rotated([4,5,6,7,0,1,2], 0)   -> 4\n  search_rotated([4,5,6,7,0,1,2], 3)   -> -1""",
+        "starter_code": """# Lab 2: Binary Search Optimization & Rotated Arrays\n# CampusPulse Coding Lab — Python 3.11\n\ndef find_pivot(nums: list[int]) -> int:\n    \"\"\"Return the index of the minimum element (rotation pivot) in O(log N).\"\"\"\n    # TODO: Binary search for pivot\n    pass\n\n\ndef search_rotated(nums: list[int], target: int) -> int:\n    \"\"\"Return index of target in rotated sorted array, or -1 if not found.\"\"\"\n    # TODO: O(log N) search on rotated array\n    pass\n\n\n# --- Test Cases ---\nprint(find_pivot([4,5,6,7,0,1,2]))           # 4\nprint(search_rotated([4,5,6,7,0,1,2], 0))    # 4\nprint(search_rotated([4,5,6,7,0,1,2], 3))    # -1\nprint(search_rotated([1], 0))                # -1""",
     },
     {
         "id": "lab-03",
@@ -918,6 +924,9 @@ LABS_CATALOG = [
         "status": "Completed",
         "points": 80,
         "description": "Calculate unweighted shortest paths and connected components using adjacency lists and queues.",
+        "problem_label": "Lab 3 — BFS & Shortest Path on Graphs",
+        "problem_statement": """Given an undirected graph represented as an adjacency list, implement two functions:\n\nTask 1 — bfs_shortest_path(graph, start, end): Return the shortest path (list of nodes) from start to end using BFS, or [] if no path exists.\nTask 2 — count_components(graph): Return the number of connected components in the graph.\n\nConstraints:\n- graph is a dict mapping node -> list of neighbour nodes\n- Nodes are integers or strings\n\nExamples:\n  graph = {0:[1,2], 1:[0,3], 2:[0], 3:[1], 4:[5], 5:[4]}\n  bfs_shortest_path(graph, 0, 3) -> [0, 1, 3]\n  count_components(graph)        -> 2""",
+        "starter_code": """# Lab 3: BFS & Shortest Path on Graphs\n# CampusPulse Coding Lab — Python 3.11\nfrom collections import deque\n\ndef bfs_shortest_path(graph: dict, start, end) -> list:\n    \"\"\"Return shortest path from start to end using BFS, or [] if none.\"\"\"\n    # TODO: BFS implementation\n    pass\n\n\ndef count_components(graph: dict) -> int:\n    \"\"\"Return number of connected components.\"\"\"\n    # TODO: BFS/DFS over all unvisited nodes\n    pass\n\n\n# --- Test Cases ---\ngraph = {0:[1,2], 1:[0,3], 2:[0], 3:[1], 4:[5], 5:[4]}\nprint(bfs_shortest_path(graph, 0, 3))  # [0, 1, 3]\nprint(count_components(graph))         # 2""",
     },
     {
         "id": "lab-04",
@@ -929,6 +938,9 @@ LABS_CATALOG = [
         "status": "Not Started",
         "points": 120,
         "description": "Design an O(1) get and put Least Recently Used cache evicting stale nodes deterministically.",
+        "problem_label": "Lab 4 — LRU Cache (Doubly Linked List + HashMap)",
+        "problem_statement": """Design a data structure that follows the Least Recently Used (LRU) cache eviction policy.\n\nImplement the LRUCache class:\n  LRUCache(capacity): Initialize with positive capacity.\n  get(key) -> int: Return the value of key if it exists, otherwise -1. Mark as recently used.\n  put(key, value): Update or insert the key-value pair. If capacity is exceeded, evict the LRU item.\n\nBoth get and put must run in O(1) average time complexity.\n\nConstraints:\n- 1 <= capacity <= 3000\n- 0 <= key, value <= 10^4\n- At most 2 * 10^5 calls to get and put\n\nExample:\n  cache = LRUCache(2)\n  cache.put(1, 1)   # cache: {1:1}\n  cache.put(2, 2)   # cache: {1:1, 2:2}\n  cache.get(1)      # returns 1, cache: {2:2, 1:1}\n  cache.put(3, 3)   # evicts key 2, cache: {1:1, 3:3}\n  cache.get(2)      # returns -1 (not found)""",
+        "starter_code": """# Lab 4: LRU Cache with Doubly Linked List & HashMap\n# CampusPulse Coding Lab — Python 3.11\n\nclass Node:\n    def __init__(self, key=0, val=0):\n        self.key, self.val = key, val\n        self.prev = self.next = None\n\n\nclass LRUCache:\n    def __init__(self, capacity: int):\n        self.cap = capacity\n        self.cache = {}  # key -> Node\n        # Sentinel head and tail\n        self.head, self.tail = Node(), Node()\n        self.head.next = self.tail\n        self.tail.prev = self.head\n\n    def _remove(self, node: Node):\n        # TODO: Remove node from doubly linked list\n        pass\n\n    def _insert_front(self, node: Node):\n        # TODO: Insert node right after head (most recently used)\n        pass\n\n    def get(self, key: int) -> int:\n        # TODO: Return value and move to front, or -1\n        pass\n\n    def put(self, key: int, value: int) -> None:\n        # TODO: Insert/update, evict LRU if over capacity\n        pass\n\n\n# --- Test Cases ---\ncache = LRUCache(2)\ncache.put(1, 1)\ncache.put(2, 2)\nprint(cache.get(1))   # 1\ncache.put(3, 3)       # evicts key 2\nprint(cache.get(2))   # -1\ncache.put(4, 4)       # evicts key 1\nprint(cache.get(1))   # -1\nprint(cache.get(3))   # 3\nprint(cache.get(4))   # 4""",
     },
 ]
 

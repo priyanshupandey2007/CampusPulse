@@ -3846,27 +3846,46 @@
           <!-- VIEW 9: CODE EDITOR -->
           <!-- ════════════════════════════════════════════════════════════════════ -->
           <div id="view-code-editor" class="tab-view">
-            <div class="breadcrumbs"><span>Home</span> / <span class="current">Code Editor</span></div>
-            <div class="page-title" style="margin-bottom:16px;"><span>Online Code Editor</span> <span class="subtitle-tag">| Python 3.11 Sandbox</span></div>
+            <div class="breadcrumbs"><span>Home</span> / <span onclick="switchNav('lab-practice')" style="cursor:pointer;">Lab Practice</span> / <span class="current" id="editor-breadcrumb-lab">Code Editor</span></div>
+            <div class="page-title" style="margin-bottom:16px;"><span>Online Code Studio</span> <span class="subtitle-tag" id="editor-lab-subtitle">| Python 3.11 Sandbox</span></div>
 
-            <div class="card">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <div style="display:flex; gap:8px; align-items:center;">
-                  <select id="editor-lang-select" class="filter-select">
-                    <option value="python">Python 3.11</option>
-                    <option value="javascript">JavaScript (Node.js)</option>
-                    <option value="java">Java 17</option>
-                    <option value="cpp">C++20</option>
-                  </select>
-                  <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted);">Problem: Two Sum (LeetCode #1)</span>
+            <!-- Split pane: Problem | Editor -->
+            <div style="display:flex; gap:16px; align-items:flex-start;">
+
+              <!-- LEFT: Problem Statement Panel -->
+              <div class="card" id="lab-problem-panel" style="flex:0 0 340px; min-width:260px; max-width:380px;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                  <span style="font-size:0.7rem; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:var(--primary-blue); background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.25); border-radius:6px; padding:3px 9px;">PROBLEM</span>
+                  <span id="editor-problem-label" style="font-size:0.82rem; font-weight:700; color:var(--text-primary);">Lab Challenge</span>
                 </div>
-                <div style="display:flex; gap:8px;">
-                  <button class="btn btn-outline btn-sm" onclick="resetEditorCode()">Reset</button>
-                  <button class="btn btn-primary btn-sm" onclick="executeEditorCode()">▶ Run Code</button>
+                <div id="editor-problem-statement" style="font-size:0.8rem; line-height:1.65; color:var(--text-secondary); white-space:pre-wrap; font-family:monospace; background:var(--surface-2,#0f0f1a); border-radius:8px; padding:12px; max-height:420px; overflow-y:auto;">Select a lab from Lab Practice and click Launch Lab to load the problem here.</div>
+                <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border,#252540);">
+                  <div style="font-size:0.7rem; font-weight:700; color:var(--text-muted); margin-bottom:4px;">DIFFICULTY</div>
+                  <span id="editor-problem-difficulty" class="reason-chip">—</span>
                 </div>
               </div>
 
-              <textarea id="code-editor-textarea" class="code-editor-box" style="width:100%; height:220px; outline:none;" spellcheck="false"># CampusPulse Technical Assessment
+              <!-- RIGHT: Editor + Console -->
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:12px;">
+                <div class="card">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <div style="display:flex; gap:8px; align-items:center;">
+                      <select id="editor-lang-select" class="filter-select">
+                        <option value="python">Python 3.11</option>
+                        <option value="javascript">JavaScript (Node.js)</option>
+                        <option value="java">Java 17</option>
+                        <option value="cpp">C++20</option>
+                      </select>
+                      <span id="editor-problem-tag" style="font-size:0.8rem; font-weight:700; color:var(--text-muted);">Free Sandbox</span>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                      <button class="btn btn-outline btn-sm" onclick="resetEditorCode()">Reset</button>
+                      <button class="btn btn-primary btn-sm" onclick="executeEditorCode()">▶ Run Code</button>
+                      <button id="btn-submit-lab" class="btn btn-sm" onclick="submitCurrentLab()" style="display:none; background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; border:none;">✓ Submit Lab</button>
+                    </div>
+                  </div>
+
+                  <textarea id="code-editor-textarea" class="code-editor-box" style="width:100%; height:300px; outline:none;" spellcheck="false"># CampusPulse Technical Assessment
 def two_sum(nums: list[int], target: int) -> list[int]:
     lookup = {}
     for i, num in enumerate(nums):
@@ -3881,11 +3900,14 @@ print(two_sum([2, 7, 11, 15], 9))  # Expected: [0, 1]
 print(two_sum([3, 2, 4], 6))        # Expected: [1, 2]
 print(two_sum([3, 3], 6))           # Expected: [0, 1]
 </textarea>
+                </div>
 
-              <div style="margin-top:12px;">
-                <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); margin-bottom:6px;">EXECUTION CONSOLE</div>
-                <div id="editor-console-output" class="terminal-window">Press '▶ Run Code' to execute in the deterministic sandbox...</div>
+                <div class="card">
+                  <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); margin-bottom:6px;">EXECUTION CONSOLE</div>
+                  <div id="editor-console-output" class="terminal-window">Press '▶ Run Code' to execute in the deterministic sandbox...</div>
+                </div>
               </div>
+
             </div>
           </div>
 
@@ -8101,7 +8123,65 @@ Available Nimbus Shell commands:
       }
     }
 
+    // Track which lab is currently open in the code studio
+    window._activeLabId = null;
+
     async function solveLab(labId) {
+      try {
+        // Fetch fresh labs catalog to get problem details
+        const res = await fetch('/api/v1/labs');
+        const json = await res.json();
+        const lab = (json.data || []).find(l => l.id === labId);
+        if (!lab) { showToast('Lab not found.'); return; }
+
+        // Populate problem panel
+        const problemLabel = document.getElementById('editor-problem-label');
+        const problemStatement = document.getElementById('editor-problem-statement');
+        const problemDifficulty = document.getElementById('editor-problem-difficulty');
+        const problemTag = document.getElementById('editor-problem-tag');
+        const breadcrumb = document.getElementById('editor-breadcrumb-lab');
+        const subtitle = document.getElementById('editor-lab-subtitle');
+        const submitBtn = document.getElementById('btn-submit-lab');
+
+        if (problemLabel) problemLabel.textContent = lab.problem_label || lab.title;
+        if (problemStatement) problemStatement.textContent = lab.problem_statement || lab.description;
+        if (problemDifficulty) {
+          problemDifficulty.textContent = lab.difficulty || '—';
+          // Colour by difficulty
+          const diffColor = { Easy: '#166534', Medium: '#854d0e', Hard: '#991b1b' };
+          problemDifficulty.style.color = diffColor[lab.difficulty] || '#64748b';
+        }
+        if (problemTag) problemTag.textContent = lab.problem_label || lab.title;
+        if (breadcrumb) breadcrumb.textContent = lab.title;
+        if (subtitle) subtitle.textContent = `| ${lab.language || 'Python 3.11'} · ${lab.difficulty}`;
+
+        // Load starter code into editor
+        const textarea = document.getElementById('code-editor-textarea');
+        if (textarea && lab.starter_code) {
+          textarea.value = lab.starter_code;
+        }
+
+        // Clear console
+        const consoleEl = document.getElementById('editor-console-output');
+        if (consoleEl) consoleEl.textContent = "Press '▶ Run Code' to execute in the deterministic sandbox...";
+
+        // Show/hide submit button based on status
+        window._activeLabId = labId;
+        if (submitBtn) submitBtn.style.display = (lab.status !== 'Completed') ? 'inline-flex' : 'none';
+
+        // Navigate to code editor
+        switchNav('code-editor');
+        showToast(`🚀 ${lab.title} loaded — good luck!`);
+
+      } catch (err) {
+        console.error(err);
+        showToast('Failed to load lab. Please try again.');
+      }
+    }
+
+    async function submitCurrentLab() {
+      const labId = window._activeLabId;
+      if (!labId) return;
       try {
         const res = await fetch('/api/v1/labs/submit', {
           method: 'POST',
@@ -8109,10 +8189,12 @@ Available Nimbus Shell commands:
           body: JSON.stringify({ lab_id: labId })
         });
         const json = await res.json();
-        showToast(json.data.message);
-        loadLabsPractice();
+        showToast('🎉 ' + json.data.message);
+        document.getElementById('btn-submit-lab').style.display = 'none';
+        window._activeLabId = null;
       } catch (err) {
         console.error(err);
+        showToast('Submission failed. Please try again.');
       }
     }
 
