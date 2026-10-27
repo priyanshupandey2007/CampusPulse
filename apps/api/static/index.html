@@ -3947,25 +3947,96 @@ print(two_sum([3, 3], 6))           # Expected: [0, 1]
                 👩‍🏫 <strong>Faculty Section Rule:</strong> As faculty of Section A, sessions you create for <strong>Section A</strong> are strictly isolated and visible <em>only</em> to students enrolled in Section A.
               </div>
 
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-                <!-- Lab picker -->
-                <div>
-                  <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:6px;">SELECT LAB FROM CATALOG</label>
-                  <select id="als-lab-select" class="filter-select" style="width:100%;">
+              <!-- Mode Selector: Choose from Catalog OR Give Custom Question -->
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px; background:var(--bg-subtle, #f1f5f9); padding:4px; border-radius:10px; width:fit-content; border:1px solid var(--border-color,#e2e8f0);">
+                <button id="als-tab-catalog" type="button" class="btn btn-sm" onclick="setLabAssignMode('catalog')" style="border-radius:7px; font-weight:700; padding:6px 14px; background:#fff; color:#0f172a; box-shadow:0 1px 3px rgba(0,0,0,0.08); border:none; cursor:pointer; transition:all 0.15s;">
+                  📚 Select from Catalog
+                </button>
+                <button id="als-tab-custom" type="button" class="btn btn-sm" onclick="setLabAssignMode('custom')" style="border-radius:7px; font-weight:700; padding:6px 14px; background:transparent; color:var(--text-muted); border:none; cursor:pointer; transition:all 0.15s;">
+                  ✍️ Give Your Own Question
+                </button>
+              </div>
+
+              <!-- ── Mode 1: Pre-built Catalog Selection ── -->
+              <div id="als-catalog-fields" style="margin-bottom:16px;">
+                <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:6px;">SELECT LAB FROM CATALOG</label>
+                <div style="display:flex; gap:10px; align-items:center;">
+                  <select id="als-lab-select" class="filter-select" style="flex:1;" onchange="if(this.value==='__custom__') setLabAssignMode('custom');">
                     <option value="">-- Choose a Lab --</option>
                     <option value="lab-01">Lab 1: Python String Algorithms & Anagrams (Easy · 50 pts)</option>
                     <option value="lab-02">Lab 2: Binary Search & Rotated Arrays (Medium · 75 pts)</option>
                     <option value="lab-03">Lab 3: BFS & Shortest Path on Graphs (Medium · 80 pts)</option>
                     <option value="lab-04">Lab 4: LRU Cache — DLL + HashMap (Hard · 120 pts)</option>
+                    <option value="__custom__">✍️ + Give your own custom question...</option>
                   </select>
+                  <button type="button" class="btn btn-outline btn-sm" onclick="setLabAssignMode('custom')" style="white-space:nowrap; font-weight:700; color:#059669; border-color:#059669;">
+                    + Custom Question
+                  </button>
+                </div>
+              </div>
+
+              <!-- ── Mode 2: Custom Question / Problem Creator ── -->
+              <div id="als-custom-fields" style="display:none; margin-bottom:16px; background:rgba(16,185,129,0.04); border:1px solid rgba(16,185,129,0.2); border-radius:10px; padding:16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                  <div style="font-weight:800; font-size:0.88rem; color:#065f46; display:flex; align-items:center; gap:6px;">
+                    <span>✍️</span> Custom Question Details
+                  </div>
+                  <span style="font-size:0.72rem; color:var(--text-muted);">Students will solve this problem in Online Code Studio</span>
                 </div>
 
-                <!-- Deadline -->
-                <div>
-                  <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:6px;">DEADLINE DATE</label>
-                  <input type="date" id="als-deadline" class="search-input-field" style="width:100%; box-sizing:border-box;">
+                <div style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:12px; margin-bottom:14px;">
+                  <div>
+                    <label style="font-size:0.74rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">QUESTION / PROBLEM TITLE *</label>
+                    <input type="text" id="als-custom-title" class="search-input-field" placeholder="e.g. Lab 5: Two Sum & Hash Maps" style="width:100%; box-sizing:border-box;">
+                  </div>
+                  <div>
+                    <label style="font-size:0.74rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">DIFFICULTY</label>
+                    <select id="als-custom-difficulty" class="filter-select" style="width:100%;">
+                      <option value="Easy">Easy</option>
+                      <option value="Medium" selected>Medium</option>
+                      <option value="Hard">Hard</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style="font-size:0.74rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">MAX POINTS</label>
+                    <input type="number" id="als-custom-points" class="search-input-field" value="60" min="10" max="200" style="width:100%; box-sizing:border-box;">
+                  </div>
                 </div>
 
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+                  <div>
+                    <label style="font-size:0.74rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">
+                      PROBLEM STATEMENT & QUESTION DETAILS *
+                    </label>
+                    <textarea id="als-custom-statement" class="search-input-field" rows="6" placeholder="Task: Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+
+Examples:
+Input: nums = [2,7,11,15], target = 9
+Output: [0, 1]
+
+Constraints:
+- 2 <= nums.length <= 10^4
+- Exactly one valid solution exists." style="width:100%; min-height:140px; resize:vertical; box-sizing:border-box; font-family:inherit; font-size:0.8rem; line-height:1.5;"></textarea>
+                  </div>
+
+                  <div>
+                    <label style="font-size:0.74rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:4px;">
+                      STARTER CODE TEMPLATE (Python 3.11)
+                    </label>
+                    <textarea id="als-custom-starter" class="search-input-field" rows="6" placeholder="# Starter code provided in Online Code Studio" style="width:100%; min-height:140px; resize:vertical; box-sizing:border-box; font-family:var(--font-mono, monospace); font-size:0.78rem; background:#0f172a; color:#38bdf8; border:1px solid #1e293b; line-height:1.5;"># Custom Coding Lab — Python 3.11
+def solution(nums, target):
+    """Write your optimal O(n) solution here."""
+    pass
+
+# Sample Test Case:
+print(solution([2, 7, 11, 15], 9))  # Expected output: [0, 1]
+</textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ── Shared Settings: Target Sections & Deadline & Instructions ── -->
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
                 <!-- Sections checkboxes -->
                 <div>
                   <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:8px;">ASSIGN TO SECTIONS</label>
@@ -3985,10 +4056,16 @@ print(two_sum([3, 3], 6))           # Expected: [0, 1]
                   </div>
                 </div>
 
-                <!-- Instructions -->
+                <!-- Deadline -->
                 <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:6px;">DEADLINE DATE</label>
+                  <input type="date" id="als-deadline" class="search-input-field" style="width:100%; box-sizing:border-box;">
+                </div>
+
+                <!-- Instructions -->
+                <div style="grid-column:1 / -1;">
                   <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:6px;">INSTRUCTIONS FOR STUDENTS (optional)</label>
-                  <textarea id="als-instructions" class="search-input-field" placeholder="e.g. Focus on O(n) solutions. Brute force will not receive full marks." style="width:100%; min-height:80px; resize:vertical; box-sizing:border-box; font-family:inherit;"></textarea>
+                  <textarea id="als-instructions" class="search-input-field" placeholder="e.g. Focus on O(n) solutions. Brute force will not receive full marks." style="width:100%; min-height:60px; resize:vertical; box-sizing:border-box; font-family:inherit;"></textarea>
                 </div>
               </div>
 
@@ -8563,6 +8640,25 @@ Available Nimbus Shell commands:
           }
         } catch(e) {}
 
+        // Fallback: check assigned sessions cache (for custom faculty questions)
+        if (!lab && window._cachedSessions) {
+          const sess = window._cachedSessions.find(s => s.id === labId || s.lab_id === labId);
+          if (sess) {
+            lab = {
+              id: sess.lab_id || sess.id,
+              title: sess.title,
+              problem_label: `Custom Lab — ${sess.title}`,
+              difficulty: sess.difficulty || 'Medium',
+              points: sess.points || 50,
+              language: 'Python 3.11',
+              test_cases_total: 5,
+              status: 'Not Started',
+              problem_statement: sess.problem_statement || (sess.instructions ? `${sess.title}\n\nInstructions:\n${sess.instructions}` : sess.title),
+              starter_code: sess.starter_code || "# Write your Python solution below\n\ndef solution():\n    pass\n"
+            };
+          }
+        }
+
         if (!lab) { showToast('Lab challenge not found.'); return; }
 
         // Populate problem panel elements
@@ -8640,6 +8736,47 @@ Available Nimbus Shell commands:
       }
     }
 
+    // ── Faculty: Assign Lab Mode (Catalog vs Custom Question) ────────────────
+    window._activeLabAssignMode = 'catalog';
+
+    function setLabAssignMode(mode) {
+      window._activeLabAssignMode = mode;
+      const tabCat = document.getElementById('als-tab-catalog');
+      const tabCus = document.getElementById('als-tab-custom');
+      const catFields = document.getElementById('als-catalog-fields');
+      const cusFields = document.getElementById('als-custom-fields');
+
+      if (mode === 'custom') {
+        if (tabCat) {
+          tabCat.style.background = 'transparent';
+          tabCat.style.color = 'var(--text-muted)';
+          tabCat.style.boxShadow = 'none';
+        }
+        if (tabCus) {
+          tabCus.style.background = '#10b981';
+          tabCus.style.color = '#fff';
+          tabCus.style.boxShadow = '0 1px 3px rgba(0,0,0,0.12)';
+        }
+        if (catFields) catFields.style.display = 'none';
+        if (cusFields) cusFields.style.display = 'block';
+        const titleInput = document.getElementById('als-custom-title');
+        if (titleInput) setTimeout(() => titleInput.focus(), 50);
+      } else {
+        if (tabCat) {
+          tabCat.style.background = '#fff';
+          tabCat.style.color = '#0f172a';
+          tabCat.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
+        }
+        if (tabCus) {
+          tabCus.style.background = 'transparent';
+          tabCus.style.color = 'var(--text-muted)';
+          tabCus.style.boxShadow = 'none';
+        }
+        if (catFields) catFields.style.display = 'block';
+        if (cusFields) cusFields.style.display = 'none';
+      }
+    }
+
     // ── Faculty: Load Assign Lab Sessions view ────────────────────────────────
     async function loadAssignLabSessions() {
       const tbody = document.getElementById('als-sessions-tbody');
@@ -8649,6 +8786,7 @@ Available Nimbus Shell commands:
         const res = await fetch('/api/v1/lab-sessions');
         const json = await res.json();
         const sessions = json.data || [];
+        window._cachedSessions = sessions;
         if (!sessions.length) {
           tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#64748b;">No sessions assigned yet. Use the form above to assign a lab session.</td></tr>';
           return;
@@ -8657,8 +8795,11 @@ Available Nimbus Shell commands:
         tbody.innerHTML = sessions.map(s => `
           <tr>
             <td>
-              <div style="font-weight:700; font-size:0.84rem; color:var(--text-main);">${s.title}</div>
-              ${s.instructions ? `<div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px; max-width:260px;">${s.instructions.substring(0, 80)}${s.instructions.length > 80 ? '…' : ''}</div>` : ''}
+              <div style="display:flex; align-items:center; gap:6px;">
+                ${s.is_custom ? '<span style="font-size:0.65rem; background:#ecfdf5; color:#059669; border:1px solid #a7f3d0; border-radius:4px; padding:1px 5px; font-weight:800;">CUSTOM</span>' : ''}
+                <div style="font-weight:700; font-size:0.84rem; color:var(--text-main);">${s.title}</div>
+              </div>
+              ${s.instructions ? `<div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px; max-width:280px;">${s.instructions.substring(0, 80)}${s.instructions.length > 80 ? '…' : ''}</div>` : ''}
             </td>
             <td>
               ${(s.sections || []).map(sec => `<span style="display:inline-block; background:rgba(5,150,105,0.12); color:#059669; border:1px solid rgba(5,150,105,0.3); border-radius:5px; padding:2px 7px; font-size:0.72rem; font-weight:800; margin:1px;">Sec ${sec}</span>`).join(' ')}
@@ -8678,9 +8819,9 @@ Available Nimbus Shell commands:
       }
     }
 
-    // ── Faculty: Create a Lab Session ─────────────────────────────────────────
+    // ── Faculty: Create a Lab Session (Pre-built Catalog OR Custom Question) ────
     async function createLabSession() {
-      const labId = document.getElementById('als-lab-select').value;
+      const mode = window._activeLabAssignMode || 'catalog';
       const deadline = document.getElementById('als-deadline').value;
       const instructions = document.getElementById('als-instructions').value.trim();
 
@@ -8688,7 +8829,6 @@ Available Nimbus Shell commands:
       const sections = ['A', 'B', 'C', 'D']
         .filter(s => { const el = document.getElementById('als-sec-' + s.toLowerCase()); return el && el.checked; });
 
-      if (!labId) { showToast('⚠️ Please select a lab from the catalog.'); return; }
       if (!sections.length) { showToast('⚠️ Please select at least one section (e.g. Section A).'); return; }
       if (!deadline) { showToast('⚠️ Please set a deadline date.'); return; }
 
@@ -8703,19 +8843,61 @@ Available Nimbus Shell commands:
         }
       } catch(e) {}
 
+      let payload = {
+        mode,
+        sections,
+        deadline,
+        instructions,
+        faculty_name: facultyName,
+        faculty_email: facultyEmail
+      };
+
+      if (mode === 'custom') {
+        const title = (document.getElementById('als-custom-title').value || '').trim();
+        const difficulty = document.getElementById('als-custom-difficulty').value || 'Medium';
+        const points = parseInt(document.getElementById('als-custom-points').value || '60', 10);
+        const statement = (document.getElementById('als-custom-statement').value || '').trim();
+        const starter = (document.getElementById('als-custom-starter').value || '').trim();
+
+        if (!title) { showToast('⚠️ Please enter a question / problem title.'); return; }
+        if (!statement) { showToast('⚠️ Please enter the problem statement.'); return; }
+
+        payload.title = title;
+        payload.difficulty = difficulty;
+        payload.points = points;
+        payload.problem_statement = statement;
+        payload.starter_code = starter;
+      } else {
+        const labId = document.getElementById('als-lab-select').value;
+        if (!labId || labId === '__custom__') {
+          showToast('⚠️ Please select a lab from the catalog or click "Give Your Own Question".');
+          return;
+        }
+        payload.lab_id = labId;
+      }
+
       try {
         const res = await fetch('/api/v1/lab-sessions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ lab_id: labId, sections, deadline, instructions, faculty_name: facultyName, faculty_email: facultyEmail })
+          body: JSON.stringify(payload)
         });
         const json = await res.json();
-        showToast('✅ ' + json.data.message);
+        showToast('✅ ' + (json.data && json.data.message ? json.data.message : 'Session assigned!'));
+
         // Reset form
         document.getElementById('als-lab-select').value = '';
         document.getElementById('als-deadline').value = '';
         document.getElementById('als-instructions').value = '';
+        const titleEl = document.getElementById('als-custom-title');
+        if (titleEl) titleEl.value = '';
+        const stmtEl = document.getElementById('als-custom-statement');
+        if (stmtEl) stmtEl.value = '';
+
         ['A','B','C','D'].forEach(s => { const el = document.getElementById('als-sec-' + s.toLowerCase()); if (el) el.checked = (s === 'A'); });
+
+        // Update caches and views
+        loadLabsPractice();
         loadAssignLabSessions();
       } catch (err) {
         console.error(err);
@@ -8774,6 +8956,7 @@ Available Nimbus Shell commands:
         const res = await fetch('/api/v1/lab-sessions?section=' + encodeURIComponent(studentSection));
         const json = await res.json();
         const sessions = json.data || [];
+        window._cachedSessions = sessions;
 
         if (!sessions.length) {
           list.innerHTML = `

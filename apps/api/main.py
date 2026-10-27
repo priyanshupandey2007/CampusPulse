@@ -998,8 +998,9 @@ def get_lab_sessions(section: Optional[str] = Query(None)):
 
 @app.post("/api/v1/lab-sessions")
 async def create_lab_session(request: Request):
-    """Faculty creates a new lab session for one or more sections."""
+    """Faculty creates a new lab session for one or more sections, supporting both catalog labs and custom questions."""
     body = await request.json()
+    mode = body.get("mode", "catalog")
     lab_id = body.get("lab_id")
     sections = body.get("sections", [])
     deadline = body.get("deadline", "")
@@ -1007,8 +1008,74 @@ async def create_lab_session(request: Request):
     faculty_name = body.get("faculty_name", "Dr. Ananya Sharma")
     faculty_email = body.get("faculty_email", "ananya.sharma@campuspulse.edu")
 
-    if not lab_id or not sections:
-        raise HTTPException(status_code=400, detail="lab_id and sections are required")
+    if not sections:
+        raise HTTPException(status_code=400, detail="At least one section must be selected")
+
+    # Mode: Custom Faculty Question
+    if mode == "custom" or lab_id == "custom":
+        title = (body.get("title") or "").strip()
+        if not title:
+            raise HTTPException(status_code=400, detail="Question title is required for custom questions")
+
+        problem_statement = (body.get("problem_statement") or "").strip() or f"Solve the coding challenge: {title}"
+        starter_code = (body.get("starter_code") or "").strip() or "# Write your Python solution below\n\ndef solution():\n    pass\n"
+        difficulty = body.get("difficulty") or "Medium"
+        try:
+            points = int(body.get("points", 50))
+        except (ValueError, TypeError):
+            points = 50
+        try:
+            test_cases_total = int(body.get("test_cases_total", 5))
+        except (ValueError, TypeError):
+            test_cases_total = 5
+
+        custom_lab_id = f"custom-lab-{uuid.uuid4().hex[:8]}"
+        new_lab = {
+            "id": custom_lab_id,
+            "title": title,
+            "language": "Python 3.11",
+            "difficulty": difficulty,
+            "test_cases_total": test_cases_total,
+            "test_cases_passed": 0,
+            "status": "Not Started",
+            "points": points,
+            "description": (problem_statement.split('\n')[0][:120] if problem_statement else title),
+            "problem_label": f"Custom Lab — {title}",
+            "problem_statement": problem_statement,
+            "starter_code": starter_code,
+            "is_custom": True,
+            "faculty_name": faculty_name,
+        }
+        LABS_CATALOG.append(new_lab)
+
+        session_id = f"session-{uuid.uuid4().hex[:8]}"
+        new_session = {
+            "id": session_id,
+            "lab_id": custom_lab_id,
+            "title": title,
+            "sections": [s.upper() for s in sections],
+            "faculty_name": faculty_name,
+            "faculty_email": faculty_email,
+            "deadline": deadline,
+            "instructions": instructions,
+            "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "status": "Active",
+            "points": points,
+            "difficulty": difficulty,
+            "is_custom": True,
+            "problem_statement": problem_statement,
+            "starter_code": starter_code,
+        }
+        LAB_SESSIONS.append(new_session)
+        return make_envelope({
+            "session": new_session,
+            "lab": new_lab,
+            "message": f"Custom lab question '{title}' created and assigned to Section(s) {', '.join(new_session['sections'])} successfully."
+        })
+
+    # Mode: Pre-built Catalog Lab
+    if not lab_id:
+        raise HTTPException(status_code=400, detail="lab_id is required")
 
     # Find matching lab in catalog
     lab = next((l for l in LABS_CATALOG if l["id"] == lab_id), None)
@@ -1029,6 +1096,9 @@ async def create_lab_session(request: Request):
         "status": "Active",
         "points": lab.get("points", 50),
         "difficulty": lab.get("difficulty", "Medium"),
+        "is_custom": False,
+        "problem_statement": lab.get("problem_statement", ""),
+        "starter_code": lab.get("starter_code", ""),
     }
     LAB_SESSIONS.append(new_session)
     return make_envelope({"session": new_session, "message": f"Lab session assigned to Section(s) {', '.join(new_session['sections'])} successfully."})
