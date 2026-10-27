@@ -1617,7 +1617,8 @@
     body[data-active-role="hod"] [data-roles]:not([data-roles~="hod"]):not([data-roles~="admin"]),
     body[data-active-role="dean"] [data-roles]:not([data-roles~="dean"]):not([data-roles~="superadmin"]):not([data-roles~="admin"]),
     body[data-active-role="admin"] [data-roles]:not([data-roles~="admin"]):not([data-roles~="hod"]):not([data-roles~="dean"]),
-    body[data-active-role="recruiter"] [data-roles]:not([data-roles~="recruiter"]) {
+    body[data-active-role="recruiter"] [data-roles]:not([data-roles~="recruiter"]),
+    .role-hidden {
       display: none !important;
     }
 
@@ -2073,7 +2074,7 @@
     }
   </style>
 </head>
-<body>
+<body data-active-role="teacher">
 
   <!-- ════════════════════════════════════════════════════════════════════ -->
   <!-- FIREBASE AUTHENTICATION SCREEN OVERLAY — DARK THEME -->
@@ -2357,7 +2358,7 @@
         
         <!-- ═════════ STUDENT VIEW ONLY ═════════ -->
         <div class="nav-section-title" data-roles="student">My Academic Success</div>
-        <a class="nav-item active" data-roles="student" onclick="switchNav('student-reports')">
+        <a class="nav-item" data-roles="student" onclick="switchNav('student-reports')">
           <span class="nav-icon">👤</span>
           <span class="nav-label">My Academic Dossier</span>
           <span class="nav-badge" style="background:#ecfdf5; color:#047857;">Live</span>
@@ -2599,11 +2600,12 @@
           <!-- Divider -->
           <div style="height: 24px; width: 1px; background: var(--border-color); margin: 0 4px;"></div>
 
-          <!-- Active Role Indicator (Locked to Authenticated Session) -->
+          <!-- Active Role Indicator (Click to Switch Account) -->
           <div style="display:flex; align-items:center; gap:6px;">
-            <div class="active-role-pill role-pill-teacher" id="topbar-role-badge" title="Authenticated Account Role">
+            <div class="active-role-pill role-pill-teacher" id="topbar-role-badge" onclick="toggleUserDropdown()" style="cursor:pointer;" title="Click to Switch Account Persona">
               <span id="topbar-role-icon">👩‍🏫</span>
               <span id="topbar-role-text">Faculty Mentor</span>
+              <span style="font-size:0.6rem; opacity:0.7; margin-left:2px;">▾</span>
             </div>
           </div>
 
@@ -2631,11 +2633,30 @@
                   </span>
                 </div>
               </div>
-              <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
-                <button data-roles="teacher advisor admin hod dean" class="btn btn-outline btn-sm" onclick="switchNav('assign-lab-sessions'); toggleUserDropdown();" style="width:100%; justify-content:flex-start; color:#059669; border-color:#059669; font-weight:700;">💻 Assign Lab Sessions</button>
-                <button data-roles="teacher advisor admin" class="btn btn-outline btn-sm" onclick="switchNav('educator-reports'); toggleUserDropdown();" style="width:100%; justify-content:flex-start;">📈 My Educator Profile</button>
-                <button data-roles="dean admin hod" class="btn btn-outline btn-sm" onclick="switchNav('test-papers'); toggleUserDropdown();" style="width:100%; justify-content:flex-start;">📝 Create Test Papers</button>
-                <button class="btn btn-sm" onclick="handleFirebaseSignOut()" style="width:100%; justify-content:flex-start; background:#fef2f2; color:#991b1b; border:1px solid #fee2e2; margin-top:2px;">🚪 Switch Account / Sign Out</button>
+
+              <!-- Quick Switch Account Persona -->
+              <div style="border-top:1px solid var(--border-color); padding-top:8px; margin-top:4px;">
+                <div style="font-size:0.68rem; font-weight:800; color:var(--text-dim); text-transform:uppercase; margin-bottom:5px; letter-spacing:0.04em;">Switch Account / Persona</div>
+                <div style="display:flex; flex-direction:column; gap:4px;">
+                  <button class="btn btn-sm btn-outline" onclick="quickDemoLogin('student'); toggleUserDropdown();" style="width:100%; justify-content:flex-start; font-size:0.74rem; font-weight:700; border-color:#93c5fd; color:#1d4ed8; background:rgba(239,246,255,0.8); padding:5px 8px;">
+                    🎓 Student (Priyanshu Pandey)
+                  </button>
+                  <button class="btn btn-sm btn-outline" onclick="quickDemoLogin('teacher'); toggleUserDropdown();" style="width:100%; justify-content:flex-start; font-size:0.74rem; font-weight:700; border-color:#86efac; color:#166534; background:rgba(240,253,244,0.8); padding:5px 8px;">
+                    👩‍🏫 Faculty Mentor (Dr. Ananya Sharma)
+                  </button>
+                  <button class="btn btn-sm btn-outline" onclick="quickDemoLogin('hod'); toggleUserDropdown();" style="width:100%; justify-content:flex-start; font-size:0.74rem; font-weight:700; border-color:#bae6fd; color:#0369a1; background:rgba(240,249,255,0.8); padding:5px 8px;">
+                    👨‍💼 HOD Admin (Dr. S. K. Venkatraman)
+                  </button>
+                  <button class="btn btn-sm btn-outline" onclick="quickDemoLogin('dean'); toggleUserDropdown();" style="width:100%; justify-content:flex-start; font-size:0.74rem; font-weight:700; border-color:#fbcfe8; color:#9d174d; background:rgba(253,242,248,0.8); padding:5px 8px;">
+                    🏛️ Dean Superadmin (Prof. Rajesh Gupta)
+                  </button>
+                </div>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap:4px; margin-top:8px; border-top:1px solid var(--border-color); padding-top:6px;">
+                <button data-roles="teacher advisor admin hod dean" class="btn btn-outline btn-sm" onclick="switchNav('assign-lab-sessions'); toggleUserDropdown();" style="width:100%; justify-content:flex-start; color:#059669; border-color:#059669; font-weight:700; font-size:0.74rem;">💻 Assign Lab Sessions</button>
+                <button data-roles="teacher advisor admin" class="btn btn-outline btn-sm" onclick="switchNav('educator-reports'); toggleUserDropdown();" style="width:100%; justify-content:flex-start; font-size:0.74rem;">📈 My Educator Profile</button>
+                <button class="btn btn-sm" onclick="handleFirebaseSignOut()" style="width:100%; justify-content:flex-start; background:#fef2f2; color:#991b1b; border:1px solid #fee2e2; margin-top:2px; font-size:0.74rem;">🚪 Sign Out</button>
               </div>
             </div>
           </div>
@@ -6305,10 +6326,13 @@ Available Nimbus Shell commands:
         console.warn('Firebase init fallback:', err);
       }
 
-      // Always show login on page load — never restore session from localStorage
-      // Clear any stale cached session so users always authenticate fresh
-      localStorage.removeItem('campuspulse_auth_user');
-      showAuthOverlay();
+      // Restore existing authenticated session if present, otherwise show auth overlay
+      const existingUser = localStorage.getItem('campuspulse_auth_user');
+      if (existingUser) {
+        hideAuthOverlay();
+      } else {
+        showAuthOverlay();
+      }
 
       // If Firebase Auth is active, listen for its own token-verified session
       if (fbAuthInstance && fbAuthInstance.onAuthStateChanged) {
@@ -6847,6 +6871,40 @@ Available Nimbus Shell commands:
       return 'stu_1107c6563069';
     }
 
+    function enforceRoleDOMVisibility(role) {
+      role = role || 'teacher';
+      if (role === 'advisor') role = 'teacher';
+      if (role === 'admin') role = 'hod';
+
+      document.body.setAttribute('data-active-role', role);
+
+      document.querySelectorAll('[data-roles]').forEach(el => {
+        const rolesAttr = el.getAttribute('data-roles') || '';
+        const rolesList = rolesAttr.trim().split(/\s+/);
+
+        let isAllowed = false;
+        if (role === 'student') {
+          isAllowed = rolesList.includes('student');
+        } else if (role === 'teacher') {
+          isAllowed = rolesList.includes('teacher') || rolesList.includes('advisor');
+        } else if (role === 'hod') {
+          isAllowed = rolesList.includes('hod') || rolesList.includes('admin') || rolesList.includes('teacher') || rolesList.includes('advisor');
+        } else if (role === 'dean') {
+          isAllowed = rolesList.includes('dean') || rolesList.includes('superadmin') || rolesList.includes('admin') || rolesList.includes('hod') || rolesList.includes('teacher') || rolesList.includes('advisor');
+        } else if (role === 'recruiter') {
+          isAllowed = rolesList.includes('recruiter');
+        }
+
+        if (isAllowed) {
+          el.style.removeProperty('display');
+          el.classList.remove('role-hidden');
+        } else {
+          el.style.setProperty('display', 'none', 'important');
+          el.classList.add('role-hidden');
+        }
+      });
+    }
+
     function applyRoleRBAC(role, customUserObj) {
       role = role || 'teacher';
       // Normalize aliases
@@ -6855,6 +6913,9 @@ Available Nimbus Shell commands:
 
       window.currentActiveRole = role;
       document.body.setAttribute('data-active-role', role);
+
+      // Enforce strict DOM visibility across all role-gated navigation and sections
+      enforceRoleDOMVisibility(role);
 
       const meta = ROLE_METADATA[role] || ROLE_METADATA.teacher;
 
@@ -7010,6 +7071,9 @@ Available Nimbus Shell commands:
         else if (currentViewId === 'project-bank') loadProjectBank();
       }
 
+      // Strip active from any hidden nav items
+      document.querySelectorAll('.nav-item.role-hidden').forEach(el => el.classList.remove('active'));
+
       // Test Papers nav item visibility based on permissions
       updateTestPaperNavVisibility();
 
@@ -7027,16 +7091,6 @@ Available Nimbus Shell commands:
     }
 
     function handleRoleChange(newRole) {
-      const storedUser = localStorage.getItem('campuspulse_auth_user');
-      if (storedUser) {
-        try {
-          const user = JSON.parse(storedUser);
-          if (user.role && user.role !== newRole) {
-            showToast('🔒 Account switching requires authentication. Please sign out and sign in to switch accounts.');
-            return;
-          }
-        } catch (e) {}
-      }
       applyRoleRBAC(newRole);
     }
 
@@ -12022,6 +12076,14 @@ Available Nimbus Shell commands:
       // Default is always light mode; only use saved preference if explicitly set
       document.documentElement.setAttribute("data-theme", savedTheme || "light");
 
+      const savedRole = localStorage.getItem('campuspulse_active_role') || 'teacher';
+      let savedUser = null;
+      try {
+        const raw = localStorage.getItem('campuspulse_auth_user');
+        if (raw) savedUser = JSON.parse(raw);
+      } catch (e) {}
+
+      applyRoleRBAC(savedUser && savedUser.role ? savedUser.role : savedRole, savedUser);
       initFirebaseAuth();
     });
   </script>
