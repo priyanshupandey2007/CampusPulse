@@ -830,11 +830,28 @@ def get_learning_sprints():
 async def toggle_sprint_module(sprint_id: str, request: Request):
     body = await request.json()
     module_id = body.get("module_id")
+    action = body.get("action")
     for s in LEARNING_SPRINTS:
         if s["id"] == sprint_id:
             for m in s["modules"]:
                 if m["id"] == module_id:
-                    m["status"] = "COMPLETED" if m["status"] != "COMPLETED" else "IN_PROGRESS"
+                    if action == "start":
+                        m["status"] = "IN_PROGRESS"
+                    elif action == "complete":
+                        m["status"] = "COMPLETED"
+                    elif action == "reset":
+                        m["status"] = "NOT_STARTED"
+                    elif action == "toggle":
+                        m["status"] = "COMPLETED" if m["status"] != "COMPLETED" else "IN_PROGRESS"
+                    else:
+                        # Smart progression: NOT_STARTED -> IN_PROGRESS -> COMPLETED -> NOT_STARTED
+                        if m["status"] not in ("IN_PROGRESS", "COMPLETED"):
+                            m["status"] = "IN_PROGRESS"
+                        elif m["status"] == "IN_PROGRESS":
+                            m["status"] = "COMPLETED"
+                        else:
+                            m["status"] = "IN_PROGRESS"
+
                     # Recompute progress
                     comp = sum(1 for x in s["modules"] if x["status"] == "COMPLETED")
                     s["completed_count"] = comp
