@@ -2475,6 +2475,11 @@
           <span class="nav-icon">🗓️</span>
           <span class="nav-label">Trainer Masterclasses</span>
         </a>
+        <a class="nav-item" data-roles="advisor admin" onclick="switchNav('assign-lab-sessions')">
+          <span class="nav-icon">🧪</span>
+          <span class="nav-label">Assign Lab Sessions</span>
+          <span class="nav-badge" style="background:rgba(16,185,129,0.15); color:#10b981;">New</span>
+        </a>
 
         <!-- RECRUITER PORTAL -->
         <div class="nav-section-title" data-roles="recruiter">Recruiter Portal</div>
@@ -3912,11 +3917,116 @@ print(two_sum([3, 3], 6))           # Expected: [0, 1]
           </div>
 
           <!-- ════════════════════════════════════════════════════════════════════ -->
+          <!-- VIEW: ASSIGN LAB SESSIONS (Faculty / Advisor only)                 -->
+          <!-- ════════════════════════════════════════════════════════════════════ -->
+          <div id="view-assign-lab-sessions" class="tab-view">
+            <div class="breadcrumbs"><span>Home</span> / <span class="current">Assign Lab Sessions</span></div>
+            <div class="page-title" style="margin-bottom:4px;"><span>Assign Lab Sessions</span> <span class="subtitle-tag">| Section-Scoped Coding Assignments</span></div>
+            <div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:20px;">Sessions you create are only visible to students enrolled in the selected section(s). Students in other sections cannot see them.</div>
+
+            <!-- ── Create Session Card ── -->
+            <div class="card" style="margin-bottom:20px; border-left:4px solid #10b981;">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:18px;">
+                <span style="font-size:1.1rem;">🧪</span>
+                <h3 style="font-size:0.95rem; font-weight:800; margin:0;">Create New Lab Session</h3>
+                <span style="font-size:0.7rem; font-weight:700; background:rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.3); border-radius:6px; padding:2px 8px;">Faculty Only</span>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <!-- Lab picker -->
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:6px;">SELECT LAB FROM CATALOG</label>
+                  <select id="als-lab-select" class="filter-select" style="width:100%;">
+                    <option value="">-- Choose a Lab --</option>
+                    <option value="lab-01">Lab 1: Python String Algorithms & Anagrams (Easy · 50 pts)</option>
+                    <option value="lab-02">Lab 2: Binary Search & Rotated Arrays (Medium · 75 pts)</option>
+                    <option value="lab-03">Lab 3: BFS & Shortest Path on Graphs (Medium · 80 pts)</option>
+                    <option value="lab-04">Lab 4: LRU Cache — DLL + HashMap (Hard · 120 pts)</option>
+                  </select>
+                </div>
+
+                <!-- Deadline -->
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:6px;">DEADLINE DATE</label>
+                  <input type="date" id="als-deadline" class="search-input-field" style="width:100%; box-sizing:border-box;">
+                </div>
+
+                <!-- Sections checkboxes -->
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:8px;">ASSIGN TO SECTIONS</label>
+                  <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                    <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:0.82rem; font-weight:600; padding:6px 12px; border:1px solid var(--border-color,#e2e8f0); border-radius:8px; transition:all 0.15s;">
+                      <input type="checkbox" id="als-sec-a" value="A" style="accent-color:#10b981;"> Section A
+                    </label>
+                    <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:0.82rem; font-weight:600; padding:6px 12px; border:1px solid var(--border-color,#e2e8f0); border-radius:8px; transition:all 0.15s;">
+                      <input type="checkbox" id="als-sec-b" value="B" style="accent-color:#10b981;"> Section B
+                    </label>
+                    <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:0.82rem; font-weight:600; padding:6px 12px; border:1px solid var(--border-color,#e2e8f0); border-radius:8px; transition:all 0.15s;">
+                      <input type="checkbox" id="als-sec-c" value="C" style="accent-color:#10b981;"> Section C
+                    </label>
+                    <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:0.82rem; font-weight:600; padding:6px 12px; border:1px solid var(--border-color,#e2e8f0); border-radius:8px; transition:all 0.15s;">
+                      <input type="checkbox" id="als-sec-d" value="D" style="accent-color:#10b981;"> Section D
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Instructions -->
+                <div>
+                  <label style="font-size:0.75rem; font-weight:700; color:var(--text-muted); display:block; margin-bottom:6px;">INSTRUCTIONS FOR STUDENTS (optional)</label>
+                  <textarea id="als-instructions" class="search-input-field" placeholder="e.g. Focus on O(n) solutions. Brute force will not receive full marks." style="width:100%; min-height:80px; resize:vertical; box-sizing:border-box; font-family:inherit;"></textarea>
+                </div>
+              </div>
+
+              <div style="margin-top:16px; display:flex; justify-content:flex-end;">
+                <button class="btn btn-primary" onclick="createLabSession()" style="background:linear-gradient(135deg,#059669,#047857); border:none; display:flex; align-items:center; gap:8px;">
+                  <span>🚀</span> Assign Lab Session
+                </button>
+              </div>
+            </div>
+
+            <!-- ── Active Sessions Table ── -->
+            <div class="card">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                <h3 style="font-size:0.92rem; font-weight:800; margin:0;">📋 Active Assigned Sessions</h3>
+                <button class="btn btn-outline btn-sm" onclick="loadAssignLabSessions()">↻ Refresh</button>
+              </div>
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Lab Title</th>
+                      <th>Sections</th>
+                      <th>Deadline</th>
+                      <th>Difficulty</th>
+                      <th>Points</th>
+                      <th>Status</th>
+                      <th style="text-align:right;">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="als-sessions-tbody">
+                    <tr><td colspan="7" style="text-align:center; padding:20px; color:var(--text-muted);">Loading sessions...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ════════════════════════════════════════════════════════════════════ -->
           <!-- VIEW 10: LAB PRACTICE -->
           <!-- ════════════════════════════════════════════════════════════════════ -->
           <div id="view-lab-practice" class="tab-view">
             <div class="breadcrumbs"><span>Home</span> / <span class="current">Lab Practice</span></div>
             <div class="page-title" style="margin-bottom:16px;"><span>Lab Environments</span> <span class="subtitle-tag">| Hands-on Coding Labs</span></div>
+
+            <!-- Faculty-Assigned Sessions (student view, section-filtered) -->
+            <div id="lab-assigned-sessions-wrap" style="margin-bottom:20px; display:none;">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                <span style="font-size:1rem;">📌</span>
+                <h3 style="font-size:0.88rem; font-weight:800; margin:0; color:#059669;">Assigned by Your Faculty</h3>
+                <span id="lab-your-section-badge" style="font-size:0.68rem; font-weight:700; background:rgba(5,150,105,0.12); color:#059669; border:1px solid rgba(5,150,105,0.3); border-radius:6px; padding:2px 8px;">Section A</span>
+              </div>
+              <div id="lab-assigned-sessions-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+            </div>
 
             <div class="table-container">
               <table class="data-table">
@@ -3927,6 +4037,7 @@ print(two_sum([3, 3], 6))           # Expected: [0, 1]
               </table>
             </div>
           </div>
+
 
           <!-- ════════════════════════════════════════════════════════════════════ -->
           <!-- VIEW 11: ASSESSMENT ANALYTICS -->
@@ -6154,7 +6265,8 @@ Available Nimbus Shell commands:
           'governance-hashes',
           'kpmg-formulation',
           'educator-reports',
-          'trainers-schedule'
+          'trainers-schedule',
+          'assign-lab-sessions'
         ]
       },
       teacher: {
@@ -6179,9 +6291,9 @@ Available Nimbus Shell commands:
           'governance-hashes',
           'kpmg-formulation',
           'educator-reports',
-          'trainers-schedule'
+          'trainers-schedule',
+          'assign-lab-sessions'
         ],
-        testPaperAccess: false
       },
       student: {
         role: 'student',
@@ -6591,6 +6703,7 @@ Available Nimbus Shell commands:
       if (viewId === 'naac-evaluator') loadNaacPlatform();
       if (viewId === 'learn-modules') loadLearningSprints();
       if (viewId === 'lab-practice') loadLabsPractice();
+      if (viewId === 'assign-lab-sessions') loadAssignLabSessions();
       if (viewId === 'trainers-schedule') loadTrainerSchedule();
       if (viewId === 'test-papers') loadTestPapersModule();
       if (viewId === 'project-bank') loadProjectBank();
@@ -8118,10 +8231,32 @@ Available Nimbus Shell commands:
           </tr>
         `).join('');
 
+        // If student, also load faculty-assigned sessions for their section
+        const role = window.currentActiveRole || 'student';
+        if (role === 'student') {
+          // Student Aarav is in Section A — derive section from stored user or default to A
+          let section = 'A';
+          try {
+            const stored = localStorage.getItem('campuspulse_auth_user');
+            if (stored) {
+              const u = JSON.parse(stored);
+              // Extract section from roleTitle e.g. "Student (CSE Sec A • Roll #001)"
+              const match = (u.roleTitle || '').match(/Sec\s+([A-D])/i);
+              if (match) section = match[1].toUpperCase();
+            }
+          } catch(e) {}
+          loadStudentAssignedSessions(section);
+        } else {
+          // Faculty: hide assigned panel
+          const wrap = document.getElementById('lab-assigned-sessions-wrap');
+          if (wrap) wrap.style.display = 'none';
+        }
+
       } catch (err) {
         console.error(err);
       }
     }
+
 
     // Track which lab is currently open in the code studio
     window._activeLabId = null;
@@ -8206,7 +8341,148 @@ Available Nimbus Shell commands:
       }
     }
 
-    // AI Mentor Chat
+    // ── Faculty: Load Assign Lab Sessions view ────────────────────────────────
+    async function loadAssignLabSessions() {
+      const tbody = document.getElementById('als-sessions-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#64748b;">Loading...</td></tr>';
+      try {
+        const res = await fetch('/api/v1/lab-sessions');
+        const json = await res.json();
+        const sessions = json.data || [];
+        if (!sessions.length) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#64748b;">No sessions assigned yet. Use the form above to create one.</td></tr>';
+          return;
+        }
+        const diffColor = { Easy: '#166534', Medium: '#854d0e', Hard: '#991b1b' };
+        tbody.innerHTML = sessions.map(s => `
+          <tr>
+            <td>
+              <div style="font-weight:700; font-size:0.82rem;">${s.title}</div>
+              ${s.instructions ? `<div style="font-size:0.72rem; color:#64748b; margin-top:2px; max-width:260px;">${s.instructions.substring(0, 80)}${s.instructions.length > 80 ? '…' : ''}</div>` : ''}
+            </td>
+            <td>
+              ${(s.sections || []).map(sec => `<span style="display:inline-block; background:rgba(5,150,105,0.1); color:#059669; border:1px solid rgba(5,150,105,0.25); border-radius:5px; padding:2px 7px; font-size:0.7rem; font-weight:700; margin:1px;">Sec ${sec}</span>`).join(' ')}
+            </td>
+            <td style="font-size:0.8rem;">${s.deadline ? `<span style="color:#854d0e; font-weight:600;">${s.deadline}</span>` : '<span style="color:#94a3b8;">—</span>'}</td>
+            <td><span style="color:${diffColor[s.difficulty] || '#64748b'}; font-weight:700; font-size:0.78rem;">${s.difficulty || '—'}</span></td>
+            <td style="font-weight:700; color:var(--primary-blue);">${s.points || '—'} pts</td>
+            <td><span style="font-size:0.72rem; font-weight:700; color:#166534; background:#ecfdf5; padding:2px 8px; border-radius:5px;">${s.status || 'Active'}</span></td>
+            <td style="text-align:right;">
+              <button class="btn btn-outline btn-sm" style="color:#dc2626; border-color:#dc2626;" onclick="deleteLabSession('${s.id}')">🗑 Remove</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        console.error(err);
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#dc2626;">Failed to load sessions.</td></tr>';
+      }
+    }
+
+    // ── Faculty: Create a Lab Session ─────────────────────────────────────────
+    async function createLabSession() {
+      const labId = document.getElementById('als-lab-select').value;
+      const deadline = document.getElementById('als-deadline').value;
+      const instructions = document.getElementById('als-instructions').value.trim();
+
+      // Collect checked sections
+      const sections = ['A', 'B', 'C', 'D']
+        .filter(s => { const el = document.getElementById('als-sec-' + s.toLowerCase()); return el && el.checked; });
+
+      if (!labId) { showToast('⚠️ Please select a lab from the catalog.'); return; }
+      if (!sections.length) { showToast('⚠️ Please select at least one section.'); return; }
+      if (!deadline) { showToast('⚠️ Please set a deadline date.'); return; }
+
+      // Get current faculty info from session
+      let facultyName = 'Dr. Ananya Sharma';
+      let facultyEmail = 'ananya.sharma@campuspulse.edu';
+      try {
+        const stored = localStorage.getItem('campuspulse_auth_user');
+        if (stored) {
+          const u = JSON.parse(stored);
+          if (u.displayName) facultyName = u.displayName;
+          if (u.email) facultyEmail = u.email;
+        }
+      } catch(e) {}
+
+      try {
+        const res = await fetch('/api/v1/lab-sessions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lab_id: labId, sections, deadline, instructions, faculty_name: facultyName, faculty_email: facultyEmail })
+        });
+        const json = await res.json();
+        showToast('✅ ' + json.data.message);
+        // Reset form
+        document.getElementById('als-lab-select').value = '';
+        document.getElementById('als-deadline').value = '';
+        document.getElementById('als-instructions').value = '';
+        ['A','B','C','D'].forEach(s => { const el = document.getElementById('als-sec-' + s.toLowerCase()); if (el) el.checked = false; });
+        // Reload sessions table
+        loadAssignLabSessions();
+      } catch (err) {
+        console.error(err);
+        showToast('❌ Failed to create session. Please try again.');
+      }
+    }
+
+    // ── Faculty: Delete a Lab Session ─────────────────────────────────────────
+    async function deleteLabSession(sessionId) {
+      if (!confirm('Remove this lab session? Students will no longer see it.')) return;
+      try {
+        const res = await fetch('/api/v1/lab-sessions/' + sessionId, { method: 'DELETE' });
+        const json = await res.json();
+        showToast('🗑 ' + json.data.message);
+        loadAssignLabSessions();
+      } catch (err) {
+        console.error(err);
+        showToast('❌ Failed to remove session.');
+      }
+    }
+
+    // ── Student: Load assigned sessions in Lab Practice (section-scoped) ──────
+    async function loadStudentAssignedSessions(studentSection) {
+      const wrap = document.getElementById('lab-assigned-sessions-wrap');
+      const list = document.getElementById('lab-assigned-sessions-list');
+      const badge = document.getElementById('lab-your-section-badge');
+      if (!wrap || !list) return;
+
+      if (badge) badge.textContent = 'Section ' + studentSection;
+
+      try {
+        const res = await fetch('/api/v1/lab-sessions?section=' + encodeURIComponent(studentSection));
+        const json = await res.json();
+        const sessions = json.data || [];
+        if (!sessions.length) { wrap.style.display = 'none'; return; }
+
+        wrap.style.display = 'block';
+        const diffColor = { Easy: '#166534', Medium: '#854d0e', Hard: '#991b1b' };
+        list.innerHTML = sessions.map(s => `
+          <div style="background:linear-gradient(135deg,rgba(5,150,105,0.06),rgba(16,185,129,0.03)); border:1px solid rgba(5,150,105,0.2); border-left:4px solid #10b981; border-radius:10px; padding:14px 16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                <span style="font-size:0.68rem; font-weight:800; background:#059669; color:#fff; border-radius:5px; padding:2px 7px; text-transform:uppercase; letter-spacing:0.05em;">Assigned</span>
+                <span style="font-weight:800; font-size:0.9rem;">${s.title}</span>
+              </div>
+              <div style="font-size:0.75rem; color:#64748b; display:flex; gap:16px; flex-wrap:wrap;">
+                <span>👩‍🏫 <strong>${s.faculty_name}</strong></span>
+                <span>📅 Due: <strong style="color:#854d0e;">${s.deadline || 'No deadline'}</strong></span>
+                <span>🏆 <strong style="color:${diffColor[s.difficulty] || '#64748b'};">${s.difficulty || ''}</strong> · ${s.points || 0} pts</span>
+              </div>
+              ${s.instructions ? `<div style="margin-top:6px; font-size:0.75rem; color:#475569; background:rgba(0,0,0,0.04); border-radius:6px; padding:6px 10px; max-width:500px;">${s.instructions}</div>` : ''}
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="solveLab('${s.lab_id}')" style="background:linear-gradient(135deg,#059669,#047857); white-space:nowrap; flex-shrink:0;">
+              🚀 Start Lab
+            </button>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error(err);
+        wrap.style.display = 'none';
+      }
+    }
+
+
     function askMentor(promptText) {
       document.getElementById('mentor-input').value = promptText;
       sendMentorMessage();

@@ -961,6 +961,89 @@ async def submit_lab_solution(request: Request):
     raise HTTPException(status_code=404, detail="Lab not found")
 
 
+# ── Faculty Lab Sessions (Section-Scoped Assignment) ──────────────────────────
+
+# In-memory store for lab sessions assigned by faculty.
+# Each session: { id, lab_id, title, sections[], faculty_name, faculty_email,
+#                 deadline, instructions, created_at, status }
+LAB_SESSIONS: list = [
+    {
+        "id": "session-001",
+        "lab_id": "lab-01",
+        "title": "Lab 1: Python String Algorithms & Anagrams",
+        "sections": ["A", "B"],
+        "faculty_name": "Dr. Ananya Sharma",
+        "faculty_email": "ananya.sharma@campuspulse.edu",
+        "deadline": "2026-11-03",
+        "instructions": "Complete both is_anagram() and is_palindrome() using O(n) frequency dictionaries. All 10 test cases must pass for full marks.",
+        "created_at": "2026-10-25T10:00:00+05:30",
+        "status": "Active",
+        "points": 50,
+    }
+]
+
+
+@app.get("/api/v1/lab-sessions")
+def get_lab_sessions(section: Optional[str] = Query(None)):
+    """
+    Return lab sessions. If section= is provided, only return sessions
+    that include that section (student view). Otherwise return all (faculty view).
+    """
+    if section:
+        filtered = [s for s in LAB_SESSIONS if section.upper() in [x.upper() for x in s.get("sections", [])]]
+        return make_envelope(filtered)
+    return make_envelope(LAB_SESSIONS)
+
+
+@app.post("/api/v1/lab-sessions")
+async def create_lab_session(request: Request):
+    """Faculty creates a new lab session for one or more sections."""
+    body = await request.json()
+    lab_id = body.get("lab_id")
+    sections = body.get("sections", [])
+    deadline = body.get("deadline", "")
+    instructions = body.get("instructions", "")
+    faculty_name = body.get("faculty_name", "Dr. Ananya Sharma")
+    faculty_email = body.get("faculty_email", "ananya.sharma@campuspulse.edu")
+
+    if not lab_id or not sections:
+        raise HTTPException(status_code=400, detail="lab_id and sections are required")
+
+    # Find matching lab in catalog
+    lab = next((l for l in LABS_CATALOG if l["id"] == lab_id), None)
+    if not lab:
+        raise HTTPException(status_code=404, detail="Lab not found in catalog")
+
+    session_id = f"session-{uuid.uuid4().hex[:8]}"
+    new_session = {
+        "id": session_id,
+        "lab_id": lab_id,
+        "title": lab["title"],
+        "sections": [s.upper() for s in sections],
+        "faculty_name": faculty_name,
+        "faculty_email": faculty_email,
+        "deadline": deadline,
+        "instructions": instructions,
+        "created_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "status": "Active",
+        "points": lab.get("points", 50),
+        "difficulty": lab.get("difficulty", "Medium"),
+    }
+    LAB_SESSIONS.append(new_session)
+    return make_envelope({"session": new_session, "message": f"Lab session assigned to Section(s) {', '.join(new_session['sections'])} successfully."})
+
+
+@app.delete("/api/v1/lab-sessions/{session_id}")
+def delete_lab_session(session_id: str):
+    """Faculty removes a lab session."""
+    global LAB_SESSIONS
+    before = len(LAB_SESSIONS)
+    LAB_SESSIONS = [s for s in LAB_SESSIONS if s["id"] != session_id]
+    if len(LAB_SESSIONS) == before:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return make_envelope({"message": "Lab session removed successfully."})
+
+
 # ── Assessment Analytics & Integrity ──────────────────────────────────────────
 
 @app.get("/api/v1/assessments/analytics")
