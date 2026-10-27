@@ -971,14 +971,15 @@ LAB_SESSIONS: list = [
         "id": "session-001",
         "lab_id": "lab-01",
         "title": "Lab 1: Python String Algorithms & Anagrams",
-        "sections": ["A", "B"],
+        "sections": ["A"],
         "faculty_name": "Dr. Ananya Sharma",
         "faculty_email": "ananya.sharma@campuspulse.edu",
         "deadline": "2026-11-03",
-        "instructions": "Complete both is_anagram() and is_palindrome() using O(n) frequency dictionaries. All 10 test cases must pass for full marks.",
+        "instructions": "Section A Exclusive Practice: Complete both is_anagram() and is_palindrome() using O(n) frequency dictionaries. All 10 test cases must pass.",
         "created_at": "2026-10-25T10:00:00+05:30",
         "status": "Active",
         "points": 50,
+        "difficulty": "Easy",
     }
 ]
 
