@@ -1,6 +1,6 @@
 # Student Success Score & Risk Identification Framework
 > **Technical & Methodology Note — CampusPulse v5.0**  
-> **KPMG in India Hackathon Deliverable**
+> **Hackathon Deliverable**
 
 ---
 

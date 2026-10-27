@@ -46,8 +46,8 @@ class Student(Base):
     advisor_id = Column(String(36), ForeignKey("advisors.id"), nullable=True)
     is_quarantined = Column(Boolean, default=False)
     quarantine_reason = Column(Text, nullable=True)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc), onupdate=lambda: datetime.datetime.now(datetime.timezone.utc))
 
     # Relationships
     advisor = relationship("Advisor", back_populates="students")
@@ -64,8 +64,8 @@ class Advisor(Base):
     display_name = Column(String(128), nullable=False)
     email = Column(String(128), unique=True, nullable=False)
     department_scope = Column(JSON, nullable=False, default=list)  # Stored as JSON list for SQLite/PG compatibility
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc), onupdate=lambda: datetime.datetime.now(datetime.timezone.utc))
 
     students = relationship("Student", back_populates="advisor")
     interventions = relationship("Intervention", back_populates="advisor")
@@ -78,7 +78,7 @@ class RawSnapshot(Base):
     source = Column(String(64), nullable=False)
     source_file = Column(String(128), nullable=False)
     sha256 = Column(String(64), nullable=False)
-    captured_at = Column(DateTime, default=datetime.datetime.utcnow)
+    captured_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
     payload = Column(JSON, nullable=False)
     is_duplicate = Column(Boolean, default=False)
     duplicate_of_sha256 = Column(String(64), nullable=True)
@@ -93,7 +93,7 @@ class CleaningLog(Base):
     raw_row = Column(JSON, nullable=False)
     issue_type = Column(String(64), nullable=False)
     resolution = Column(String(128), nullable=False)
-    logged_at = Column(DateTime, default=datetime.datetime.utcnow)
+    logged_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
 
 
 class WeeklyMetric(Base):
@@ -125,7 +125,7 @@ class WeeklyMetric(Base):
     config_hash = Column(String(32), nullable=False)
     targets_hash = Column(String(32), nullable=False)
     score_version = Column(String(32), nullable=False, default="v5.0")
-    generated_at = Column(DateTime, default=datetime.datetime.utcnow)
+    generated_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
 
     student = relationship("Student", back_populates="weekly_metrics")
 
@@ -143,7 +143,7 @@ class AssessmentResult(Base):
     multi_ip = Column(Boolean, default=False)
     speed_anomaly = Column(Boolean, default=False)
     integrity_flag = Column(Boolean, default=False)
-    submission_at = Column(DateTime, default=datetime.datetime.utcnow)
+    submission_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
     ip_list = Column(JSON, nullable=False, default=list)
     is_primary = Column(Boolean, default=True, index=True)
 
@@ -158,7 +158,7 @@ class HiddenRiskFlag(Base):
     week_number = Column(Integer, nullable=False)
     flag_code = Column(String(64), nullable=False)
     evidence_json = Column(JSON, nullable=False, default=dict)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
 
     student = relationship("Student", back_populates="flags")
 
@@ -173,8 +173,8 @@ class Intervention(Base):
     notes = Column(Text, nullable=True)
     status = Column(String(32), nullable=False, default="OPEN")  # OPEN, IN_PROGRESS, RESOLVED
     due_at = Column(DateTime, nullable=True)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc), onupdate=lambda: datetime.datetime.now(datetime.timezone.utc))
 
     student = relationship("Student", back_populates="interventions")
     advisor = relationship("Advisor", back_populates="interventions")
@@ -188,7 +188,7 @@ class FeedbackSignal(Base):
     week_number = Column(Integer, nullable=False)
     signal_code = Column(String(64), nullable=False)
     value = Column(Float, nullable=False)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
 
 
 class AuditLog(Base):
@@ -201,4 +201,4 @@ class AuditLog(Base):
     target_type = Column(String(64), nullable=False)
     target_id = Column(String(36), nullable=True)
     metadata_json = Column(JSON, nullable=True)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))

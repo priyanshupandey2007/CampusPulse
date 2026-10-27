@@ -48,8 +48,7 @@ def run_checks():
         ("GET", "/api/v1/competitive/matrix", 200, "Competitive Intelligence: Feature Matrix"),
         ("GET", "/api/v1/competitive/gaps", 200, "Competitive Intelligence: 10 Gap Cards"),
         ("GET", "/api/v1/competitive/workflow", 200, "Competitive Intelligence: 7-Step Advantage"),
-        ("GET", "/api/v1/kpmg/deliverables", 200, "KPMG Deliverables & Presentation Deck"),
-        ("GET", "/api/v1/kpmg/segmentation-matrix", 200, "KPMG 2D Student Segmentation Matrix"),
+
         ("GET", "/api/v1/ml/models", 200, "ML Model Registry (RF, GB, LR Baselines)"),
         ("GET", "/api/v1/ml/feature-importance", 200, "ML Feature Importance Rankings"),
         ("GET", "/api/v1/ml/evaluation", 200, "ML Model Evaluation & Fairness Audit"),

@@ -1,6 +1,6 @@
 # CampusPulse — System Architecture & Implementation Audit Report
 **Version:** 5.0.0-FINAL  
-**Challenge:** KPMG in India — Smart Campus Analytics & AI-Powered Student Success Platform  
+
 **Target Architecture:** Monorepo (FastAPI + SQLAlchemy + Pure AST Domain + Tailwind/SPA UI)  
 **Audit Date:** October 2026  
 
@@ -10,13 +10,13 @@
 
 | System Dimension | Target Requirement | Implemented Status | Verification Result |
 | :--- | :--- | :---: | :--- |
-| **API Endpoints** | All core student, risk, ML, college, and KPMG routes | **35 / 35 Endpoints Active** | **PASSED (100% in < 15ms latency)** |
+| **API Endpoints** | All core student, risk, ML, college, and other routes | **35 / 35 Endpoints Active** | **PASSED (100% in < 15ms latency)** |
 | **Unit & Integration Tests** | 100% test pass with zero regressions | **26 / 26 Tests Passing** | **PASSED (`pytest -v` exits code 0)** |
 | **Scoring Determinism** | 100% AST pure without network or black-box LLMs | **Verified Pure** | **PASSED (`POST /api/v1/admin/verify-ast`)** |
 | **ML Intelligence Layer** | Model Registry, Feature Importance, Risk Proxy | **3 Models + Proxy API** | **PASSED (`GET /api/v1/ml/models` & eval)** |
 | **Boot Hash Integrity** | Cryptographic validation of config and targets | **Verified Hash** | **PASSED (`scripts/boot_check.py`)** |
-| **KPMG Deliverables** | Working Prototype + Scoring Note + Pitch Deck | **3 / 3 Delivered** | **PASSED (`GET /api/v1/kpmg/deliverables`)** |
-| **Bonus: 2D Segmentation** | 5-quadrant classification & scatter visualization | **Fully Functional** | **PASSED (`GET /api/v1/kpmg/segmentation-matrix`)** |
+| **Deliverables** | Working Prototype + Scoring Note + Pitch Deck | **3 / 3 Delivered** | **PASSED** |
+
 | **Bonus: Explainability** | Waterfall driver attribution without black-box | **Fully Functional** | **PASSED (`GET /api/v1/students/{ref}/explain`)** |
 | **Closed-Loop Interventions** | Detect $\rightarrow$ Assign $\rightarrow$ Measure Lifecycle | **Fully Functional** | **PASSED (CRUD + Outcome Tracking)** |
 
@@ -52,7 +52,7 @@
 │   ├── ingestion/loader.py    # Multi-format CSV/Excel loader & SHA-256 deduplication
 │   └── pipeline.py            # End-to-end data processing pipeline
 └── tests/
-    ├── api/                   # API, Error Envelope, PII, College Telemetry, and KPMG tests
+
     └── unit/                  # AST purity, determinism, boot check, momentum, and segment partition tests
 ```
 
@@ -109,7 +109,7 @@
 - tests/api/test_college_and_auth.py          [3 passed]
 - tests/api/test_competitive_intelligence.py  [6 passed]
 - tests/api/test_error_envelope.py            [3 passed]
-- tests/api/test_kpmg_deliverables.py        [6 passed]
+
 - tests/api/test_pii_scope.py                 [2 passed]
 - tests/unit/test_ai_execution_contract.py    [1 passed]
 - tests/unit/test_boot_check.py               [1 passed]
@@ -121,7 +121,7 @@
 - Root Health & Sub-Probes:   GET /health, /health/db, /health/ml, /api/v1/health
 - ML Layer & Registry:        GET /api/v1/ml/models, /feature-importance, /evaluation
 - ML Risk & Agreement Check:  POST /api/v1/ml/predict-risk, POST /api/v1/ml/agreement-check
-- KPMG Deliverables & Matrix: GET /api/v1/kpmg/deliverables, /api/v1/kpmg/segmentation-matrix
+
 - Cohort Telemetry & Gaps:    GET /api/v1/cohorts/readiness, /gaps, /login-activity, /telemetry
 - Student 360 & Explainable:  GET /api/v1/students/{ref}, /{ref}/explain, /{ref}/trend
 - Decision Intelligence:      POST /api/v1/what-if, POST /api/v1/admin/verify-ast

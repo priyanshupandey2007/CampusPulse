@@ -83,3 +83,29 @@ def test_nep_matrix_integrity():
     assert "nep_1" in pillar_ids
     assert "nep_5" in pillar_ids
     assert "nep_8" in pillar_ids
+
+
+def test_batches_breakdown_and_swoc_integrity():
+    """Validates institutional batch breakdown, student ABC ledger, and SWOC analysis."""
+    eval_result = compute_live_naac_score()
+    assert "batches_breakdown" in eval_result
+    assert len(eval_result["batches_breakdown"]) == 7
+    batch_names = [b["batch_name"] for b in eval_result["batches_breakdown"]]
+    assert "KRMU_2029_AIML_E" in batch_names
+    assert "KRMU_2029_CSE_C" in batch_names
+    assert "KRMU_2029_CSE_D" in batch_names
+
+    assert "sample_abc_ledger" in eval_result
+    assert len(eval_result["sample_abc_ledger"]) >= 5
+    first_student = eval_result["sample_abc_ledger"][0]
+    assert "apaar_abc_id" in first_student
+    assert "roll_number" in first_student
+    assert "credits_earned" in first_student
+
+    assert "swoc_analysis" in eval_result
+    swoc = eval_result["swoc_analysis"]
+    assert "strengths" in swoc and len(swoc["strengths"]) >= 4
+    assert "weaknesses" in swoc and len(swoc["weaknesses"]) >= 3
+    assert "opportunities" in swoc and len(swoc["opportunities"]) >= 3
+    assert "challenges" in swoc and len(swoc["challenges"]) >= 3
+

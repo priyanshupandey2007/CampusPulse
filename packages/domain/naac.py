@@ -50,6 +50,190 @@ INSTITUTION_METADATA: Dict[str, Any] = {
     "iqac_coordinator": "Dr. S. K. Venkatraman",
     "university_type": "State Private University (UGC 2(f) Recognized)",
     "campus_area_acres": 26.5,
+    "total_faculty_soet": 26,
+    "student_faculty_ratio": "18:1",
+    "nirf_band": "Top 100–150 State Universities",
+}
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Cohort / Batch-Level Accreditation Telemetry
+# ──────────────────────────────────────────────────────────────────────────────
+
+BATCH_ACCREDITATION_BREAKDOWN: List[Dict[str, Any]] = [
+    {
+        "batch_name": "KRMU_2029_AIML_E",
+        "program": "B.Tech CSE (AI & Machine Learning)",
+        "enrolled": 68,
+        "avg_attendance": 81.2,
+        "academic_index": 76.5,
+        "placement_readiness": 88.4,
+        "abc_id_seeded_pct": 100.0,
+        "obe_co_attainment_pct": 89.2,
+        "mentor_in_charge": "Dr. Ananya Sharma",
+        "status": "Exemplary",
+    },
+    {
+        "batch_name": "KRMU_2029_CSE_C",
+        "program": "B.Tech Computer Science & Engineering",
+        "enrolled": 62,
+        "avg_attendance": 79.5,
+        "academic_index": 75.1,
+        "placement_readiness": 86.1,
+        "abc_id_seeded_pct": 98.4,
+        "obe_co_attainment_pct": 87.5,
+        "mentor_in_charge": "Dr. S. K. Venkatraman",
+        "status": "Exemplary",
+    },
+    {
+        "batch_name": "KRMU_2029_CSE_D",
+        "program": "B.Tech Computer Science & Engineering",
+        "enrolled": 55,
+        "avg_attendance": 77.0,
+        "academic_index": 73.8,
+        "placement_readiness": 82.5,
+        "abc_id_seeded_pct": 98.2,
+        "obe_co_attainment_pct": 85.0,
+        "mentor_in_charge": "Dr. Neeraj Kumar",
+        "status": "High Standing",
+    },
+    {
+        "batch_name": "KRMU_2028_CSE_A",
+        "program": "B.Tech Computer Science & Engineering",
+        "enrolled": 72,
+        "avg_attendance": 76.8,
+        "academic_index": 74.2,
+        "placement_readiness": 85.0,
+        "abc_id_seeded_pct": 97.2,
+        "obe_co_attainment_pct": 86.1,
+        "mentor_in_charge": "Prof. Meenakshi Sundaram",
+        "status": "High Standing",
+    },
+    {
+        "batch_name": "KRMU_2028_CSE_B",
+        "program": "B.Tech Computer Science & Engineering",
+        "enrolled": 70,
+        "avg_attendance": 78.1,
+        "academic_index": 75.0,
+        "placement_readiness": 84.6,
+        "abc_id_seeded_pct": 98.6,
+        "obe_co_attainment_pct": 86.8,
+        "mentor_in_charge": "Dr. Pooja Batra",
+        "status": "High Standing",
+    },
+    {
+        "batch_name": "KRMU_2027_CSE_HONOURS",
+        "program": "B.Tech CSE (Cloud & DevOps Honours)",
+        "enrolled": 64,
+        "avg_attendance": 80.4,
+        "academic_index": 77.9,
+        "placement_readiness": 89.2,
+        "abc_id_seeded_pct": 100.0,
+        "obe_co_attainment_pct": 89.7,
+        "mentor_in_charge": "Prof. Rajesh Gupta",
+        "status": "Exemplary",
+    },
+    {
+        "batch_name": "KRMU_2027_AIML_HONOURS",
+        "program": "B.Tech CSE (AI & Data Science Honours)",
+        "enrolled": 78,
+        "avg_attendance": 82.0,
+        "academic_index": 78.5,
+        "placement_readiness": 91.0,
+        "abc_id_seeded_pct": 100.0,
+        "obe_co_attainment_pct": 90.5,
+        "mentor_in_charge": "Dr. Deepak Sharma",
+        "status": "Benchmark Leader",
+    },
+]
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Sample Verified Student Academic Bank of Credits (ABC) & APAAR Registry
+# ──────────────────────────────────────────────────────────────────────────────
+
+SAMPLE_STUDENT_ABC_LEDGER: List[Dict[str, Any]] = [
+    {
+        "roll_number": "2501730197",
+        "student_name": "Archita",
+        "batch": "KRMU_2029_AIML_E",
+        "apaar_abc_id": "8412-9201-4410",
+        "credits_earned": 46,
+        "mees_pathway": "4-Yr UG Honours with Research",
+        "digilocker_status": "Verified & Seeded",
+        "last_sync": "Today 08:30 IST",
+    },
+    {
+        "roll_number": "251302001",
+        "student_name": "Aarav Sharma",
+        "batch": "KRMU_2029_CSE_C",
+        "apaar_abc_id": "9014-2311-6789",
+        "credits_earned": 48,
+        "mees_pathway": "4-Yr UG Honours with Research",
+        "digilocker_status": "Verified & Seeded",
+        "last_sync": "Today 09:12 IST",
+    },
+    {
+        "roll_number": "251302094",
+        "student_name": "Sahil Yadav",
+        "batch": "KRMU_2029_CSE_C",
+        "apaar_abc_id": "3129-8804-5120",
+        "credits_earned": 44,
+        "mees_pathway": "4-Yr UG Degree Major",
+        "digilocker_status": "Verified & Seeded",
+        "last_sync": "Yesterday 16:40 IST",
+    },
+    {
+        "roll_number": "251302176",
+        "student_name": "Somay Sehrawat",
+        "batch": "KRMU_2029_CSE_C",
+        "apaar_abc_id": "6721-4450-9923",
+        "credits_earned": 50,
+        "mees_pathway": "4-Yr UG Honours with Research",
+        "digilocker_status": "Verified & Seeded",
+        "last_sync": "Today 07:45 IST",
+    },
+    {
+        "roll_number": "251302312",
+        "student_name": "Harshit Joon",
+        "batch": "KRMU_2029_CSE_D",
+        "apaar_abc_id": "4510-3329-8812",
+        "credits_earned": 42,
+        "mees_pathway": "4-Yr UG Degree Major",
+        "digilocker_status": "Verified & Seeded",
+        "last_sync": "Today 09:50 IST",
+    },
+]
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Institutional SWOC Analysis (NAAC Self Study Report Chapter 1)
+# ──────────────────────────────────────────────────────────────────────────────
+
+INSTITUTIONAL_SWOC_ANALYSIS: Dict[str, List[str]] = {
+    "strengths": [
+        "State-of-the-art deterministic AI student analytics (CampusPulse OS) enabling sub-30s advisor triage.",
+        "Outcome-Based Education (OBE) curriculum with 100% Bloom-mapped course outcomes and 86.4% attainment.",
+        "Vibrant innovation ecosystem with 14 incubated startups, 28 filed patents, and MoE IIC 4-star recognition.",
+        "Robust IT infrastructure with 1:1.8 student-to-computer ratio and 1 Gbps lease line connectivity.",
+        "Strong industry immersion with 24 corporate MoUs (AWS Academy, RedHat, ByteXL, IBM) yielding 84.7% placement readiness.",
+    ],
+    "weaknesses": [
+        "Extramural international research funding requires further scaling beyond existing DST/AICTE grants.",
+        "Hostel residential capacity requires planned expansion to meet surging pan-India admissions demand.",
+        "Commercial monetization of early-stage filed student patents is currently in transition.",
+    ],
+    "opportunities": [
+        "Emerging technology corridor along Gurugram/Delhi-NCR enables direct executive co-op programs.",
+        "Implementation of NEP 2020 Dual-Degree pathways with accredited international universities.",
+        "Establishing an AI & Quantum Computing Centre of Excellence supported by corporate CSR grants.",
+    ],
+    "challenges": [
+        "Rapidly evolving generative AI industry standards demanding continuous semester-wise syllabus refresh.",
+        "Managing diverse academic backgrounds across students entering from across 18 Indian states.",
+        "Maintaining data quality and timely updates across institutional academic records.",
+    ],
+
 }
 
 
@@ -90,33 +274,41 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
             "key_indicators": [
                 {
                     "code": "1.1",
+                    "metric_code": "Metric 1.1.1",
+                    "metric_type": "QlM",
                     "title": "Curricular Planning & Implementation",
                     "weight": 40,
                     "score": 3.75,
                     "kpi": "100% of courses have Bloom-aligned Course Outcomes (CO) mapped to Program Outcomes (PO/PSO).",
-                    "evidence": "Academic Council Minutes 2024-25, Dean's Curriculum Audit, Lesson Plans.",
+                    "evidence": "Academic Council Minutes Ref: AC/2024-25/RES-14, Lesson Plans.",
                     "status": "Exemplary",
                 },
                 {
                     "code": "1.2",
+                    "metric_code": "Metric 1.2.1",
+                    "metric_type": "QnM",
                     "title": "Academic Flexibility (NEP 2020 Credit Framework)",
                     "weight": 40,
                     "score": 3.80,
                     "kpi": "Choice-Based Credit System (CBCS) + Multidisciplinary Open Electives in 42 modern tech verticals.",
-                    "evidence": "DigiLocker ABC Registration Ledger, Elective Catalog, Minor Degree Guidelines.",
+                    "evidence": "DigiLocker ABC Registration Ledger APAAR-KRMU-2024, Minor Degree Guidelines.",
                     "status": "Exemplary",
                 },
                 {
                     "code": "1.3",
+                    "metric_code": "Metric 1.3.2",
+                    "metric_type": "QnM",
                     "title": "Curriculum Enrichment & Skill Sprints",
                     "weight": 40,
                     "score": 3.65,
                     "kpi": "Value-added courses, micro-credentials in GenAI/Full-Stack, mandatory 8-week corporate internships.",
-                    "evidence": "Skill Sprint Syllabi, Corporate Internship Completion Logs, Certificate Repositories.",
+                    "evidence": "Skill Sprint Syllabi, Corporate Internship Completion Logs (397 Students).",
                     "status": "High Standing",
                 },
                 {
                     "code": "1.4",
+                    "metric_code": "Metric 1.4.1",
+                    "metric_type": "QnM",
                     "title": "Feedback System on Curriculum",
                     "weight": 30,
                     "score": 3.60,
@@ -137,24 +329,30 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
             "key_indicators": [
                 {
                     "code": "2.1",
+                    "metric_code": "Metric 2.1.2",
+                    "metric_type": "QnM",
                     "title": "Student Enrollment & Profile",
                     "weight": 25,
                     "score": 3.60,
                     "kpi": "Average enrollment demand ratio 1:3.4; pan-India student representation across 18 states.",
-                    "evidence": "Admissions Office Statistics, Merit Lists, Diversity Records.",
+                    "evidence": "Admissions Office Statistics, Merit Lists, State Diversity Ledger.",
                     "status": "High Standing",
                 },
                 {
                     "code": "2.2",
+                    "metric_code": "Metric 2.2.1",
+                    "metric_type": "QlM",
                     "title": "Catering to Student Diversity & Slow/Fast Learner Triage",
                     "weight": 35,
                     "score": 3.85,
                     "kpi": "CampusPulse automated segmentation (Priority Support, Watchlist, On-Track) drives individualized remedial playbooks.",
-                    "evidence": "CampusPulse 2D Segmentation Matrix, Remedial Class Logs, Advanced Learner Honors Projects.",
+                    "evidence": "CampusPulse 2D Segmentation Matrix, Remedial Class Logs, Honors Project Portfolios.",
                     "status": "Benchmark Leader",
                 },
                 {
                     "code": "2.3",
+                    "metric_code": "Metric 2.3.1",
+                    "metric_type": "QlM",
                     "title": "Teaching-Learning Process & Experiential Labs",
                     "weight": 40,
                     "score": 3.70,
@@ -164,6 +362,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
                 },
                 {
                     "code": "2.4",
+                    "metric_code": "Metric 2.4.2",
+                    "metric_type": "QnM",
                     "title": "Teacher Profile & Faculty Quality",
                     "weight": 30,
                     "score": 3.55,
@@ -173,6 +373,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
                 },
                 {
                     "code": "2.5",
+                    "metric_code": "Metric 2.5.1",
+                    "metric_type": "QlM",
                     "title": "Evaluation Process & Reforms (Formative Telemetry)",
                     "weight": 35,
                     "score": 3.80,
@@ -182,11 +384,13 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
                 },
                 {
                     "code": "2.6",
+                    "metric_code": "Metric 2.6.2",
+                    "metric_type": "QnM",
                     "title": "Student Performance and Learning Outcomes (OBE)",
                     "weight": 35,
                     "score": 3.65,
                     "kpi": "CO-PO attainment measured at 86.4% across graduating cohort; overall pass percentage 93.8%.",
-                    "evidence": "OBE Attainment Software Calculations, End-Term Mark Sheets, Controller of Examinations Reports.",
+                    "evidence": "OBE Attainment Software Calculations, End-Term Mark Sheets, CoE Reports.",
                     "status": "Exemplary",
                 },
             ],
@@ -202,6 +406,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
             "key_indicators": [
                 {
                     "code": "3.1",
+                    "metric_code": "Metric 3.1.1",
+                    "metric_type": "QnM",
                     "title": "Resource Mobilization for Research",
                     "weight": 35,
                     "score": 3.35,
@@ -211,6 +417,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
                 },
                 {
                     "code": "3.2",
+                    "metric_code": "Metric 3.2.2",
+                    "metric_type": "QnM",
                     "title": "Innovation Ecosystem & Incubation Centre",
                     "weight": 50,
                     "score": 3.60,
@@ -220,15 +428,19 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
                 },
                 {
                     "code": "3.3",
+                    "metric_code": "Metric 3.3.1",
+                    "metric_type": "QnM",
                     "title": "Research Publications & Awards",
                     "weight": 65,
                     "score": 3.40,
                     "kpi": "480+ papers in Scopus/WoS indexed journals; university h-index of 24; average impact factor 2.68.",
-                    "evidence": "Scopus / Web of Science University Profile, Publication Links, Citation Reports.",
+                    "evidence": "Scopus Profile Ref: 60110328, Publication Links, Citation Reports.",
                     "status": "Good Standing",
                 },
                 {
                     "code": "3.4",
+                    "metric_code": "Metric 3.4.3",
+                    "metric_type": "QnM",
                     "title": "Extension Activities & Community Engagement",
                     "weight": 50,
                     "score": 3.50,
@@ -238,10 +450,12 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
                 },
                 {
                     "code": "3.5",
+                    "metric_code": "Metric 3.5.2",
+                    "metric_type": "QnM",
                     "title": "Institutional Collaborations & Corporate MoUs",
                     "weight": 50,
                     "score": 3.55,
-                    "kpi": "24 active MoUs with technology enterprises (AWS Academy, ByteXL, RedHat, IBM, KPMG in India).",
+                    "kpi": "24 active MoUs with technology enterprises (AWS Academy, ByteXL, RedHat, IBM).",
                     "evidence": "Signed Bilateral MoUs, Joint Training Workshop Reports, Guest Lecture Logs.",
                     "status": "High Standing",
                 },
@@ -258,6 +472,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
             "key_indicators": [
                 {
                     "code": "4.1",
+                    "metric_code": "Metric 4.1.1",
+                    "metric_type": "QlM",
                     "title": "Physical Facilities & Modern Laboratories",
                     "weight": 30,
                     "score": 3.85,
@@ -267,6 +483,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
                 },
                 {
                     "code": "4.2",
+                    "metric_code": "Metric 4.2.2",
+                    "metric_type": "QnM",
                     "title": "Library as a Learning Resource & Digital Subscriptions",
                     "weight": 25,
                     "score": 3.75,
@@ -276,6 +494,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
                 },
                 {
                     "code": "4.3",
+                    "metric_code": "Metric 4.3.2",
+                    "metric_type": "QnM",
                     "title": "IT Infrastructure & High-Speed Bandwidth",
                     "weight": 25,
                     "score": 3.85,
@@ -285,6 +505,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
                 },
                 {
                     "code": "4.4",
+                    "metric_code": "Metric 4.4.1",
+                    "metric_type": "QlM",
                     "title": "Maintenance of Campus Facilities",
                     "weight": 20,
                     "score": 3.70,
@@ -305,6 +527,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
             "key_indicators": [
                 {
                     "code": "5.1",
+                    "metric_code": "Metric 5.1.1",
+                    "metric_type": "QnM",
                     "title": "Student Support & Capability Enhancement Schemes",
                     "weight": 30,
                     "score": 3.70,
@@ -314,6 +538,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
                 },
                 {
                     "code": "5.2",
+                    "metric_code": "Metric 5.2.1",
+                    "metric_type": "QnM",
                     "title": "Student Progression & Placement Conversion",
                     "weight": 40,
                     "score": 3.80,
@@ -323,6 +549,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
                 },
                 {
                     "code": "5.3",
+                    "metric_code": "Metric 5.3.3",
+                    "metric_type": "QnM",
                     "title": "Student Participation in Co-curricular & Hackathons",
                     "weight": 15,
                     "score": 3.75,
@@ -332,6 +560,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
                 },
                 {
                     "code": "5.4",
+                    "metric_code": "Metric 5.4.1",
+                    "metric_type": "QlM",
                     "title": "Alumni Association & Mentorship",
                     "weight": 15,
                     "score": 3.65,
@@ -352,6 +582,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
             "key_indicators": [
                 {
                     "code": "6.1",
+                    "metric_code": "Metric 6.1.1",
+                    "metric_type": "QlM",
                     "title": "Institutional Vision and Leadership",
                     "weight": 20,
                     "score": 3.65,
@@ -361,6 +593,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
                 },
                 {
                     "code": "6.2",
+                    "metric_code": "Metric 6.2.2",
+                    "metric_type": "QnM",
                     "title": "Strategy Development & E-Governance (CampusPulse Deployment)",
                     "weight": 25,
                     "score": 3.85,
@@ -370,6 +604,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
                 },
                 {
                     "code": "6.3",
+                    "metric_code": "Metric 6.3.2",
+                    "metric_type": "QnM",
                     "title": "Faculty Empowerment & Professional Development",
                     "weight": 20,
                     "score": 3.50,
@@ -379,6 +615,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
                 },
                 {
                     "code": "6.4",
+                    "metric_code": "Metric 6.4.1",
+                    "metric_type": "QlM",
                     "title": "Financial Management & Audit Compliance",
                     "weight": 15,
                     "score": 3.60,
@@ -388,6 +626,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
                 },
                 {
                     "code": "6.5",
+                    "metric_code": "Metric 6.5.2",
+                    "metric_type": "QnM",
                     "title": "Internal Quality Assurance Cell (IQAC) Quality Initiatives",
                     "weight": 20,
                     "score": 3.75,
@@ -408,6 +648,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
             "key_indicators": [
                 {
                     "code": "7.1",
+                    "metric_code": "Metric 7.1.2",
+                    "metric_type": "QnM",
                     "title": "Institutional Values & Social Responsibilities",
                     "weight": 30,
                     "score": 3.80,
@@ -417,6 +659,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
                 },
                 {
                     "code": "7.2",
+                    "metric_code": "Metric 7.2.1",
+                    "metric_type": "QlM",
                     "title": "Institutional Best Practice I: CampusPulse Deterministic OS",
                     "weight": 35,
                     "score": 3.95,
@@ -426,6 +670,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
                 },
                 {
                     "code": "7.3",
+                    "metric_code": "Metric 7.2.2",
+                    "metric_type": "QlM",
                     "title": "Institutional Best Practice II: Industry-Embedded Capstone Sprints",
                     "weight": 20,
                     "score": 3.80,
@@ -435,6 +681,8 @@ def get_criteria_definitions() -> Dict[str, Dict[str, Any]]:
                 },
                 {
                     "code": "7.4",
+                    "metric_code": "Metric 7.3.1",
+                    "metric_type": "QlM",
                     "title": "Institutional Distinctiveness",
                     "weight": 15,
                     "score": 3.85,
@@ -586,7 +834,6 @@ def compute_live_naac_score(
     }
 
     # Apply live adjustments based on database telemetry
-    # E.g., Higher attendance and higher placement readiness positively modulate Criterion 2 and Criterion 5
     if avg_attendance > 75.0:
         base_scores["criterion_2"] = min(4.00, base_scores["criterion_2"] + 0.03)
     if placement_readiness_pct > 80.0:
@@ -640,6 +887,9 @@ def compute_live_naac_score(
         "criteria": criteria_breakdown,
         "nep_compliance_pct": 94.8,
         "evaluated_students_count": total_students,
+        "batches_breakdown": BATCH_ACCREDITATION_BREAKDOWN,
+        "sample_abc_ledger": SAMPLE_STUDENT_ABC_LEDGER,
+        "swoc_analysis": INSTITUTIONAL_SWOC_ANALYSIS,
         "live_signals": {
             "average_attendance": round(avg_attendance, 1),
             "average_academic_index": round(avg_academic, 1),
@@ -648,6 +898,7 @@ def compute_live_naac_score(
             "backlog_clearance_rate": round(backlog_clearance_rate, 1),
             "student_faculty_ratio": "18:1",
             "phd_faculty_percentage": 78.4,
+            "student_computer_ratio": "1:1.8",
             "active_mous": 24,
             "patents_filed": 28,
             "incubated_startups": 14,
@@ -657,6 +908,7 @@ def compute_live_naac_score(
             "quantitative_metrics_qnm_score": 3.66,
             "qualitative_metrics_qlm_score": 3.61,
             "peer_team_readiness": "Ready for Peer Team On-Site Inspection",
+            "mock_defense_score": "94.5 / 100",
             "last_updated": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
         },
     }

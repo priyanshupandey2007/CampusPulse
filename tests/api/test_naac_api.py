@@ -27,6 +27,10 @@ def test_naac_overview_endpoint():
     assert len(d["criteria"]) == 7
     assert "live_signals" in d
     assert "average_attendance" in d["live_signals"]
+    assert "batches_breakdown" in d and len(d["batches_breakdown"]) == 7
+    assert "sample_abc_ledger" in d and len(d["sample_abc_ledger"]) >= 5
+    assert "swoc_analysis" in d and "strengths" in d["swoc_analysis"]
+
 
 
 def test_naac_criteria_list_and_detail():

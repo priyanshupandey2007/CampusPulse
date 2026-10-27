@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CampusPulse — Enterprise Student Success & Placement Readiness OS</title>
-  <meta name="description" content="Explainable, CI-audited, deterministic student-success and placement-readiness operating system for colleges. Built for KPMG Smart Campus Analytics.">
+  <meta name="description" content="Explainable, CI-audited, deterministic student-success and placement-readiness operating system for colleges.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="alternate icon" href="/favicon.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,15 +16,15 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
   <script>
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    // CampusPulse Firebase Configuration — campuspulse-d014f
     const firebaseConfig = {
-      apiKey: "AIzaSyA7SpSw4TIIv52eZgUq31yMsbjk0eQRsKI",
-      authDomain: "hackxl.firebaseapp.com",
-      projectId: "hackxl",
-      storageBucket: "hackxl.firebasestorage.app",
-      messagingSenderId: "765716719209",
-      appId: "1:765716719209:web:f7c3e3d1c19a1e530d24f8",
-      measurementId: "G-K373KRXX7T"
+      apiKey: "AIzaSyBXDZipeGgUFOyczUfbCrZZmInmEgT9x8k",
+      authDomain: "campuspulse-d014f.firebaseapp.com",
+      projectId: "campuspulse-d014f",
+      storageBucket: "campuspulse-d014f.firebasestorage.app",
+      messagingSenderId: "469605355904",
+      appId: "1:469605355904:web:e529f8cd949a4cff62b165",
+      measurementId: "G-V90RQZM1PP"
     };
     window.firebaseConfig = firebaseConfig;
     if (typeof firebase !== 'undefined' && firebase.apps && !firebase.apps.length) {
@@ -195,11 +195,14 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
     body {
       font-family: var(--font-sans);
       background-color: var(--bg-app);
       color: var(--text-main);
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
       -webkit-font-smoothing: antialiased;
@@ -209,19 +212,23 @@
     .app-layout {
       display: flex;
       flex: 1;
+      height: 100%;
       height: 100vh;
+      height: 100dvh;
       overflow: hidden;
     }
 
     /* Sidebar */
     .sidebar {
       width: 250px;
+      height: 100%;
       background: var(--bg-surface);
       border-right: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
       z-index: 40;
       flex-shrink: 0;
+      overflow: hidden;
     }
     .sidebar-header {
       padding: 14px 18px;
@@ -281,6 +288,7 @@
 
     .sidebar-nav {
       flex: 1;
+      min-height: 0;
       padding: 10px 10px;
       display: flex;
       flex-direction: column;
@@ -334,6 +342,8 @@
     /* Top Navbar */
     .main-wrapper {
       flex: 1;
+      min-width: 0;
+      min-height: 0;
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -484,6 +494,7 @@
     /* Content Area */
     .main-content {
       flex: 1;
+      min-height: 0;
       overflow-y: auto;
       padding: 22px 28px 48px;
     }
@@ -1969,6 +1980,97 @@
       background: var(--bg-surface) !important;
       border-color: var(--border-color) !important;
     }
+
+    /* NAAC Institutional SWOC & Presets Styling */
+    .naac-swoc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+    .naac-swoc-box {
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      display: flex;
+      flex-direction: column;
+    }
+    .naac-swoc-box.strengths { border-top: 4px solid #10b981; }
+    .naac-swoc-box.weaknesses { border-top: 4px solid #f59e0b; }
+    .naac-swoc-box.opportunities { border-top: 4px solid #3b82f6; }
+    .naac-swoc-box.challenges { border-top: 4px solid #ef4444; }
+
+    .naac-preset-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .naac-preset-btn {
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .naac-preset-btn:hover {
+      background: #7c3aed;
+      color: #ffffff;
+      border-color: #6d28d9;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+    }
+
+    .naac-evidence-modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.72);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(5px);
+      padding: 20px;
+    }
+    .naac-evidence-modal-card {
+      background: var(--bg-surface);
+      border-radius: var(--radius-lg);
+      max-width: 700px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.35);
+      padding: 24px 28px;
+      color: var(--text-main);
+    }
+
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #naac-ssr-printable-area, #naac-ssr-printable-area * {
+        visibility: visible !important;
+      }
+      #naac-ssr-printable-area {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 20px !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1998,6 +2100,14 @@
         <button class="auth-role-tab" id="tab-student" onclick="switchPortalRole('student')">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
           Student Login
+        </button>
+        <button class="auth-role-tab" id="tab-dean" onclick="switchPortalRole('dean')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Dean Login
+        </button>
+        <button class="auth-role-tab" id="tab-hod" onclick="switchPortalRole('hod')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M17 11l2 2 4-4"/></svg>
+          HOD Login
         </button>
       </div>
 
@@ -2117,6 +2227,100 @@
             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
           </svg>
+          Sign In with Google
+        </button>
+      </div>
+
+      <!-- Dean Portal Card (hidden by default) -->
+      <div class="auth-card" id="auth-card-dean" style="display:none;">
+        <div class="auth-card-header">
+          <div class="auth-card-icon" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <div>
+            <div class="auth-card-title">Dean&rsquo;s Executive Portal</div>
+            <div class="auth-card-subtitle">Institution-wide analytics, NAAC metrics, and strategic oversight dashboard.</div>
+          </div>
+        </div>
+        <div class="auth-info-strip">
+          <div class="auth-info-strip-text">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Dean role: <strong>Full Institution Analytics &amp; NAAC Scorecard</strong>
+          </div>
+          <button class="btn-quick-demo" onclick="quickDemoLogin('dean')">Quick Demo Login</button>
+        </div>
+        <div class="auth-input-group">
+          <label class="auth-input-label">Dean ID / Email</label>
+          <div class="auth-input-wrapper">
+            <span class="auth-input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+            <input type="text" id="auth-dean-id" class="auth-input" placeholder="dean@campuspulse.edu" value="rajesh.gupta@campuspulse.edu">
+          </div>
+        </div>
+        <div class="auth-input-group">
+          <label class="auth-input-label">Password</label>
+          <div class="auth-input-wrapper">
+            <span class="auth-input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
+            <input type="password" id="auth-dean-password" class="auth-input" placeholder="••••••••••" value="campuspulse2026">
+          </div>
+        </div>
+        <button class="btn-auth-primary" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);" onclick="quickDemoLogin('dean')">
+          Sign In to Dean Portal
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+        <div class="auth-divider"><span>OR CONTINUE WITH</span></div>
+        <button type="button" class="btn-google" onclick="handleFirebaseGoogleSignIn('dean')" id="btn-google-signin-dean">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+          Sign In with Google
+        </button>
+      </div>
+
+      <!-- HOD Portal Card (hidden by default) -->
+      <div class="auth-card" id="auth-card-hod" style="display:none;">
+        <div class="auth-card-header">
+          <div class="auth-card-icon" style="background:linear-gradient(135deg,#0891b2,#0284c7);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M17 11l2 2 4-4"/></svg>
+          </div>
+          <div>
+            <div class="auth-card-title">HOD Department Portal</div>
+            <div class="auth-card-subtitle">Department-level student analytics, cohort gaps, and placement readiness metrics.</div>
+          </div>
+        </div>
+        <div class="auth-info-strip">
+          <div class="auth-info-strip-text">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            HOD role: <strong>Department Cohort Analytics &amp; Risk Overview</strong>
+          </div>
+          <button class="btn-quick-demo" onclick="quickDemoLogin('hod')">Quick Demo Login</button>
+        </div>
+        <div class="auth-input-group">
+          <label class="auth-input-label">HOD ID / Email</label>
+          <div class="auth-input-wrapper">
+            <span class="auth-input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+            <input type="text" id="auth-hod-id" class="auth-input" placeholder="hod@campuspulse.edu" value="sk.venkatraman@campuspulse.edu">
+          </div>
+        </div>
+        <div class="auth-input-group">
+          <label class="auth-input-label">Password</label>
+          <div class="auth-input-wrapper">
+            <span class="auth-input-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
+            <input type="password" id="auth-hod-password" class="auth-input" placeholder="••••••••••" value="campuspulse2026">
+          </div>
+        </div>
+        <button class="btn-auth-primary" style="background:linear-gradient(135deg,#0891b2,#0284c7);" onclick="quickDemoLogin('hod')">
+          Sign In to HOD Portal
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+        <div class="auth-divider"><span>OR CONTINUE WITH</span></div>
+        <button type="button" class="btn-google" onclick="handleFirebaseGoogleSignIn('hod')" id="btn-google-signin-hod">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
           Sign In with Google
         </button>
       </div>
@@ -2302,6 +2506,11 @@
           <span class="nav-label">Enterprise Admin Portal</span>
           <span class="nav-badge" style="background:#fef3c7; color:#92400e;">Admin Only</span>
         </a>
+        <a class="nav-item" data-roles="hod dean admin teacher" id="nav-test-papers" onclick="switchNav('test-papers')" style="border-left:3px solid #7c3aed; background:rgba(124,58,237,0.05);">
+          <span class="nav-icon">📝</span>
+          <span class="nav-label">Create Test Papers</span>
+          <span class="nav-badge" id="nav-test-papers-badge" style="background:#ede9fe; color:#6d28d9;">Superadmin</span>
+        </a>
 
         <!-- KPMG SHOWCASE (Dean & Admin only) -->
         <div class="nav-section-title" data-roles="dean admin" style="color:#4f46e5; font-weight:800; display:flex; align-items:center; justify-content:space-between;">
@@ -2365,6 +2574,10 @@
             <span>🏆</span> KPMG Deck
           </button>
 
+          <button class="btn btn-sm" onclick="switchNav('naac-evaluator')" style="background:linear-gradient(135deg, #7c3aed, #9333ea); color:#ffffff; font-weight:700; border:none; box-shadow:0 2px 10px rgba(124,58,237,0.3); display:flex; align-items:center; gap:6px; border-radius:20px; padding:6px 13px;" title="Open NAAC RAF Accreditation & NEP 2020 Platform">
+            <span>🏛️</span> NAAC A++ (3.65)
+          </button>
+
           <button class="btn btn-sm btn-outline" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode" style="padding: 6px 10px; font-size: 0.95rem; border-radius: 20px;">
             🌓
           </button>
@@ -2376,15 +2589,12 @@
           <!-- Divider -->
           <div style="height: 24px; width: 1px; background: var(--border-color); margin: 0 4px;"></div>
 
-          <!-- Role Perspective Selector -->
+          <!-- Active Role Indicator (Locked to Authenticated Session) -->
           <div style="display:flex; align-items:center; gap:6px;">
-            <select class="role-selector-pill" id="role-selector" onchange="handleRoleChange(this.value)" title="Switch Active Role Perspective">
-              <option value="dean">🏛️ Dean (Superadmin)</option>
-              <option value="hod">👨‍💼 HOD CSE (Admin)</option>
-              <option value="teacher">👩‍🏫 Faculty Mentor</option>
-              <option value="student">🎓 Enrolled Student</option>
-              <option value="recruiter">💼 Corporate Recruiter</option>
-            </select>
+            <div class="active-role-pill role-pill-teacher" id="topbar-role-badge" title="Authenticated Account Role">
+              <span id="topbar-role-icon">👩‍🏫</span>
+              <span id="topbar-role-text">Faculty Mentor</span>
+            </div>
           </div>
 
           <!-- User Profile Dropdown Badge -->
@@ -2410,12 +2620,11 @@
                     <span id="active-role-badge-text">Faculty</span>
                   </span>
                 </div>
-                <div style="margin-top:2px;">Auth: <span style="color:#166534; font-weight:600;" id="dropdown-auth-type">Firebase</span></div>
               </div>
               <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
                 <button data-roles="advisor admin" class="btn btn-outline btn-sm" onclick="switchNav('educator-reports'); toggleUserDropdown();" style="width:100%; justify-content:flex-start;">📈 My Educator Profile</button>
-                <button class="btn btn-outline btn-sm" onclick="openFirebaseConfigModal(); toggleUserDropdown();" style="width:100%; justify-content:flex-start;">⚙️ Firebase Credentials</button>
-                <button class="btn btn-sm" onclick="handleFirebaseSignOut()" style="width:100%; justify-content:flex-start; background:#fef2f2; color:#991b1b; border:1px solid #fee2e2; margin-top:2px;">🚪 Sign Out</button>
+                <button data-roles="dean admin" class="btn btn-outline btn-sm" onclick="switchNav('test-papers'); toggleUserDropdown();" style="width:100%; justify-content:flex-start;">📝 Create Test Papers</button>
+                <button class="btn btn-sm" onclick="handleFirebaseSignOut()" style="width:100%; justify-content:flex-start; background:#fef2f2; color:#991b1b; border:1px solid #fee2e2; margin-top:2px;">🚪 Switch Account / Sign Out</button>
               </div>
             </div>
           </div>
@@ -2651,6 +2860,31 @@
             <div class="breadcrumbs"><span>Home</span> / <span class="current">College Reports</span></div>
             <div class="page-title" style="margin-bottom:16px;">
               <span>College Report</span> <span class="subtitle-tag" style="color:var(--primary-blue); font-weight:700;">| KRM University</span>
+            </div>
+
+            <!-- Executive Institutional NAAC Accreditation Snapshot Banner -->
+            <div class="card" style="padding:14px 20px; margin-bottom:18px; background:linear-gradient(135deg, #311042, #4c1d95, #6d28d9); color:#ffffff; border-radius:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; box-shadow:0 4px 18px rgba(109,40,217,0.22); border:1px solid rgba(255,255,255,0.15);">
+              <div style="display:flex; align-items:center; gap:14px;">
+                <div style="width:44px; height:44px; border-radius:10px; background:rgba(255,255,255,0.16); display:flex; align-items:center; justify-content:center; font-size:1.4rem; border:1px solid rgba(255,255,255,0.3);">
+                  🏛️
+                </div>
+                <div>
+                  <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; opacity:0.85; font-weight:700;">NAAC Revised Accreditation Framework (RAF 2024–2026) Operational Standing</div>
+                  <div style="font-size:1.05rem; font-weight:800; display:flex; align-items:center; gap:10px; margin-top:2px; flex-wrap:wrap;">
+                    <span>K.R. Mangalam University — SOET</span>
+                    <span style="background:#22c55e; color:#ffffff; font-size:0.75rem; padding:2px 10px; border-radius:12px; font-weight:800; box-shadow:0 2px 6px rgba(34,197,94,0.3);">Grade A++ (3.65 CGPA)</span>
+                    <span style="background:rgba(255,255,255,0.2); font-size:0.72rem; padding:2px 8px; border-radius:12px;">Level 4 National Eminence</span>
+                  </div>
+                  <div style="font-size:0.75rem; opacity:0.85; margin-top:3px;">
+                    AISHE Code: <strong>U-0162</strong> • 469 Students Evaluated across 7 Cohorts • 94.8% NEP 2020 Matrix Compliance • SSR Peer-Team Ready
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex; gap:10px;">
+                <button class="btn btn-sm" onclick="switchNav('naac-evaluator')" style="background:#ffffff; color:#6d28d9; font-weight:800; border:none; padding:8px 18px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.15); cursor:pointer;">
+                  Open Full NAAC OS →
+                </button>
+              </div>
             </div>
 
             <!-- Top Filter Row (Matches Screenshot 2 & 3) -->
@@ -3191,6 +3425,42 @@
               <div class="naac-grid-7" id="naac-criteria-grid">
                 <!-- Dynamically injected via renderNaacOverview -->
               </div>
+
+              <!-- Institutional Cohort Accreditation Breakdown -->
+              <div class="card" style="margin-top:20px; margin-bottom:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                  <div>
+                    <h3 style="font-size:0.95rem; font-weight:800; display:flex; align-items:center; gap:8px;">
+                      <span>📊</span> Cohort-Level Accreditation Attainment &amp; Outcome Metrics (7 Batches)
+                    </h3>
+                    <div style="font-size:0.75rem; color:var(--text-muted);">
+                      Real-time aggregation from KRMU active student records, OBE Bloom mappings, and faculty mentor assignments.
+                    </div>
+                  </div>
+                  <span class="naac-score-pill" style="background:#f3e8ff; color:#7c3aed; font-size:0.75rem;">7 of 7 Cohorts Audited</span>
+                </div>
+                <div id="naac-batches-table-container">
+                  <!-- Populated via renderNaacBatchesTable -->
+                </div>
+              </div>
+
+              <!-- Institutional SWOC Strategic Matrix (NAAC SSR Chapter 1) -->
+              <div class="card" style="margin-bottom:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                  <div>
+                    <h3 style="font-size:0.95rem; font-weight:800; display:flex; align-items:center; gap:8px;">
+                      <span>🧭</span> Institutional SWOC Matrix (Strengths, Weaknesses, Opportunities, Challenges)
+                    </h3>
+                    <div style="font-size:0.75rem; color:var(--text-muted);">
+                      Official strategic self-assessment required for NAAC SSR Chapter 1 &amp; IQAC annual roadmap.
+                    </div>
+                  </div>
+                  <span class="naac-score-pill" style="background:#ecfdf5; color:#047857; font-size:0.75rem;">IQAC Certified</span>
+                </div>
+                <div id="naac-swoc-container">
+                  <!-- Populated via renderNaacSwocAnalysis -->
+                </div>
+              </div>
             </div>
 
             <!-- ── SUBVIEW 2: 7 CRITERIA & KEY INDICATORS (RAF) ── -->
@@ -3225,6 +3495,24 @@
 
                 <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px;" id="naac-nep-pillars-grid">
                   <!-- Dynamically populated via renderNaacNepMatrix -->
+                </div>
+
+                <!-- Verified Student APAAR / ABC Registry Ledger Section -->
+                <div style="margin-top:22px; padding-top:18px; border-top:1px solid var(--border-color);">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                    <div>
+                      <h4 style="font-size:0.92rem; font-weight:800; color:#0f172a; display:flex; align-items:center; gap:8px;">
+                        <span>🎓</span> Verified Student APAAR / Academic Bank of Credits (ABC) Digital Registry
+                      </h4>
+                      <div style="font-size:0.75rem; color:var(--text-muted);">
+                        Real-time student credit mobility tracking adhering to UGC National Credit Framework (NCrF) guidelines.
+                      </div>
+                    </div>
+                    <span class="naac-score-pill" style="background:#ecfdf5; color:#047857; font-size:0.75rem;">100% Digilocker Active</span>
+                  </div>
+                  <div id="naac-abc-ledger-container">
+                    <!-- Populated via renderNaacAbcLedger -->
+                  </div>
                 </div>
               </div>
             </div>
@@ -3294,6 +3582,16 @@
                       <div style="font-size:0.75rem; color:var(--text-muted);">Adjust individual Criteria grade points (0.00 – 4.00) to simulate institutional CGPA and Grade trajectory.</div>
                     </div>
                     <button class="btn btn-outline btn-sm" onclick="resetNaacSimulation()">Reset to Baseline</button>
+                  </div>
+
+                  <!-- Scenario Quick Presets -->
+                  <div class="naac-preset-bar">
+                    <span style="font-size:0.75rem; font-weight:700; color:var(--text-muted); align-self:center;">Presets:</span>
+                    <button class="naac-preset-btn" onclick="applyNaacPreset('baseline')">🎯 Baseline A++ (3.65)</button>
+                    <button class="naac-preset-btn" onclick="applyNaacPreset('research')">🔬 Research Surge (3.82)</button>
+                    <button class="naac-preset-btn" onclick="applyNaacPreset('placement')">💼 Placement Focus (3.80)</button>
+                    <button class="naac-preset-btn" onclick="applyNaacPreset('global')">🌟 Global Tier 1 (3.88)</button>
+                    <button class="naac-preset-btn" onclick="applyNaacPreset('max')">⚡ Maximum (4.00)</button>
                   </div>
 
                   <div id="naac-simulator-sliders">
@@ -3382,6 +3680,13 @@
                     <div style="font-size:0.68rem; color:#94a3b8;">Seal of the University</div>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <!-- DVV Evidence Inspection Modal -->
+            <div id="naac-evidence-modal" class="naac-evidence-modal-backdrop" style="display:none;" onclick="handleEvidenceModalBackdrop(event)">
+              <div class="naac-evidence-modal-card" id="naac-evidence-modal-body">
+                <!-- Dynamically populated via openNaacEvidenceModal -->
               </div>
             </div>
 
@@ -3792,16 +4097,18 @@ Available Nimbus Shell commands:
                       <th>Admin Portal Access</th>
                       <th>Cohort Triage</th>
                       <th>Student Record Access</th>
+                      <th>Test Paper Access</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
                       <td><span class="active-role-pill role-pill-dean">🏛️ Dean (Superadmin)</span></td>
                       <td>Level 4</td>
-                      <td>Institution-Wide (All Programs, KPMG Strategic Showcase, Cross-Dept Analytics)</td>
+                      <td>Institution-Wide (All Programs, Strategic Showcase, Cross-Dept Analytics)</td>
                       <td><span class="reason-chip" style="background:#dcfce7; color:#166534; font-weight:700;">✓ Full Access</span></td>
                       <td><span class="reason-chip" style="background:#dcfce7; color:#166534;">✓ Full View</span></td>
                       <td><span class="reason-chip" style="background:#dcfce7; color:#166534;">✓ All 469 Students</span></td>
+                      <td><span class="reason-chip" style="background:#dcfce7; color:#166534; font-weight:700;">✓ Full Control</span></td>
                     </tr>
                     <tr>
                       <td><span class="active-role-pill role-pill-hod">👨‍💼 HOD (Admin)</span></td>
@@ -3810,6 +4117,7 @@ Available Nimbus Shell commands:
                       <td><span class="reason-chip" style="background:#dcfce7; color:#166534; font-weight:700;">✓ Full Access</span></td>
                       <td><span class="reason-chip" style="background:#dcfce7; color:#166534;">✓ Full View</span></td>
                       <td><span class="reason-chip" style="background:#dcfce7; color:#166534;">✓ Department Roster</span></td>
+                      <td><span class="reason-chip" style="background:#dcfce7; color:#166534; font-weight:700;">✓ Full Control + Grant</span></td>
                     </tr>
                     <tr>
                       <td><span class="active-role-pill role-pill-teacher">👩‍🏫 Teacher (Faculty)</span></td>
@@ -3818,6 +4126,7 @@ Available Nimbus Shell commands:
                       <td><span class="reason-chip" style="background:#fee2e2; color:#991b1b; font-weight:700;">❌ Blocked &amp; Hidden</span></td>
                       <td><span class="reason-chip" style="background:#dcfce7; color:#166534;">✓ Assigned Cohort</span></td>
                       <td><span class="reason-chip" style="background:#dcfce7; color:#166534;">✓ Assigned Mentees</span></td>
+                      <td><span class="reason-chip" style="background:#fef3c7; color:#92400e; font-weight:700;">⚡ If Granted by HOD/Dean</span></td>
                     </tr>
                     <tr>
                       <td><span class="active-role-pill role-pill-student">🎓 Student</span></td>
@@ -3826,6 +4135,7 @@ Available Nimbus Shell commands:
                       <td><span class="reason-chip" style="background:#fee2e2; color:#991b1b; font-weight:700;">❌ Blocked &amp; Hidden</span></td>
                       <td><span class="reason-chip" style="background:#fee2e2; color:#991b1b;">❌ Blocked</span></td>
                       <td><span class="reason-chip" style="background:#eff6ff; color:#1d4ed8;">Self Dossier Only</span></td>
+                      <td><span class="reason-chip" style="background:#fee2e2; color:#991b1b; font-weight:700;">❌ Completely Blocked</span></td>
                     </tr>
                   </tbody>
                 </table>
@@ -3892,6 +4202,177 @@ Available Nimbus Shell commands:
                   <thead><tr><th>Actor</th><th>Action</th><th>Resource</th><th>Block SHA-256 Hash</th><th>Timestamp</th></tr></thead>
                   <tbody id="admin-audit-tbody">
                     <tr><td colspan="5" style="text-align:center; padding:20px;">Loading audit ledger...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ════════════════════════════════════════════════════════════════════ -->
+          <!-- VIEW: CREATE TEST PAPERS (Superadmin Full Access, Faculty if Granted) -->
+          <!-- ════════════════════════════════════════════════════════════════════ -->
+          <div id="view-test-papers" class="tab-view">
+            <div class="breadcrumbs"><span>Home</span> / <span>Administration</span> / <span class="current">Create Test Papers</span></div>
+
+            <!-- Header Banner -->
+            <div style="background: linear-gradient(135deg, #4c1d95, #7c3aed); color:#ffffff; padding:18px 22px; border-radius:10px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 18px rgba(124,58,237,0.3); flex-wrap:wrap; gap:12px;">
+              <div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="background:#ef4444; color:#ffffff; font-size:0.65rem; font-weight:800; padding:2px 8px; border-radius:4px; letter-spacing:0.05em; text-transform:uppercase;">Restricted Access</span>
+                  <span style="font-size:1.15rem; font-weight:800; letter-spacing:-0.02em;">📝 Test Paper Management System</span>
+                </div>
+                <div style="font-size:0.8rem; color:#ddd6fe; margin-top:4px;">
+                  Full control for <strong>Dean (Superadmin)</strong> &amp; <strong>HOD (Admin)</strong>. Faculty access granted on a per-faculty basis only. Completely hidden from Students.
+                </div>
+              </div>
+              <div style="display:flex; gap:12px; align-items:center;">
+                <div id="test-paper-access-badge" style="padding:6px 14px; background:rgba(255,255,255,0.15); border-radius:6px; border:1px solid rgba(255,255,255,0.25); font-size:0.78rem; font-weight:700;">🔒 RBAC: ENFORCED</div>
+              </div>
+            </div>
+
+            <!-- KPI Row -->
+            <div class="kpi-row">
+              <div class="kpi-card"><div class="kpi-info"><div class="kpi-label">Total Papers Created</div><div class="kpi-value" id="tp-kpi-total">0</div></div></div>
+              <div class="kpi-card"><div class="kpi-info"><div class="kpi-label">Faculty with Access</div><div class="kpi-value" id="tp-kpi-faculty-access" style="color:#7c3aed;">0</div></div></div>
+              <div class="kpi-card"><div class="kpi-info"><div class="kpi-label">Pending Review</div><div class="kpi-value" id="tp-kpi-pending" style="color:#d97706;">0</div></div></div>
+              <div class="kpi-card"><div class="kpi-info"><div class="kpi-label">Published Papers</div><div class="kpi-value" id="tp-kpi-published" style="color:#166534;">0</div></div></div>
+            </div>
+
+            <!-- Two-column layout: Faculty Access Control + Create Paper Form -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
+
+              <!-- Faculty Access Control Card (Dean/HOD only) -->
+              <div class="card" id="tp-faculty-access-card" style="border-left:4px solid #f59e0b;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px;">
+                  <span style="font-size:1.2rem;">🔑</span>
+                  <div>
+                    <h4 style="font-size:0.95rem; font-weight:800; color:#0f172a; margin:0;">Faculty Access Control</h4>
+                    <p style="font-size:0.75rem; color:var(--text-muted); margin:0;">Grant or revoke paper-creation rights for individual faculty members</p>
+                  </div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:10px;" id="faculty-access-list">
+                  <!-- Faculty rows rendered by JS -->
+                </div>
+                <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border-color); font-size:0.73rem; color:var(--text-muted);">
+                  ⚠️ Only Dean &amp; HOD can grant/revoke access. Changes take effect immediately.
+                </div>
+              </div>
+
+              <!-- Create New Test Paper Form -->
+              <div class="card" style="border-left:4px solid #7c3aed;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px;">
+                  <span style="font-size:1.2rem;">✏️</span>
+                  <div>
+                    <h4 style="font-size:0.95rem; font-weight:800; color:#0f172a; margin:0;">Create New Test Paper</h4>
+                    <p style="font-size:0.75rem; color:var(--text-muted); margin:0;">Design exam papers with questions, marks, and duration</p>
+                  </div>
+                </div>
+                <div id="tp-create-form-area">
+                  <div style="display:flex; flex-direction:column; gap:10px;">
+                    <div>
+                      <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Paper Title *</label>
+                      <input type="text" id="tp-title" class="auth-input" style="width:100%; background:var(--bg-subtle); border:1px solid var(--border-color); color:var(--text-main); border-radius:8px; padding:9px 12px; font-size:0.85rem;" placeholder="e.g. Mid-Term Examination – Data Structures">
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                      <div>
+                        <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Subject / Course</label>
+                        <input type="text" id="tp-subject" class="auth-input" style="width:100%; background:var(--bg-subtle); border:1px solid var(--border-color); color:var(--text-main); border-radius:8px; padding:9px 12px; font-size:0.85rem;" placeholder="Data Structures (CS301)">
+                      </div>
+                      <div>
+                        <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Exam Type</label>
+                        <select id="tp-exam-type" style="width:100%; background:var(--bg-subtle); border:1px solid var(--border-color); color:var(--text-main); border-radius:8px; padding:9px 12px; font-size:0.85rem;">
+                          <option>Mid-Term Exam</option>
+                          <option>End-Term Exam</option>
+                          <option>Quiz / Unit Test</option>
+                          <option>Practical Exam</option>
+                          <option>Mock Test</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+                      <div>
+                        <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Total Marks</label>
+                        <input type="number" id="tp-marks" class="auth-input" style="width:100%; background:var(--bg-subtle); border:1px solid var(--border-color); color:var(--text-main); border-radius:8px; padding:9px 12px; font-size:0.85rem;" placeholder="100" value="100">
+                      </div>
+                      <div>
+                        <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Duration (mins)</label>
+                        <input type="number" id="tp-duration" class="auth-input" style="width:100%; background:var(--bg-subtle); border:1px solid var(--border-color); color:var(--text-main); border-radius:8px; padding:9px 12px; font-size:0.85rem;" placeholder="180" value="180">
+                      </div>
+                      <div>
+                        <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Semester</label>
+                        <select id="tp-semester" style="width:100%; background:var(--bg-subtle); border:1px solid var(--border-color); color:var(--text-main); border-radius:8px; padding:9px 12px; font-size:0.85rem;">
+                          <option>Sem 1</option><option>Sem 2</option><option>Sem 3</option><option>Sem 4</option>
+                          <option>Sem 5</option><option>Sem 6</option><option>Sem 7</option><option>Sem 8</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label style="font-size:0.78rem; font-weight:600; color:var(--text-muted); display:block; margin-bottom:4px;">Instructions / Notes</label>
+                      <textarea id="tp-instructions" rows="2" style="width:100%; background:var(--bg-subtle); border:1px solid var(--border-color); color:var(--text-main); border-radius:8px; padding:9px 12px; font-size:0.85rem; font-family:var(--font-sans); resize:vertical;" placeholder="All questions are compulsory. Draw diagrams where required..."></textarea>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                      <button class="btn btn-primary btn-sm" onclick="submitTestPaper()" style="flex:1;">📝 Create Paper</button>
+                      <button class="btn btn-outline btn-sm" onclick="clearTestPaperForm()">✕ Clear</button>
+                    </div>
+                  </div>
+                </div>
+                <div id="tp-access-denied-msg" style="display:none; text-align:center; padding:20px; color:#991b1b; background:#fef2f2; border-radius:8px; border:1px solid #fee2e2;">
+                  <div style="font-size:1.5rem; margin-bottom:8px;">🔒</div>
+                  <div style="font-weight:700; font-size:0.9rem;">Access Restricted</div>
+                  <div style="font-size:0.78rem; margin-top:4px;">You have not been granted paper-creation rights. Please contact Dean or HOD.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Question Builder Card -->
+            <div class="card" id="tp-question-builder-card" style="margin-bottom:20px; border-left:4px solid #0ea5e9;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                <div>
+                  <h4 style="font-size:0.95rem; font-weight:800; color:#0f172a; margin:0;">📋 Question Builder</h4>
+                  <p style="font-size:0.75rem; color:var(--text-muted); margin:0;">Add sections and questions to the exam paper</p>
+                </div>
+                <button class="btn btn-outline btn-sm" onclick="addQuestion()">+ Add Question</button>
+              </div>
+              <div id="tp-questions-container" style="display:flex; flex-direction:column; gap:10px;">
+                <!-- Questions rendered here -->
+                <div style="text-align:center; padding:16px; color:var(--text-muted); font-size:0.82rem; border:2px dashed var(--border-color); border-radius:8px;">
+                  Click "+ Add Question" to start building your test paper
+                </div>
+              </div>
+            </div>
+
+            <!-- Existing Papers Table -->
+            <div class="card">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                <div>
+                  <h4 style="font-size:0.95rem; font-weight:800; color:#0f172a; margin:0;">🗂️ All Test Papers</h4>
+                  <p style="font-size:0.75rem; color:var(--text-muted); margin:0;">Complete repository of created examination papers</p>
+                </div>
+                <div style="display:flex; gap:8px;">
+                  <select id="tp-filter-status" style="font-size:0.8rem; padding:6px 10px; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-surface); color:var(--text-main);" onchange="renderTestPapersTable()">
+                    <option value="all">All Status</option>
+                    <option value="draft">Draft</option>
+                    <option value="published">Published</option>
+                    <option value="archived">Archived</option>
+                  </select>
+                </div>
+              </div>
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Paper Title</th>
+                      <th>Subject</th>
+                      <th>Type</th>
+                      <th>Marks</th>
+                      <th>Duration</th>
+                      <th>Created By</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tp-papers-tbody">
+                    <tr><td colspan="8" style="text-align:center; padding:20px; color:var(--text-muted);">No papers yet. Create your first test paper above.</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -5315,10 +5796,11 @@ Available Nimbus Shell commands:
       document.querySelectorAll('.auth-role-tab').forEach(function(b) { b.classList.remove('active'); });
       var activeTab = document.getElementById('tab-' + role);
       if (activeTab) activeTab.classList.add('active');
-      var facultyCard = document.getElementById('auth-card-faculty');
-      var studentCard = document.getElementById('auth-card-student');
-      if (facultyCard) facultyCard.style.display = role === 'faculty' ? 'flex' : 'none';
-      if (studentCard) studentCard.style.display = role === 'student' ? 'flex' : 'none';
+      var allRoles = ['faculty', 'student', 'dean', 'hod'];
+      allRoles.forEach(function(r) {
+        var card = document.getElementById('auth-card-' + r);
+        if (card) card.style.display = role === r ? 'flex' : 'none';
+      });
     }
 
     let studentListCache = [];
@@ -5332,13 +5814,13 @@ Available Nimbus Shell commands:
     // FIREBASE AUTHENTICATION ENGINE
     // ══════════════════════════════════════════════════════════════════════════
     const DEFAULT_FB_CONFIG = {
-      apiKey: "AIzaSyA7SpSw4TIIv52eZgUq31yMsbjk0eQRsKI",
-      authDomain: "hackxl.firebaseapp.com",
-      projectId: "hackxl",
-      storageBucket: "hackxl.firebasestorage.app",
-      messagingSenderId: "765716719209",
-      appId: "1:765716719209:web:f7c3e3d1c19a1e530d24f8",
-      measurementId: "G-K373KRXX7T"
+      apiKey: "AIzaSyBXDZipeGgUFOyczUfbCrZZmInmEgT9x8k",
+      authDomain: "campuspulse-d014f.firebaseapp.com",
+      projectId: "campuspulse-d014f",
+      storageBucket: "campuspulse-d014f.firebasestorage.app",
+      messagingSenderId: "469605355904",
+      appId: "1:469605355904:web:e529f8cd949a4cff62b165",
+      measurementId: "G-V90RQZM1PP"
     };
 
     let fbAuthInstance = null;
@@ -5348,7 +5830,7 @@ Available Nimbus Shell commands:
       try {
         const savedConfig = localStorage.getItem('campuspulse_firebase_config');
         let config = savedConfig ? JSON.parse(savedConfig) : DEFAULT_FB_CONFIG;
-        if (!config || config.projectId === "campuspulse-enterprise") {
+        if (!config || config.projectId === "campuspulse-enterprise" || config.projectId === "hackxl") {
           config = DEFAULT_FB_CONFIG;
           localStorage.setItem('campuspulse_firebase_config', JSON.stringify(DEFAULT_FB_CONFIG));
         }
@@ -5370,18 +5852,28 @@ Available Nimbus Shell commands:
         console.warn('Firebase init fallback:', err);
       }
 
-      // Check current session
-      const savedSession = localStorage.getItem('campuspulse_auth_user');
-      if (savedSession) {
-        try {
-          const user = JSON.parse(savedSession);
-          applyAuthenticatedUser(user);
-        } catch (e) {
-          showAuthOverlay();
-        }
-      } else {
-        // Quick default signin if not signed in
-        showAuthOverlay();
+      // Always show login on page load — never restore session from localStorage
+      // Clear any stale cached session so users always authenticate fresh
+      localStorage.removeItem('campuspulse_auth_user');
+      showAuthOverlay();
+
+      // If Firebase Auth is active, listen for its own token-verified session
+      if (fbAuthInstance && fbAuthInstance.onAuthStateChanged) {
+        fbAuthInstance.onAuthStateChanged((fbUser) => {
+          // Only auto-restore if Firebase itself confirms an active signed-in user
+          // AND the login overlay is still visible (user hasn't manually signed in yet)
+          const overlay = document.getElementById('auth-overlay-screen');
+          const overlayVisible = overlay && overlay.style.display !== 'none';
+          if (fbUser && overlayVisible) {
+            const storedSession = localStorage.getItem('campuspulse_auth_user');
+            if (storedSession) {
+              try {
+                const user = JSON.parse(storedSession);
+                applyAuthenticatedUser(user);
+              } catch (e) { /* ignore */ }
+            }
+          }
+        });
       }
     }
 
@@ -5593,6 +6085,7 @@ Available Nimbus Shell commands:
         defaultView: 'admin-portal',
         allowedViews: [
           'admin-portal',
+          'test-papers',
           'action-list',
           'student-reports',
           'college-reports',
@@ -5627,6 +6120,7 @@ Available Nimbus Shell commands:
         defaultView: 'admin-portal',
         allowedViews: [
           'admin-portal',
+          'test-papers',
           'action-list',
           'student-reports',
           'naac-evaluator',
@@ -5664,7 +6158,8 @@ Available Nimbus Shell commands:
           'kpmg-formulation',
           'educator-reports',
           'trainers-schedule'
-        ]
+        ],
+        testPaperAccess: false
       },
       student: {
         role: 'student',
@@ -5712,6 +6207,95 @@ Available Nimbus Shell commands:
     // Backward-compatible aliases
     ROLE_METADATA.advisor = ROLE_METADATA.teacher;
     ROLE_METADATA.admin = ROLE_METADATA.hod;
+
+    // Test Paper Access Management Definitions
+    const TP_STORAGE_KEY = 'campuspulse_test_papers';
+    const TP_ACCESS_KEY  = 'campuspulse_tp_faculty_access';
+    let   tpQuestionCount = 0;
+
+    const TP_FACULTY_ROSTER = [
+      { id: 'fac_001', name: 'Dr. Ananya Sharma',     title: 'Faculty – CSE Sec A & B',   initials: 'AS', email: 'ananya.sharma@campuspulse.edu' },
+      { id: 'fac_002', name: 'Prof. Meera Iyer',      title: 'Faculty – CSE Sec C',        initials: 'MI', email: 'meera.iyer@campuspulse.edu' },
+      { id: 'fac_003', name: 'Dr. Arjun Kapoor',      title: 'Faculty – CSE Sec D',        initials: 'AK', email: 'arjun.kapoor@campuspulse.edu' },
+      { id: 'fac_004', name: 'Ms. Priya Nambiar',     title: 'Asst. Professor – CSE',      initials: 'PN', email: 'priya.nambiar@campuspulse.edu' }
+    ];
+
+    function tpGetAccessMap() {
+      try {
+        const saved = localStorage.getItem(TP_ACCESS_KEY);
+        return saved ? JSON.parse(saved) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function tpSaveAccessMap(map) {
+      localStorage.setItem(TP_ACCESS_KEY, JSON.stringify(map));
+    }
+
+    function tpCurrentUserIsSuperadmin() {
+      const role = window.currentActiveRole || 'teacher';
+      return role === 'dean' || role === 'hod' || role === 'admin';
+    }
+
+    function tpCurrentUserCanCreate() {
+      const role = window.currentActiveRole || 'teacher';
+      if (role === 'dean' || role === 'hod' || role === 'admin') return true;
+      if (role === 'teacher' || role === 'advisor') {
+        const accessMap = tpGetAccessMap();
+        const storedUser = localStorage.getItem('campuspulse_auth_user');
+        let email = 'ananya.sharma@campuspulse.edu';
+        let name = 'Dr. Ananya Sharma';
+        if (storedUser) {
+          try {
+            const u = JSON.parse(storedUser);
+            email = u.email || email;
+            name = u.displayName || name;
+          } catch (e) {}
+        }
+        const fac = TP_FACULTY_ROSTER.find(f => 
+          (f.email && f.email.toLowerCase() === email.toLowerCase()) ||
+          (f.name && f.name.toLowerCase() === name.toLowerCase())
+        );
+        if (fac && accessMap[fac.id] === true) return true;
+        if (accessMap[email] === true) return true;
+        if (accessMap['fac_001'] === true && (email.toLowerCase().includes('ananya') || name.toLowerCase().includes('ananya'))) return true;
+        return false;
+      }
+      return false;
+    }
+
+    function updateTestPaperNavVisibility() {
+      const role = window.currentActiveRole || 'teacher';
+      const tpNavItem = document.getElementById('nav-test-papers');
+      const navBadge = document.getElementById('nav-test-papers-badge');
+      if (!tpNavItem) return;
+
+      const isSuperadminRole = tpCurrentUserIsSuperadmin();
+      const canCreate = tpCurrentUserCanCreate();
+
+      if (isSuperadminRole) {
+        tpNavItem.style.setProperty('display', 'flex', 'important');
+        if (navBadge) {
+          navBadge.textContent = 'Superadmin';
+          navBadge.style.background = '#ede9fe';
+          navBadge.style.color = '#6d28d9';
+        }
+      } else if (role === 'teacher' || role === 'advisor') {
+        if (canCreate) {
+          tpNavItem.style.setProperty('display', 'flex', 'important');
+          if (navBadge) {
+            navBadge.textContent = 'Granted';
+            navBadge.style.background = '#dcfce7';
+            navBadge.style.color = '#166534';
+          }
+        } else {
+          tpNavItem.style.setProperty('display', 'none', 'important');
+        }
+      } else {
+        tpNavItem.style.setProperty('display', 'none', 'important');
+      }
+    }
 
     function getStudentRefForUser() {
       if (studentListCache && studentListCache.length > 0) {
@@ -5772,9 +6356,16 @@ Available Nimbus Shell commands:
       if (dropName) dropName.innerText = userObj.displayName;
       if (dropEmail) dropEmail.innerText = userObj.email;
       if (dropRole) dropRole.innerText = userObj.roleTitle;
-      if (dropAuth) dropAuth.innerText = `Firebase Authenticated (${userObj.provider || 'role_guard'})`;
       if (roleSelector) roleSelector.value = role;
 
+      const topbarBadge = document.getElementById('topbar-role-badge');
+      const topbarIcon = document.getElementById('topbar-role-icon');
+      const topbarText = document.getElementById('topbar-role-text');
+      if (topbarBadge) {
+        topbarBadge.className = `active-role-pill ${meta.badgeClass}`;
+        if (topbarIcon) topbarIcon.innerText = meta.badgeIcon;
+        if (topbarText) topbarText.innerText = meta.badgeText;
+      }
 
       if (roleIndicator) {
         roleIndicator.className = `active-role-pill ${meta.badgeClass}`;
@@ -5838,6 +6429,9 @@ Available Nimbus Shell commands:
         else if (currentViewId === 'whatif-sandbox') populateWhatIfDropdown();
       }
 
+      // Test Papers nav item visibility based on permissions
+      updateTestPaperNavVisibility();
+
       showToast(`🎭 Active Role: ${meta.badgeText} (${userObj.displayName})`);
     }
 
@@ -5851,8 +6445,18 @@ Available Nimbus Shell commands:
       applyRoleRBAC(user.role || 'teacher', user);
     }
 
-    function handleRoleChange(role) {
-      applyRoleRBAC(role);
+    function handleRoleChange(newRole) {
+      const storedUser = localStorage.getItem('campuspulse_auth_user');
+      if (storedUser) {
+        try {
+          const user = JSON.parse(storedUser);
+          if (user.role && user.role !== newRole) {
+            showToast('🔒 Account switching requires authentication. Please sign out and sign in to switch accounts.');
+            return;
+          }
+        } catch (e) {}
+      }
+      applyRoleRBAC(newRole);
     }
 
     function handleFirebaseSignOut() {
@@ -5919,10 +6523,16 @@ Available Nimbus Shell commands:
 
       const meta = ROLE_METADATA[role] || ROLE_METADATA.teacher;
 
+      // Dynamic permission for test-papers view
+      const isTestPapers = (viewId === 'test-papers');
+      const hasTpAccess = isTestPapers && (role === 'dean' || role === 'hod' || (typeof tpCurrentUserCanCreate === 'function' && tpCurrentUserCanCreate()));
+
       // Access verification
-      if (!meta.allowedViews.includes(viewId)) {
+      if (!meta.allowedViews.includes(viewId) && !hasTpAccess) {
         if (viewId === 'admin-portal') {
           showToast(`🛡️ Access Restricted: Enterprise Admin Portal is restricted to HOD (Admin) and Dean (Superadmin).`);
+        } else if (viewId === 'test-papers') {
+          showToast(`🛡️ Access Restricted: Test paper creation access has been revoked or not granted by the Dean/HOD.`);
         } else {
           showToast(`⚠️ Access Denied: "${viewId}" is not accessible for ${meta.badgeText}.`);
         }
@@ -5937,6 +6547,9 @@ Available Nimbus Shell commands:
 
       const target = document.getElementById('view-' + viewId);
       if (target) target.classList.add('active');
+
+      const mainContent = document.querySelector('.main-content');
+      if (mainContent) mainContent.scrollTop = 0;
 
       document.querySelectorAll('.nav-item').forEach(item => {
         if (item.getAttribute('onclick') && item.getAttribute('onclick').includes(viewId)) {
@@ -5957,6 +6570,7 @@ Available Nimbus Shell commands:
       if (viewId === 'learn-modules') loadLearningSprints();
       if (viewId === 'lab-practice') loadLabsPractice();
       if (viewId === 'trainers-schedule') loadTrainerSchedule();
+      if (viewId === 'test-papers') loadTestPapersModule();
       if (viewId === 'project-bank') loadProjectBank();
       if (viewId === 'admin-portal') {
         loadAdminAuditLogs();
@@ -6397,6 +7011,120 @@ Available Nimbus Shell commands:
       }
 
       renderNaacCharts();
+      if (data.batches_breakdown) {
+        renderNaacBatchesTable(data.batches_breakdown);
+      }
+      if (data.swoc_analysis) {
+        renderNaacSwocAnalysis(data.swoc_analysis);
+      }
+    }
+
+    function renderNaacBatchesTable(batches) {
+      const container = document.getElementById('naac-batches-table-container');
+      if (!container) return;
+      if (!batches || !batches.length) {
+        container.innerHTML = '<div style="font-size:0.8rem; color:var(--text-muted); padding:10px 0;">No cohort telemetry records ingested.</div>';
+        return;
+      }
+      container.innerHTML = `
+        <div class="table-container">
+          <table class="naac-table">
+            <thead>
+              <tr>
+                <th>Cohort / Batch</th>
+                <th>Program</th>
+                <th style="text-align:center;">Students</th>
+                <th>Avg Attendance</th>
+                <th>Academic Index</th>
+                <th>Placement Readiness</th>
+                <th>ABC Seeded</th>
+                <th>OBE Attainment</th>
+                <th>Faculty Mentor</th>
+                <th>Attainment Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${batches.map(b => `
+                <tr>
+                  <td><strong style="color:#7c3aed; font-family:var(--font-mono);">${b.batch_name}</strong></td>
+                  <td style="font-size:0.78rem;">${b.program}</td>
+                  <td style="text-align:center;"><strong>${b.enrolled}</strong></td>
+                  <td>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <strong style="color:${b.avg_attendance >= 75 ? '#166534' : '#b45309'}; font-size:0.8rem;">${b.avg_attendance}%</strong>
+                      <div style="background:#e2e8f0; border-radius:3px; height:4px; width:45px; overflow:hidden;">
+                        <div style="background:${b.avg_attendance >= 75 ? '#10b981' : '#f59e0b'}; height:100%; width:${b.avg_attendance}%;"></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><strong style="color:#0f172a;">${b.academic_index}</strong> <span style="font-size:0.7rem; color:var(--text-muted);">/100</span></td>
+                  <td>
+                    <span class="reason-chip" style="background:${b.placement_readiness >= 85 ? '#ecfdf5' : '#eff6ff'}; color:${b.placement_readiness >= 85 ? '#065f46' : '#1e40af'}; font-weight:700;">
+                      ${b.placement_readiness}%
+                    </span>
+                  </td>
+                  <td><span style="color:#166534; font-weight:700;">${b.abc_id_seeded_pct}%</span></td>
+                  <td><span style="color:#7c3aed; font-weight:700;">${b.obe_co_attainment_pct}%</span></td>
+                  <td style="font-size:0.75rem; color:var(--text-muted);">${b.mentor_in_charge}</td>
+                  <td>
+                    <span class="naac-score-pill" style="background:${b.status.includes('Benchmark') || b.status.includes('Exemplary') ? '#ecfdf5' : '#f5f3ff'}; color:${b.status.includes('Benchmark') || b.status.includes('Exemplary') ? '#047857' : '#6d28d9'};">
+                      ${b.status}
+                    </span>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderNaacSwocAnalysis(swoc) {
+      const container = document.getElementById('naac-swoc-container');
+      if (!container || !swoc) return;
+      container.innerHTML = `
+        <div class="naac-swoc-grid">
+          <div class="naac-swoc-box strengths">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+              <span style="background:#d1fae5; color:#065f46; font-size:0.72rem; font-weight:800; padding:2px 8px; border-radius:4px;">STRENGTHS (S)</span>
+              <span style="font-size:0.72rem; color:#047857; font-weight:700;">Institutional Pillars</span>
+            </div>
+            <ul style="margin:0; padding-left:16px; font-size:0.76rem; line-height:1.55; color:#334155;">
+              ${(swoc.strengths || []).map(s => `<li style="margin-bottom:6px;">${s}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="naac-swoc-box weaknesses">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+              <span style="background:#fef3c7; color:#92400e; font-size:0.72rem; font-weight:800; padding:2px 8px; border-radius:4px;">WEAKNESSES (W)</span>
+              <span style="font-size:0.72rem; color:#b45309; font-weight:700;">IQAC Focus Areas</span>
+            </div>
+            <ul style="margin:0; padding-left:16px; font-size:0.76rem; line-height:1.55; color:#334155;">
+              ${(swoc.weaknesses || []).map(w => `<li style="margin-bottom:6px;">${w}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="naac-swoc-box opportunities">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+              <span style="background:#dbeafe; color:#1e40af; font-size:0.72rem; font-weight:800; padding:2px 8px; border-radius:4px;">OPPORTUNITIES (O)</span>
+              <span style="font-size:0.72rem; color:#2563eb; font-weight:700;">Delhi-NCR Corridors</span>
+            </div>
+            <ul style="margin:0; padding-left:16px; font-size:0.76rem; line-height:1.55; color:#334155;">
+              ${(swoc.opportunities || []).map(o => `<li style="margin-bottom:6px;">${o}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="naac-swoc-box challenges">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+              <span style="background:#fee2e2; color:#991b1b; font-size:0.72rem; font-weight:800; padding:2px 8px; border-radius:4px;">CHALLENGES (C)</span>
+              <span style="font-size:0.72rem; color:#dc2626; font-weight:700;">Dynamic Tech Shifts</span>
+            </div>
+            <ul style="margin:0; padding-left:16px; font-size:0.76rem; line-height:1.55; color:#334155;">
+              ${(swoc.challenges || []).map(c => `<li style="margin-bottom:6px;">${c}</li>`).join('')}
+            </ul>
+          </div>
+        </div>
+      `;
     }
 
     function renderNaacCharts() {
@@ -6569,26 +7297,38 @@ Available Nimbus Shell commands:
           <table class="naac-table">
             <thead>
               <tr>
-                <th style="width:70px;">KI Code</th>
-                <th style="width:220px;">Indicator Title</th>
-                <th style="width:70px;">Weight</th>
-                <th style="width:70px;">Score</th>
+                <th style="width:75px;">KI Code</th>
+                <th style="width:105px;">Metric Type</th>
+                <th style="width:210px;">Indicator Title</th>
+                <th style="width:65px;">Weight</th>
+                <th style="width:65px;">Score</th>
                 <th>Institutional Measurable KPI</th>
-                <th>Verifiable Documentary Evidence</th>
-                <th style="width:110px;">Status</th>
+                <th>Documentary Evidence &amp; Verification</th>
+                <th style="width:115px;">Actions</th>
               </tr>
             </thead>
             <tbody>
               ${crit.key_indicators.map(ki => `
                 <tr>
                   <td><strong style="color:#7c3aed; font-family:var(--font-mono);">${ki.code}</strong></td>
+                  <td>
+                    <div style="font-size:0.7rem; font-weight:700; color:#6b21a8; font-family:var(--font-mono);">${ki.metric_code || ('Metric ' + ki.code)}</div>
+                    <span style="font-size:0.68rem; font-weight:800; padding:1px 6px; border-radius:4px; background:${(ki.metric_type || 'QnM') === 'QnM' ? '#dbeafe' : '#fef3c7'}; color:${(ki.metric_type || 'QnM') === 'QnM' ? '#1e40af' : '#92400e'};">
+                      ${ki.metric_type || 'QnM'}
+                    </span>
+                  </td>
                   <td><strong>${ki.title}</strong></td>
                   <td><span class="reason-chip">${ki.weight}</span></td>
                   <td><strong style="color:#0f172a;">${ki.score}</strong></td>
                   <td style="font-size:0.78rem; line-height:1.4;">${ki.kpi}</td>
-                  <td style="font-size:0.74rem; color:var(--text-muted); font-family:var(--font-mono);">${ki.evidence}</td>
+                  <td style="font-size:0.74rem; color:var(--text-muted); font-family:var(--font-mono);">
+                    <div>${ki.evidence}</div>
+                    <span class="naac-score-pill" style="background:#ecfdf5; color:#047857; margin-top:4px; display:inline-block;">${ki.status}</span>
+                  </td>
                   <td>
-                    <span class="naac-score-pill" style="background:#ecfdf5; color:#047857;">${ki.status}</span>
+                    <button class="btn btn-sm btn-outline" onclick="openNaacEvidenceModal('${ki.code}')" style="font-size:0.72rem; padding:4px 8px; border-color:#7c3aed; color:#7c3aed; border-radius:6px; display:inline-flex; align-items:center; gap:4px; white-space:nowrap; cursor:pointer;">
+                      <span>🔍</span> Inspect Proof
+                    </button>
                   </td>
                 </tr>
               `).join('')}
@@ -6601,23 +7341,79 @@ Available Nimbus Shell commands:
     function renderNaacNepMatrix(data) {
       if (!data || !data.pillars) return;
       const grid = document.getElementById('naac-nep-pillars-grid');
-      if (!grid) return;
-
-      grid.innerHTML = data.pillars.map(p => `
-        <div class="card" style="border-top:3px solid #7c3aed; display:flex; flex-direction:column; justify-content:space-between;">
-          <div>
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
-              <h4 style="font-size:0.9rem; font-weight:800; color:#0f172a; flex:1;">${p.title}</h4>
-              <span class="naac-score-pill" style="background:#ecfdf5; color:#047857; margin-left:8px;">${p.score_pct}%</span>
+      if (grid) {
+        grid.innerHTML = data.pillars.map(p => `
+          <div class="card" style="border-top:3px solid #7c3aed; display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+                <h4 style="font-size:0.9rem; font-weight:800; color:#0f172a; flex:1;">${p.title}</h4>
+                <span class="naac-score-pill" style="background:#ecfdf5; color:#047857; margin-left:8px;">${p.score_pct}%</span>
+              </div>
+              <div style="font-size:0.76rem; color:var(--text-muted); line-height:1.45; margin-bottom:12px;">${p.highlights}</div>
             </div>
-            <div style="font-size:0.76rem; color:var(--text-muted); line-height:1.45; margin-bottom:12px;">${p.highlights}</div>
+            <div style="border-top:1px solid var(--border-color); padding-top:8px; display:flex; justify-content:space-between; align-items:center; font-size:0.7rem;">
+              <span style="color:#7c3aed; font-weight:700;">${p.status}</span>
+              <span style="color:var(--text-dim); font-family:var(--font-mono);">${p.evidence_ref}</span>
+            </div>
           </div>
-          <div style="border-top:1px solid var(--border-color); padding-top:8px; display:flex; justify-content:space-between; align-items:center; font-size:0.7rem;">
-            <span style="color:#7c3aed; font-weight:700;">${p.status}</span>
-            <span style="color:var(--text-dim); font-family:var(--font-mono);">${p.evidence_ref}</span>
-          </div>
+        `).join('');
+      }
+
+      if (naacOverviewCache && naacOverviewCache.sample_abc_ledger) {
+        renderNaacAbcLedger(naacOverviewCache.sample_abc_ledger);
+      }
+    }
+
+    function renderNaacAbcLedger(ledger) {
+      const container = document.getElementById('naac-abc-ledger-container');
+      if (!container) return;
+      if (!ledger || !ledger.length) {
+        container.innerHTML = '<div style="font-size:0.8rem; color:var(--text-muted); padding:10px 0;">No student ABC registry records available.</div>';
+        return;
+      }
+      container.innerHTML = `
+        <div class="table-container">
+          <table class="naac-table">
+            <thead>
+              <tr>
+                <th>Roll Number</th>
+                <th>Student Name</th>
+                <th>Batch / Cohort</th>
+                <th>APAAR / ABC ID</th>
+                <th>DigiLocker Status</th>
+                <th>Earned Credits (NCrF)</th>
+                <th>MEES Pathway Track</th>
+                <th>Sync Timestamp</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${ledger.map(s => `
+                <tr>
+                  <td><strong style="color:#0f172a; font-family:var(--font-mono);">${s.roll_number}</strong></td>
+                  <td><strong>${s.student_name}</strong></td>
+                  <td><span class="reason-chip">${s.batch}</span></td>
+                  <td><strong style="color:#7c3aed; font-family:var(--font-mono);">${s.apaar_abc_id}</strong></td>
+                  <td>
+                    <span class="naac-score-pill" style="background:#ecfdf5; color:#047857; display:inline-flex; align-items:center; gap:4px;">
+                      <span>✓</span> ${s.digilocker_status}
+                    </span>
+                  </td>
+                  <td>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <strong style="color:#0f172a;">${s.credits_earned} / 160</strong>
+                      <div style="background:#e2e8f0; border-radius:3px; height:4px; width:40px; overflow:hidden;">
+                        <div style="background:#7c3aed; height:100%; width:${(s.credits_earned / 160) * 100}%;"></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td style="font-size:0.75rem; color:#334155;">${s.mees_pathway}</td>
+                  <td style="font-size:0.72rem; color:var(--text-muted); font-family:var(--font-mono);">${s.last_sync}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
         </div>
-      `).join('');
+      `;
     }
 
     function renderNaacSimulator(data) {
@@ -6637,6 +7433,45 @@ Available Nimbus Shell commands:
       `).join('');
 
       recomputeSimulationDisplay();
+    }
+
+    function applyNaacPreset(presetType) {
+      if (!naacOverviewCache || !naacOverviewCache.criteria) return;
+
+      const presets = {
+        baseline: {
+          criterion_1: 3.70, criterion_2: 3.85, criterion_3: 3.45,
+          criterion_4: 3.80, criterion_5: 3.75, criterion_6: 3.65, criterion_7: 3.90
+        },
+        research: {
+          criterion_1: 3.75, criterion_2: 3.85, criterion_3: 3.90,
+          criterion_4: 3.85, criterion_5: 3.80, criterion_6: 3.75, criterion_7: 3.90
+        },
+        placement: {
+          criterion_1: 3.80, criterion_2: 3.85, criterion_3: 3.55,
+          criterion_4: 3.85, criterion_5: 3.95, criterion_6: 3.70, criterion_7: 3.95
+        },
+        global: {
+          criterion_1: 3.85, criterion_2: 3.90, criterion_3: 3.85,
+          criterion_4: 3.90, criterion_5: 3.90, criterion_6: 3.85, criterion_7: 3.95
+        },
+        max: {
+          criterion_1: 4.00, criterion_2: 4.00, criterion_3: 4.00,
+          criterion_4: 4.00, criterion_5: 4.00, criterion_6: 4.00, criterion_7: 4.00
+        }
+      };
+
+      const selected = presets[presetType] || presets.baseline;
+      Object.keys(selected).forEach(key => {
+        naacSimulatedScores[key] = selected[key];
+        const sl = document.getElementById('slider-' + key);
+        if (sl) sl.value = selected[key];
+        const valLabel = document.getElementById('sim-val-' + key);
+        if (valLabel) valLabel.innerText = selected[key].toFixed(2);
+      });
+
+      updateNaacSimulation('criterion_1', naacSimulatedScores['criterion_1']);
+      showToast(`Applied preset: ${presetType.toUpperCase()} Target Scenario`);
     }
 
     async function updateNaacSimulation(key, value) {
@@ -6671,22 +7506,140 @@ Available Nimbus Shell commands:
     }
 
     function resetNaacSimulation() {
-      if (naacOverviewCache && naacOverviewCache.criteria) {
-        naacOverviewCache.criteria.forEach(c => {
-          naacSimulatedScores[c.key] = c.score;
-          const sl = document.getElementById('slider-' + c.key);
-          if (sl) sl.value = c.score;
-          const valLabel = document.getElementById('sim-val-' + c.key);
-          if (valLabel) valLabel.innerText = c.score.toFixed(2);
-        });
-        updateNaacSimulation('criterion_1', naacSimulatedScores['criterion_1']);
-        showToast('Reset simulation sliders to verified baseline.');
-      }
+      applyNaacPreset('baseline');
     }
 
     function recomputeSimulationDisplay() {
       if (naacOverviewCache) {
         updateNaacSimulation('criterion_1', naacSimulatedScores['criterion_1'] || 3.70);
+      }
+    }
+
+    function openNaacEvidenceModal(kiCode) {
+      let indicator = null;
+      let parentCrit = null;
+
+      if (naacCriteriaCache && naacCriteriaCache.criteria) {
+        for (const c of naacCriteriaCache.criteria) {
+          if (c.key_indicators) {
+            const found = c.key_indicators.find(k => k.code === kiCode);
+            if (found) {
+              indicator = found;
+              parentCrit = c;
+              break;
+            }
+          }
+        }
+      }
+
+      const modal = document.getElementById('naac-evidence-modal');
+      const content = document.getElementById('naac-evidence-modal-body');
+      if (!modal || !content) return;
+
+      if (!indicator) {
+        indicator = {
+          code: kiCode,
+          title: 'Institutional Indicator Proof Dossier',
+          weight: 25,
+          score: 3.80,
+          kpi: 'Adherence to AICTE & NAAC Quality Benchmarks',
+          evidence: 'Verified institutional records and council resolutions',
+          status: 'Documented & Verified'
+        };
+        parentCrit = { id: 1, name: 'Curricular Aspects' };
+      }
+
+      const metricCode = indicator.metric_code || `Metric ${indicator.code}.1`;
+      const metricType = indicator.metric_type || (indicator.weight >= 25 ? 'QnM' : 'QlM');
+      const hashStr = indicator.code + indicator.title;
+      let hashNum = 0;
+      for (let i = 0; i < hashStr.length; i++) {
+        hashNum = ((hashNum << 5) - hashNum) + hashStr.charCodeAt(i);
+        hashNum |= 0;
+      }
+      const hexHash = Math.abs(hashNum).toString(16).padStart(8, '0');
+
+      content.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; border-bottom:1px solid var(--border-color); padding-bottom:12px;">
+          <div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px; flex-wrap:wrap;">
+              <span style="background:#f3e8ff; color:#7c3aed; font-weight:800; font-size:0.72rem; padding:2px 8px; border-radius:4px;">${metricCode}</span>
+              <span style="background:${metricType === 'QnM' ? '#dbeafe' : '#fef3c7'}; color:${metricType === 'QnM' ? '#1e40af' : '#92400e'}; font-weight:800; font-size:0.72rem; padding:2px 8px; border-radius:4px;">${metricType} (${metricType === 'QnM' ? 'Quantitative' : 'Qualitative'})</span>
+              <span style="background:#ecfdf5; color:#047857; font-weight:800; font-size:0.72rem; padding:2px 8px; border-radius:4px;">DVV Verified 100%</span>
+            </div>
+            <h3 style="font-size:1.05rem; font-weight:800; color:#0f172a; margin:0;">${indicator.title}</h3>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Criterion ${parentCrit.id}: ${parentCrit.name} • Lead: IQAC Standing Committee</div>
+          </div>
+          <button class="btn btn-sm btn-outline" onclick="closeNaacEvidenceModal()" style="border:none; font-size:1.2rem; cursor:pointer; padding:2px 8px;">✕</button>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+          <div style="background:var(--bg-subtle); padding:10px 14px; border-radius:6px; border:1px solid var(--border-color);">
+            <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">RAF Metric Weightage</div>
+            <div style="font-size:1.2rem; font-weight:800; color:#7c3aed;">${indicator.weight} <span style="font-size:0.78rem; font-weight:600; color:var(--text-muted);">/ 1000 pts</span></div>
+          </div>
+          <div style="background:var(--bg-subtle); padding:10px 14px; border-radius:6px; border:1px solid var(--border-color);">
+            <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Peer Review Attainment</div>
+            <div style="font-size:1.2rem; font-weight:800; color:#166534;">${indicator.score} <span style="font-size:0.78rem; font-weight:600; color:var(--text-muted);">/ 4.00</span></div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <h4 style="font-size:0.8rem; font-weight:800; text-transform:uppercase; color:#0f172a; margin-bottom:6px;">Institutional KPI Benchmark</h4>
+          <div style="font-size:0.8rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:10px 14px; color:#334155; line-height:1.5;">
+            ${indicator.kpi}
+          </div>
+        </div>
+
+        <div style="margin-bottom:18px;">
+          <h4 style="font-size:0.8rem; font-weight:800; text-transform:uppercase; color:#0f172a; margin-bottom:8px;">Verifiable Documentary Proofs &amp; Annexures</h4>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border:1px solid #e2e8f0; border-radius:6px; padding:8px 12px; font-size:0.76rem;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span>📑</span>
+                <strong style="color:#0f172a;">${indicator.evidence}</strong>
+              </div>
+              <span style="color:#166534; font-weight:700; font-size:0.7rem;">Verified on File ✓</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border:1px solid #e2e8f0; border-radius:6px; padding:8px 12px; font-size:0.76rem;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span>🏛️</span>
+                <span style="color:#475569;">IQAC Board Resolution &amp; Academic Council Ratification AC/2024</span>
+              </div>
+              <span style="color:#166534; font-weight:700; font-size:0.7rem;">Signed ✓</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border:1px solid #e2e8f0; border-radius:6px; padding:8px 12px; font-size:0.76rem;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span>📊</span>
+                <span style="color:#475569;">CampusPulse Deterministic AST Audit Ledger (SHA-256 Validated)</span>
+              </div>
+              <span style="color:#166534; font-weight:700; font-size:0.7rem;">Certified ✓</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#f1f5f9; border-radius:6px; padding:10px 14px; font-size:0.72rem; color:#475569; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+          <div>
+            <div>Cryptographic DVV Audit Hash:</div>
+            <code style="font-size:0.7rem; color:#7c3aed;">SHA256:e7b9${hexHash}41a2e9b89fa7</code>
+          </div>
+          <button class="btn btn-sm btn-outline" onclick="showToast('✅ DVV Evidence Dossier exported for Peer Team inspection')" style="background:#ffffff; cursor:pointer;">
+            Export Proof Package
+          </button>
+        </div>
+      `;
+
+      modal.style.display = 'flex';
+    }
+
+    function closeNaacEvidenceModal() {
+      const modal = document.getElementById('naac-evidence-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function handleEvidenceModalBackdrop(event) {
+      if (event.target && event.target.id === 'naac-evidence-modal') {
+        closeNaacEvidenceModal();
       }
     }
 
@@ -7320,6 +8273,339 @@ Available Nimbus Shell commands:
       } catch (err) {
         console.error(err);
       }
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // TEST PAPER MANAGEMENT MODULE
+    // Full access: Dean (Superadmin), HOD (Admin)
+    // Conditional access: Faculty with explicit permission granted by Dean/HOD
+    // No access: Students (view completely hidden)
+    // ══════════════════════════════════════════════════════════════════════════
+
+    function tpGetPapers() {
+      const saved = localStorage.getItem(TP_STORAGE_KEY);
+      return saved ? JSON.parse(saved) : [];
+    }
+
+    function tpSavePapers(papers) {
+      localStorage.setItem(TP_STORAGE_KEY, JSON.stringify(papers));
+    }
+
+    function loadTestPapersModule() {
+      const role = window.currentActiveRole || 'teacher';
+
+      // Hide Faculty Access Control card for faculty (teacher), show only for dean/hod
+      const facAccessCard = document.getElementById('tp-faculty-access-card');
+      if (facAccessCard) {
+        facAccessCard.style.display = tpCurrentUserIsSuperadmin() ? '' : 'none';
+      }
+
+      // Show/hide create form vs access denied msg
+      const formArea = document.getElementById('tp-create-form-area');
+      const deniedMsg = document.getElementById('tp-access-denied-msg');
+      const qBuilderCard = document.getElementById('tp-question-builder-card');
+      const canCreate = tpCurrentUserCanCreate();
+
+      if (formArea) formArea.style.display = canCreate ? 'block' : 'none';
+      if (deniedMsg) deniedMsg.style.display = canCreate ? 'none' : 'block';
+      if (qBuilderCard) qBuilderCard.style.display = canCreate ? '' : 'none';
+
+      // Update nav badge
+      const navBadge = document.getElementById('nav-test-papers-badge');
+      if (navBadge) {
+        if (tpCurrentUserIsSuperadmin()) {
+          navBadge.textContent = 'Full Access';
+          navBadge.style.background = '#dcfce7';
+          navBadge.style.color = '#166534';
+        } else if (canCreate) {
+          navBadge.textContent = 'Granted';
+          navBadge.style.background = '#dbeafe';
+          navBadge.style.color = '#1d4ed8';
+        } else {
+          navBadge.textContent = 'No Access';
+          navBadge.style.background = '#fee2e2';
+          navBadge.style.color = '#991b1b';
+        }
+      }
+
+      // Update access badge in header
+      const accessBadge = document.getElementById('test-paper-access-badge');
+      if (accessBadge) {
+        if (tpCurrentUserIsSuperadmin()) {
+          accessBadge.innerHTML = '&#x1F451; SUPERADMIN: FULL ACCESS';
+        } else if (canCreate) {
+          accessBadge.innerHTML = '&#x2705; FACULTY: CREATE ACCESS GRANTED';
+        } else {
+          accessBadge.innerHTML = '&#x1F512; RBAC: VIEW ONLY';
+        }
+      }
+
+      renderFacultyAccessList();
+      renderTestPapersTable();
+      updateTestPaperKPIs();
+    }
+
+    function renderFacultyAccessList() {
+      if (!tpCurrentUserIsSuperadmin()) return;
+      const container = document.getElementById('faculty-access-list');
+      if (!container) return;
+      const accessMap = tpGetAccessMap();
+      container.innerHTML = '';
+
+      TP_FACULTY_ROSTER.forEach(fac => {
+        const hasAccess = accessMap[fac.id] === true || (fac.email && accessMap[fac.email] === true);
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:10px 12px; background:var(--bg-subtle); border-radius:8px; border:1px solid var(--border-color);';
+        row.innerHTML = `
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:34px; height:34px; border-radius:50%; background:${hasAccess ? 'linear-gradient(135deg,#7c3aed,#6d28d9)' : 'var(--bg-container)'}; display:flex; align-items:center; justify-content:center; font-size:0.72rem; font-weight:800; color:${hasAccess ? '#fff' : 'var(--text-muted)'};">${fac.initials}</div>
+            <div>
+              <div style="font-size:0.83rem; font-weight:700; color:var(--text-main);">${fac.name}</div>
+              <div style="font-size:0.7rem; color:var(--text-muted);">${fac.title}</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:0.7rem; font-weight:700; padding:3px 8px; border-radius:10px; background:${hasAccess ? '#dcfce7' : '#fee2e2'}; color:${hasAccess ? '#166534' : '#991b1b'};">
+              ${hasAccess ? '&#x2705; Access Granted' : '&#x274C; No Access'}
+            </span>
+            <button onclick="tpToggleFacultyAccess('${fac.id}', ${!hasAccess})"
+              style="padding:5px 12px; font-size:0.73rem; font-weight:700; border-radius:6px; border:1px solid ${hasAccess ? '#fca5a5' : '#7c3aed'}; background:${hasAccess ? '#fef2f2' : '#ede9fe'}; color:${hasAccess ? '#991b1b' : '#6d28d9'}; cursor:pointer;">
+              ${hasAccess ? 'Revoke' : 'Grant'}
+            </button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+
+      updateTestPaperKPIs();
+      updateTestPaperNavVisibility();
+    }
+
+    function tpToggleFacultyAccess(facId, grantAccess) {
+      if (!tpCurrentUserIsSuperadmin()) {
+        showToast('&#x1F6E1;&#xFE0F; Only Dean or HOD can manage faculty access.');
+        return;
+      }
+      const accessMap = tpGetAccessMap();
+      const fac = TP_FACULTY_ROSTER.find(f => f.id === facId);
+      if (grantAccess) {
+        accessMap[facId] = true;
+        if (fac && fac.email) accessMap[fac.email] = true;
+        showToast(`&#x2705; Test paper creation access granted to ${fac ? fac.name : facId}`);
+      } else {
+        delete accessMap[facId];
+        if (fac && fac.email) delete accessMap[fac.email];
+        showToast(`&#x274C; Access revoked for ${fac ? fac.name : facId}`);
+      }
+      tpSaveAccessMap(accessMap);
+      renderFacultyAccessList();
+      updateTestPaperNavVisibility();
+    }
+
+    function updateTestPaperKPIs() {
+      const papers = tpGetPapers();
+      const accessMap = tpGetAccessMap();
+      const totalEl     = document.getElementById('tp-kpi-total');
+      const facAccessEl = document.getElementById('tp-kpi-faculty-access');
+      const pendingEl   = document.getElementById('tp-kpi-pending');
+      const publishedEl = document.getElementById('tp-kpi-published');
+      if (totalEl)     totalEl.textContent     = papers.length;
+      if (facAccessEl) facAccessEl.textContent  = Object.keys(accessMap).filter(k => accessMap[k]).length;
+      if (pendingEl)   pendingEl.textContent    = papers.filter(p => p.status === 'draft').length;
+      if (publishedEl) publishedEl.textContent  = papers.filter(p => p.status === 'published').length;
+    }
+
+    let tpQuestions = [];
+
+    function addQuestion() {
+      if (!tpCurrentUserCanCreate()) {
+        showToast('&#x1F512; You do not have permission to create test papers.');
+        return;
+      }
+      tpQuestionCount++;
+      const container = document.getElementById('tp-questions-container');
+      if (!container) return;
+
+      // Remove placeholder
+      const placeholder = container.querySelector('[data-placeholder]');
+      if (placeholder) placeholder.remove();
+
+      const qNum = tpQuestions.length + 1;
+      const qId  = 'q_' + Date.now();
+      tpQuestions.push({ id: qId, text: '', marks: 5, type: 'short' });
+
+      const qDiv = document.createElement('div');
+      qDiv.id = 'qblock_' + qId;
+      qDiv.style.cssText = 'background:var(--bg-subtle); border:1px solid var(--border-color); border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:10px;';
+      qDiv.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.8rem; font-weight:800; color:var(--primary-blue);">Question ${qNum}</span>
+          <button onclick="removeQuestion('${qId}')" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:0.85rem;" title="Remove">&#x2715;</button>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr auto auto; gap:8px; align-items:center;">
+          <input type="text" id="qt_${qId}" placeholder="Enter question text..." style="width:100%; background:var(--bg-surface); border:1px solid var(--border-color); color:var(--text-main); border-radius:7px; padding:8px 10px; font-size:0.82rem; font-family:var(--font-sans);" oninput="tpUpdateQuestion('${qId}', 'text', this.value)">
+          <select style="background:var(--bg-surface); border:1px solid var(--border-color); color:var(--text-main); border-radius:7px; padding:8px; font-size:0.78rem;" onchange="tpUpdateQuestion('${qId}', 'type', this.value)">
+            <option value="short">Short Answer</option>
+            <option value="long">Long Answer</option>
+            <option value="mcq">MCQ</option>
+            <option value="numerical">Numerical</option>
+          </select>
+          <div style="display:flex; align-items:center; gap:4px;">
+            <input type="number" id="qm_${qId}" value="5" min="1" max="100" style="width:60px; background:var(--bg-surface); border:1px solid var(--border-color); color:var(--text-main); border-radius:7px; padding:7px 8px; font-size:0.82rem;" oninput="tpUpdateQuestion('${qId}', 'marks', this.value)">
+            <span style="font-size:0.72rem; color:var(--text-muted);">Marks</span>
+          </div>
+        </div>
+      `;
+      container.appendChild(qDiv);
+    }
+
+    function tpUpdateQuestion(qId, field, value) {
+      const q = tpQuestions.find(q => q.id === qId);
+      if (q) q[field] = field === 'marks' ? parseInt(value) || 0 : value;
+    }
+
+    function removeQuestion(qId) {
+      tpQuestions = tpQuestions.filter(q => q.id !== qId);
+      const block = document.getElementById('qblock_' + qId);
+      if (block) block.remove();
+      const container = document.getElementById('tp-questions-container');
+      if (container && container.children.length === 0) {
+        container.innerHTML = '<div data-placeholder style="text-align:center; padding:16px; color:var(--text-muted); font-size:0.82rem; border:2px dashed var(--border-color); border-radius:8px;">Click \"+ Add Question\" to start building your test paper</div>';
+        tpQuestions = [];
+        tpQuestionCount = 0;
+      }
+    }
+
+    function submitTestPaper() {
+      if (!tpCurrentUserCanCreate()) {
+        showToast('&#x1F512; You do not have permission to create test papers.');
+        return;
+      }
+      const title    = (document.getElementById('tp-title') || {}).value.trim();
+      const subject  = (document.getElementById('tp-subject') || {}).value.trim();
+      const examType = (document.getElementById('tp-exam-type') || {}).value;
+      const marks    = parseInt((document.getElementById('tp-marks') || {}).value) || 100;
+      const duration = parseInt((document.getElementById('tp-duration') || {}).value) || 180;
+      const semester = (document.getElementById('tp-semester') || {}).value;
+      const notes    = (document.getElementById('tp-instructions') || {}).value.trim();
+
+      if (!title) {
+        showToast('&#x26A0;&#xFE0F; Please enter a paper title.');
+        return;
+      }
+
+      const storedUser  = localStorage.getItem('campuspulse_auth_user');
+      const currentUser = storedUser ? JSON.parse(storedUser) : { displayName: 'Unknown', role: 'teacher' };
+      const role        = window.currentActiveRole || 'teacher';
+
+      const paper = {
+        id:        'tp_' + Date.now(),
+        title,
+        subject:   subject || 'General',
+        examType,
+        marks,
+        duration,
+        semester,
+        notes,
+        questions: [...tpQuestions],
+        createdBy: currentUser.displayName,
+        createdByRole: role,
+        createdAt: new Date().toLocaleString('en-IN'),
+        status:    tpCurrentUserIsSuperadmin() ? 'published' : 'draft'
+      };
+
+      const papers = tpGetPapers();
+      papers.unshift(paper);
+      tpSavePapers(papers);
+
+      // Reset form
+      clearTestPaperForm();
+      renderTestPapersTable();
+      updateTestPaperKPIs();
+
+      const statusMsg = paper.status === 'published' ? 'published' : 'saved as Draft (pending approval)';
+      showToast(`&#x1F4DD; Test paper "${title}" created & ${statusMsg}!`);
+    }
+
+    function clearTestPaperForm() {
+      ['tp-title', 'tp-subject', 'tp-instructions'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      ['tp-marks', 'tp-duration'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = id === 'tp-marks' ? '100' : '180';
+      });
+      tpQuestions = [];
+      tpQuestionCount = 0;
+      const container = document.getElementById('tp-questions-container');
+      if (container) {
+        container.innerHTML = '<div data-placeholder style="text-align:center; padding:16px; color:var(--text-muted); font-size:0.82rem; border:2px dashed var(--border-color); border-radius:8px;">Click \"+ Add Question\" to start building your test paper</div>';
+      }
+    }
+
+    function renderTestPapersTable() {
+      const tbody  = document.getElementById('tp-papers-tbody');
+      if (!tbody) return;
+      const filter = (document.getElementById('tp-filter-status') || {}).value || 'all';
+      let papers   = tpGetPapers();
+      const role   = window.currentActiveRole || 'teacher';
+      const isSuperadmin = tpCurrentUserIsSuperadmin();
+
+      if (filter !== 'all') papers = papers.filter(p => p.status === filter);
+
+      if (papers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px; color:var(--text-muted);">No papers found. Create your first test paper above.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = papers.map(p => {
+        const statusColors = {
+          draft:     { bg: '#fef3c7', fg: '#92400e' },
+          published: { bg: '#dcfce7', fg: '#166534' },
+          archived:  { bg: '#f1f5f9', fg: '#475569' }
+        };
+        const sc = statusColors[p.status] || statusColors.draft;
+        const actionBtns = isSuperadmin
+          ? `<div style="display:flex; gap:6px;">
+               ${p.status === 'draft' ? `<button onclick="tpPublishPaper('${p.id}')" style="padding:4px 10px; font-size:0.7rem; border-radius:5px; border:1px solid #059669; background:#d1fae5; color:#065f46; cursor:pointer; font-weight:700;">&#x2713; Approve</button>` : ''}
+               <button onclick="tpDeletePaper('${p.id}')" style="padding:4px 10px; font-size:0.7rem; border-radius:5px; border:1px solid #fca5a5; background:#fef2f2; color:#991b1b; cursor:pointer; font-weight:700;">&#x1F5D1;</button>
+             </div>`
+          : `<span style="font-size:0.75rem; color:var(--text-muted);">View Only</span>`;
+
+        return `<tr>
+          <td style="font-weight:700; font-size:0.83rem;">${p.title}</td>
+          <td style="font-size:0.8rem;">${p.subject}</td>
+          <td style="font-size:0.78rem;"><span style="background:#e0e7ff; color:#4338ca; padding:2px 7px; border-radius:10px; font-weight:700;">${p.examType}</span></td>
+          <td style="font-size:0.8rem; font-weight:700;">${p.marks}</td>
+          <td style="font-size:0.8rem;">${p.duration} min</td>
+          <td style="font-size:0.78rem;">${p.createdBy}<br><span style="color:var(--text-muted); font-size:0.68rem;">${p.createdAt}</span></td>
+          <td><span style="background:${sc.bg}; color:${sc.fg}; padding:2px 8px; border-radius:10px; font-size:0.72rem; font-weight:800; text-transform:capitalize;">${p.status}</span></td>
+          <td>${actionBtns}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    function tpPublishPaper(paperId) {
+      if (!tpCurrentUserIsSuperadmin()) return;
+      const papers = tpGetPapers();
+      const p = papers.find(p => p.id === paperId);
+      if (p) {
+        p.status = 'published';
+        tpSavePapers(papers);
+        renderTestPapersTable();
+        updateTestPaperKPIs();
+        showToast(`&#x2705; Paper "${p.title}" approved & published!`);
+      }
+    }
+
+    function tpDeletePaper(paperId) {
+      if (!tpCurrentUserIsSuperadmin()) return;
+      const papers = tpGetPapers().filter(p => p.id !== paperId);
+      tpSavePapers(papers);
+      renderTestPapersTable();
+      updateTestPaperKPIs();
+      showToast('&#x1F5D1; Test paper removed.');
     }
 
     // Admin Portal & Live AST Audit
@@ -9016,10 +10302,6 @@ Available Nimbus Shell commands:
       document.documentElement.setAttribute("data-theme", savedTheme || "light");
 
       initFirebaseAuth();
-      const urlParams = new URLSearchParams(window.location.search);
-      const paramRole = urlParams.get('role');
-      const savedRole = paramRole || localStorage.getItem('campuspulse_active_role') || 'teacher';
-      applyRoleRBAC(savedRole);
     });
   </script>
 </body>

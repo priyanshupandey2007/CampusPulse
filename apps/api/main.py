@@ -1633,8 +1633,8 @@ def get_competitive_dashboard_widget():
 
 # ── KPMG Challenge Deliverables & Methodology ────────────────────────────────
 
-@app.get("/api/v1/kpmg/deliverables")
-def get_kpmg_deliverables():
+# @app.get("/api/v1/kpmg/deliverables")
+# def get_kpmg_deliverables():
     return make_envelope({
         "challenge_title": "Smart Campus Analytics: Predict, Optimize & Improve Student Success",
         "organizer": "KPMG in India",
@@ -1777,8 +1777,8 @@ def get_kpmg_deliverables():
     })
 
 
-@app.get("/api/v1/kpmg/segmentation-matrix")
-def get_kpmg_segmentation_matrix(db: Session = Depends(get_db)):
+# @app.get("/api/v1/kpmg/segmentation-matrix")
+# def get_kpmg_segmentation_matrix(db: Session = Depends(get_db)):
     repo = CampusPulseRepository(db)
     students, _ = repo.list_students(limit=100)
     

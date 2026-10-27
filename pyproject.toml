@@ -1,7 +1,7 @@
 [project]
 name = "campuspulse"
 version = "5.0.0"
-description = "Smart Campus Analytics — Student Success Operating System (KPMG Hackathon)"
+description = "Smart Campus Analytics — Student Success Operating System"
 requires-python = ">=3.11"
 readme = "README.md"
 license = { text = "Proprietary" }
