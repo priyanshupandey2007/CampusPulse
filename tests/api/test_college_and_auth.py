@@ -122,3 +122,24 @@ def test_capstone_faculty_document_management():
     assert del_res.status_code == 200
 
 
+def test_kpmg_deliverables_and_segmentation_matrix():
+    # Test KPMG Challenge Deliverables endpoint
+    deliv_res = client.get("/api/v1/kpmg/deliverables")
+    assert deliv_res.status_code == 200
+    data = deliv_res.json()["data"]
+    assert "pitch_deck" in data
+    assert "evaluation_rubric_mapping" in data
+    assert "data_integration" in data
+    assert len(data["pitch_deck"]) >= 5
+
+    # Test KPMG 2D Student Segmentation Matrix endpoint
+    seg_res = client.get("/api/v1/kpmg/segmentation-matrix")
+    assert seg_res.status_code == 200
+    seg_data = seg_res.json()["data"]
+    assert "students" in seg_data
+    assert "quadrant_distribution" in seg_data
+    assert "cohort_benchmarks" in seg_data
+    assert isinstance(seg_data["students"], list)
+
+
+

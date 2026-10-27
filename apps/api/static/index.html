@@ -11209,14 +11209,19 @@ Available Nimbus Shell commands:
       }
     });
 
-    function closeDrawer(id) { document.getElementById(id).style.display = 'none'; }
+    function closeDrawer(id) {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    }
+
     function toggleSidebar() {
       const s = document.querySelector('.sidebar');
-      s.style.display = s.style.display === 'none' ? 'flex' : 'none';
+      if (s) s.style.display = s.style.display === 'none' ? 'flex' : 'none';
     }
 
     function showToast(msg) {
       const container = document.getElementById('toast-container');
+      if (!container) return;
       const toast = document.createElement('div');
       toast.className = 'toast';
       toast.innerHTML = `<span>⚡</span> <span>${msg}</span>`;
