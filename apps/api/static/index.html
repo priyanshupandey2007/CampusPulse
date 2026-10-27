@@ -3708,7 +3708,7 @@
               <div class="page-title" style="display:flex; align-items:center; flex-wrap:wrap; gap:8px;">
                 <span id="student-report-title">Student Success Dossier</span>
                 <select id="student-report-select" data-roles="advisor admin recruiter" class="filter-select" style="font-size:0.9rem; font-weight:600;" onchange="loadStudentDossier(this.value)"></select>
-                <div id="student-self-badge" data-roles="student" style="background:#eff6ff; color:#1d4ed8; font-weight:700; padding:6px 12px; border-radius:6px; font-size:0.84rem; border:1px solid #bfdbfe;">🎓 Enrolled: Aarav Sharma (2023CSE001 • CSE 2029)</div>
+                <div id="student-self-badge" data-roles="student" style="background:#eff6ff; color:#1d4ed8; font-weight:700; padding:6px 12px; border-radius:6px; font-size:0.84rem; border:1px solid #bfdbfe;">🎓 Enrolled: Priyanshu Pandey (2023CSE001 • Section A • CSE 2029)</div>
               </div>
               <div class="header-actions-group">
                 <button class="btn btn-outline" onclick="window.print()">🖨️ Print Dossier</button>
@@ -3792,7 +3792,7 @@
 
               <div id="mentor-chat-window" style="background:#f8fafc; border:1px solid var(--border-color); border-radius:8px; padding:16px; min-height:200px; font-size:0.85rem; line-height:1.6; margin-bottom:14px;">
                 <div style="padding:10px; background:#ffffff; border-radius:6px; border-left:3px solid var(--primary-blue); margin-bottom:10px;">
-                  <strong>CampusPulse AI Mentor:</strong> Hello Aarav! Based on your 9.1 CGPA and 42 placement score, your highest-ROI focus this week is completing 4 LeetCode Dynamic Programming challenges. What would you like to practice today?
+                  <strong>CampusPulse AI Mentor:</strong> Hello Priyanshu! Based on your 9.1 CGPA and 42 placement score, your highest-ROI focus this week is completing 4 LeetCode Dynamic Programming challenges. What would you like to practice today?
                 </div>
               </div>
 
@@ -4776,7 +4776,7 @@ Available Nimbus Shell commands:
                 <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
                   <label style="font-size:0.82rem; font-weight:700; color:#475569;">Target Mentee:</label>
                   <select id="whatif-select-student" data-roles="advisor admin recruiter" class="filter-select" style="min-width:320px;" onchange="loadWhatIf(this.value)"></select>
-                  <div id="whatif-student-self-badge" data-roles="student" style="font-weight:700; color:#1d4ed8; background:#eff6ff; padding:6px 12px; border-radius:6px; border:1px solid #bfdbfe; font-size:0.85rem;">🎓 Simulating for: Aarav Sharma (2023CSE001 • CSE 2029)</div>
+                  <div id="whatif-student-self-badge" data-roles="student" style="font-weight:700; color:#1d4ed8; background:#eff6ff; padding:6px 12px; border-radius:6px; border:1px solid #bfdbfe; font-size:0.85rem;">🎓 Simulating for: Priyanshu Pandey (2023CSE001 • Section A • CSE 2029)</div>
                 </div>
                 <div style="display:flex; gap:8px;">
                   <button class="btn btn-outline btn-sm" onclick="resetWhatIfSliders()">↺ Reset Sliders</button>
@@ -6024,13 +6024,43 @@ Available Nimbus Shell commands:
           const overlay = document.getElementById('auth-overlay-screen');
           const overlayVisible = overlay && overlay.style.display !== 'none';
           if (fbUser && overlayVisible) {
+            let user = null;
             const storedSession = localStorage.getItem('campuspulse_auth_user');
             if (storedSession) {
               try {
-                const user = JSON.parse(storedSession);
-                applyAuthenticatedUser(user);
+                user = JSON.parse(storedSession);
               } catch (e) { /* ignore */ }
             }
+            if (!user) {
+              const email = fbUser.email || '';
+              const isStudent = email.includes('student') || email.includes('priyanshu') || !!email.match(/[0-9]{4}/);
+              let displayName = fbUser.displayName;
+              if (!displayName && email) {
+                if (email.toLowerCase().includes('priyanshu')) displayName = 'Priyanshu Pandey';
+                else displayName = email.split('@')[0];
+              }
+              if (!displayName) displayName = isStudent ? 'Priyanshu Pandey' : 'Faculty Member';
+
+              const initials = displayName
+                .split(' ')
+                .filter(Boolean)
+                .map(n => n[0])
+                .join('')
+                .substring(0, 2)
+                .toUpperCase() || 'PP';
+
+              user = {
+                uid: fbUser.uid,
+                email: email || (isStudent ? 'priyanshupandey2864@gmail.com' : 'faculty@campuspulse.edu'),
+                displayName: displayName,
+                role: isStudent ? 'student' : 'teacher',
+                roleTitle: isStudent ? 'Student (CSE Sec A • Roll #001)' : 'Faculty Mentor',
+                avatarInitials: initials,
+                provider: 'firebase'
+              };
+            }
+            applyAuthenticatedUser(user);
+            hideAuthOverlay();
           }
         });
       }
@@ -6076,20 +6106,38 @@ Available Nimbus Shell commands:
         const fbUserCredential = await fbAuthInstance.signInWithEmailAndPassword(email, pwd);
         const fbUser = fbUserCredential.user;
 
-        const isStudent = email.includes('student') || email.includes('aarav') || !!email.match(/[0-9]{4}/);
+        const isStudent = email.includes('student') || email.includes('priyanshu') || email.includes('aarav') || !!email.match(/[0-9]{4}/);
         const isAdmin = email.includes('rajesh') || email.includes('admin') || email.includes('dean');
+
+        let displayName = fbUser && fbUser.displayName ? fbUser.displayName : '';
+        if (!displayName) {
+          if (email.toLowerCase().includes('priyanshu') || isStudent) {
+            displayName = 'Priyanshu Pandey';
+          } else if (isAdmin) {
+            displayName = 'Prof. Rajesh Gupta';
+          } else if (email.includes('ananya')) {
+            displayName = 'Dr. Ananya Sharma';
+          } else {
+            const prefix = email.split('@')[0].replace(/[0-9._-]+/g, ' ').trim();
+            displayName = prefix ? prefix.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Priyanshu Pandey';
+          }
+        }
+
+        const initials = displayName
+          .split(' ')
+          .filter(Boolean)
+          .map(n => n[0])
+          .join('')
+          .substring(0, 2)
+          .toUpperCase() || 'PP';
 
         const userObj = {
           uid: fbUser ? fbUser.uid : ('fb_' + Math.random().toString(36).substring(2, 10)),
           email: fbUser && fbUser.email ? fbUser.email : email,
-          displayName: fbUser && fbUser.displayName ? fbUser.displayName : (
-            isAdmin ? 'Prof. Rajesh Gupta' :
-            isStudent ? 'Aarav Sharma' :
-            (email.includes('ananya') ? 'Dr. Ananya Sharma' : 'Faculty Member')
-          ),
+          displayName: displayName,
           role: isAdmin ? 'admin' : (isStudent ? 'student' : 'advisor'),
-          roleTitle: isAdmin ? 'Dean & Placement Director' : (isStudent ? 'Student (Enrolled)' : 'Lead Faculty Advisor (CSE)'),
-          avatarInitials: (fbUser && fbUser.displayName ? fbUser.displayName : email).substring(0, 2).toUpperCase(),
+          roleTitle: isAdmin ? 'Dean & Placement Director' : (isStudent ? 'Student (CSE Sec A • Roll #001)' : 'Lead Faculty Advisor (CSE)'),
+          avatarInitials: initials,
           provider: 'password',
           loginTime: new Date().toISOString()
         };
@@ -6140,15 +6188,31 @@ Available Nimbus Shell commands:
         const role = rolePreference || (googleUser.email && (googleUser.email.includes('student') || googleUser.email.match(/[0-9]{4}/)) ? 'student' : 'teacher');
         const isStudent = (role === 'student');
 
+        let displayName = googleUser.displayName;
+        if (!displayName && googleUser.email) {
+          if (googleUser.email.toLowerCase().includes('priyanshu') || isStudent) {
+            displayName = 'Priyanshu Pandey';
+          } else {
+            displayName = googleUser.email.split('@')[0];
+          }
+        }
+        if (!displayName) displayName = isStudent ? 'Priyanshu Pandey' : 'Faculty Member';
+
+        const initials = displayName
+          .split(' ')
+          .filter(Boolean)
+          .map(n => n[0])
+          .join('')
+          .substring(0, 2)
+          .toUpperCase() || 'PP';
+
         const userObj = {
           uid: googleUser.uid,
-          email: googleUser.email || (isStudent ? 'student@campuspulse.edu' : 'faculty@campuspulse.edu'),
-          displayName: googleUser.displayName || (isStudent ? 'Enrolled Student' : 'Faculty Member'),
+          email: googleUser.email || (isStudent ? 'priyanshupandey2864@gmail.com' : 'faculty@campuspulse.edu'),
+          displayName: displayName,
           role: isStudent ? 'student' : 'teacher',
-          roleTitle: isStudent ? 'Student (Google Authenticated)' : 'Faculty Mentor (Google Authenticated)',
-          avatarInitials: googleUser.displayName
-            ? googleUser.displayName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
-            : 'GU',
+          roleTitle: isStudent ? 'Student (CSE Sec A • Roll #001)' : 'Faculty Mentor (Google Authenticated)',
+          avatarInitials: initials,
           photoURL: googleUser.photoURL || null,
           provider: 'google.com',
           loginTime: new Date().toISOString()
@@ -6330,13 +6394,13 @@ Available Nimbus Shell commands:
       },
       student: {
         role: 'student',
-        displayName: 'Aarav Sharma',
+        displayName: 'Priyanshu Pandey',
         roleTitle: 'Student (CSE Sec A • Roll #001)',
-        email: '2023cse001@campuspulse.edu',
-        avatarInitials: 'AS',
+        email: 'priyanshupandey2864@gmail.com',
+        avatarInitials: 'PP',
         badgeClass: 'role-pill-student',
         badgeIcon: '🎓',
-        badgeText: 'Student (Aarav Sharma)',
+        badgeText: 'Student (Priyanshu Pandey)',
         defaultView: 'student-reports',
         allowedViews: [
           'student-reports',
@@ -6466,7 +6530,18 @@ Available Nimbus Shell commands:
 
     function getStudentRefForUser() {
       if (studentListCache && studentListCache.length > 0) {
-        const found = studentListCache.find(s => s.name && s.name.toLowerCase().includes('aarav'));
+        let currentName = '';
+        try {
+          const stored = localStorage.getItem('campuspulse_auth_user');
+          if (stored) currentName = (JSON.parse(stored).displayName || '').toLowerCase();
+        } catch(e) {}
+
+        if (currentName) {
+          const matched = studentListCache.find(s => s.name && s.name.toLowerCase().includes(currentName.split(' ')[0]));
+          if (matched) return matched.student_ref;
+        }
+
+        const found = studentListCache.find(s => s.name && (s.name.toLowerCase().includes('priyanshu') || s.name.toLowerCase().includes('aarav')));
         if (found) return found.student_ref;
         const specific = studentListCache.find(s => s.student_ref === 'stu_1107c6563069');
         if (specific) return specific.student_ref;
@@ -6485,14 +6560,42 @@ Available Nimbus Shell commands:
       document.body.setAttribute('data-active-role', role);
 
       const meta = ROLE_METADATA[role] || ROLE_METADATA.teacher;
+
+      // Check existing session in localStorage to preserve user's name
+      let storedUser = null;
+      try {
+        const raw = localStorage.getItem('campuspulse_auth_user');
+        if (raw) storedUser = JSON.parse(raw);
+      } catch (e) {}
+
+      let preferredName = meta.displayName;
+      let preferredEmail = meta.email;
+      let preferredAvatar = meta.avatarInitials;
+
+      if (customUserObj && customUserObj.displayName) {
+        preferredName = customUserObj.displayName;
+        preferredEmail = customUserObj.email || preferredEmail;
+        preferredAvatar = customUserObj.avatarInitials || preferredName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+      } else if (storedUser && storedUser.displayName) {
+        preferredName = storedUser.displayName;
+        preferredEmail = storedUser.email || preferredEmail;
+        preferredAvatar = storedUser.avatarInitials || preferredName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+      }
+
+      if (role === 'student' && (!preferredName || preferredName.includes('Aarav'))) {
+        preferredName = 'Priyanshu Pandey';
+        preferredAvatar = 'PP';
+        preferredEmail = 'priyanshupandey2864@gmail.com';
+      }
+
       const userObj = customUserObj || {
-        uid: 'fb_' + role + '_profile',
-        email: meta.email,
-        displayName: meta.displayName,
+        uid: (storedUser && storedUser.uid) ? storedUser.uid : ('fb_' + role + '_profile'),
+        email: preferredEmail,
+        displayName: preferredName,
         role: meta.role,
-        roleTitle: meta.roleTitle,
-        avatarInitials: meta.avatarInitials,
-        provider: 'firebase_session'
+        roleTitle: (role === 'student') ? `Student (${preferredName} • Sec A)` : meta.roleTitle,
+        avatarInitials: preferredAvatar,
+        provider: (storedUser && storedUser.provider) ? storedUser.provider : 'firebase_session'
       };
 
       localStorage.setItem('campuspulse_auth_user', JSON.stringify(userObj));
@@ -6513,10 +6616,10 @@ Available Nimbus Shell commands:
 
       if (navAvatar) navAvatar.innerText = userObj.avatarInitials;
       if (navName) {
-        // Show clean friendly name on top bar
-        const firstName = userObj.displayName ? userObj.displayName.split(' ')[0] : 'User';
-        navName.innerText = (userObj.displayName && userObj.displayName.includes('Dr.')) 
-          ? ('Dr. ' + (userObj.displayName.split(' ')[1] || 'Sharma'))
+        const nameToUse = userObj.displayName || 'Priyanshu';
+        const firstName = nameToUse.split(' ')[0];
+        navName.innerText = (nameToUse.includes('Dr.')) 
+          ? ('Dr. ' + (nameToUse.split(' ')[1] || 'Sharma'))
           : firstName;
       }
       if (dropAvatar) dropAvatar.innerText = userObj.avatarInitials;
@@ -6531,13 +6634,25 @@ Available Nimbus Shell commands:
       if (topbarBadge) {
         topbarBadge.className = `active-role-pill ${meta.badgeClass}`;
         if (topbarIcon) topbarIcon.innerText = meta.badgeIcon;
-        if (topbarText) topbarText.innerText = meta.badgeText;
+        if (topbarText) {
+          if (role === 'student') {
+            topbarText.innerText = `Student (${userObj.displayName || 'Priyanshu Pandey'})`;
+          } else {
+            topbarText.innerText = meta.badgeText;
+          }
+        }
       }
 
       if (roleIndicator) {
         roleIndicator.className = `active-role-pill ${meta.badgeClass}`;
         if (roleIcon) roleIcon.innerText = meta.badgeIcon;
-        if (roleText) roleText.innerText = meta.badgeText;
+        if (roleText) {
+          if (role === 'student') {
+            roleText.innerText = `Student (${userObj.displayName || 'Priyanshu Pandey'})`;
+          } else {
+            roleText.innerText = meta.badgeText;
+          }
+        }
       }
 
       // Synchronize role-specific controls
@@ -6548,15 +6663,16 @@ Available Nimbus Shell commands:
       const badgeWhatIf = document.getElementById('whatif-student-self-badge');
 
       if (role === 'student') {
+        const studentName = userObj.displayName || 'Priyanshu Pandey';
         if (repTitle) repTitle.innerText = "My Academic Success Dossier";
         if (selReport) selReport.style.display = 'none';
         if (badgeReport) {
-          badgeReport.innerText = "🎓 Enrolled: Aarav Sharma (2023CSE001 • Mentee of Dr. Ananya Sharma)";
+          badgeReport.innerText = `🎓 Enrolled: ${studentName} (2023CSE001 • Section A • Mentee of Dr. Ananya Sharma)`;
           badgeReport.style.display = 'inline-flex';
         }
         if (selWhatIf) selWhatIf.style.display = 'none';
         if (badgeWhatIf) {
-          badgeWhatIf.innerText = "🎓 Simulating for: Aarav Sharma (2023CSE001 • Mentee of Dr. Ananya Sharma)";
+          badgeWhatIf.innerText = `🎓 Simulating for: ${studentName} (2023CSE001 • Section A • Mentee of Dr. Ananya Sharma)`;
           badgeWhatIf.style.display = 'inline-flex';
         }
       } else if (role === 'teacher' || role === 'advisor') {
@@ -8844,12 +8960,18 @@ Available Nimbus Shell commands:
 
     async function assignProject(projId) {
       try {
+        let currentStudentName = 'Priyanshu Pandey';
+        try {
+          const su = JSON.parse(localStorage.getItem('campuspulse_auth_user'));
+          if (su && su.displayName) currentStudentName = su.displayName;
+        } catch (e) {}
+
         await fetch('/api/v1/projects/assign', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ project_id: projId, student_name: 'Aarav Sharma' })
+          body: JSON.stringify({ project_id: projId, student_name: currentStudentName })
         });
-        showToast('Project assigned to student!');
+        showToast(`Project assigned to ${currentStudentName}!`);
         loadProjectBank();
       } catch (err) {
         console.error(err);
@@ -9309,9 +9431,14 @@ Available Nimbus Shell commands:
 
       if (isStudent) {
         const targetRef = getStudentRefForUser();
+        let currentStudentName = 'Priyanshu Pandey';
+        try {
+          const su = JSON.parse(localStorage.getItem('campuspulse_auth_user'));
+          if (su && su.displayName) currentStudentName = su.displayName;
+        } catch (e) {}
         if (sel) {
           sel.style.display = 'none';
-          sel.innerHTML = `<option value="${targetRef}" selected>Aarav Sharma (${targetRef})</option>`;
+          sel.innerHTML = `<option value="${targetRef}" selected>${currentStudentName} (${targetRef})</option>`;
           sel.value = targetRef;
         }
         if (badge) badge.style.display = 'inline-flex';
@@ -9894,8 +10021,13 @@ Available Nimbus Shell commands:
           }
         });
       } else {
-        if ('aarav sharma'.includes(query) || 'my dossier'.includes(query) || 'my report'.includes(query) || 'profile'.includes(query)) {
-          matches.push({ type: 'My Profile', label: 'My Academic Dossier (Aarav Sharma)', action: () => { closeDrawer('modal-spotlight'); switchNav('student-reports'); } });
+        let currentStudentName = 'Priyanshu Pandey';
+        try {
+          const su = JSON.parse(localStorage.getItem('campuspulse_auth_user'));
+          if (su && su.displayName) currentStudentName = su.displayName;
+        } catch (e) {}
+        if (currentStudentName.toLowerCase().includes(query) || 'priyanshu pandey'.includes(query) || 'my dossier'.includes(query) || 'my report'.includes(query) || 'profile'.includes(query)) {
+          matches.push({ type: 'My Profile', label: `My Academic Dossier (${currentStudentName})`, action: () => { closeDrawer('modal-spotlight'); switchNav('student-reports'); } });
         }
       }
 
