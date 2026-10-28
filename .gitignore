@@ -49,3 +49,7 @@ Thumbs.db
 
 # Agent & IDE caches
 .kilo/
+
+# Database and automated backups
+*.db
+backups/
