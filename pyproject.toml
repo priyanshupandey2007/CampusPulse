@@ -13,7 +13,6 @@ dependencies = [
     # --- Data / pipeline ---
     "pandas>=2.2.0",
     "openpyxl>=3.1.2",
-    "pyarrow>=15.0.0",
     "numpy>=1.26.0",
     "scipy>=1.13.0",
     # --- DB / ORM ---
