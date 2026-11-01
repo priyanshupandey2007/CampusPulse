@@ -126,3 +126,12 @@ def test_dean_page_svg_removed():
     assert "badgeClass: 'role-pill-dean',\n        badgeIcon: ''," in content or 'badgeClass: "role-pill-dean",\n        badgeIcon: "",' in content
 
 
+def test_no_parul_trainer_references():
+    """Verify all legacy Parul trainer references are eradicated from frontend and backend."""
+    index_content = Path("apps/api/static/index.html").read_text(encoding="utf-8")
+    main_content = Path("apps/api/main.py").read_text(encoding="utf-8")
+    assert "parul" not in index_content.lower(), "Found 'parul' in index.html"
+    assert "parul" not in main_content.lower(), "Found 'parul' in main.py"
+
+
+

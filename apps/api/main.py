@@ -1555,7 +1555,7 @@ def get_assessment_analytics(db: Session = Depends(get_db)):
 @app.get("/api/v1/nimbus/cluster-status")
 def get_nimbus_cluster_status():
     return make_envelope({
-        "cluster_name": "krm-parul-cloud-01",
+        "cluster_name": "krm-cloud-01",
         "status": "HEALTHY",
         "uptime": "99.98%",
         "nodes": [
@@ -1631,7 +1631,7 @@ SCHEDULE_EVENTS = [
         "title": "Section C — Weekly Placement Coding Masterclass",
         "student_ref": "cohort_sec_c",
         "student_name": "Section C (All Students)",
-        "advisor_name": "Parul Lead Trainer",
+        "advisor_name": "KRM Lead Trainer",
         "date": "2026-10-09",
         "time": "11:00 AM",
         "type": "Batch Masterclass",
@@ -1883,7 +1883,7 @@ def get_college_telemetry():
         "courses": [
             {"title": "CS301: Advanced Data Structures & Algorithms", "faculty": "Dr. Ananya Sharma", "progress_pct": 74, "avg_quiz": "84.5%"},
             {"title": "CS304: Database Management & Query Tuning", "faculty": "Prof. Rajesh Gupta", "progress_pct": 82, "avg_quiz": "88.2%"},
-            {"title": "CS308: Cloud Architecture & DevOps", "faculty": "Parul Trainers", "progress_pct": 65, "avg_quiz": "79.0%"}
+            {"title": "CS308: Cloud Architecture & DevOps", "faculty": "KRM Core Faculty", "progress_pct": 65, "avg_quiz": "79.0%"}
         ],
         "leaderboard": [
             {"rank": 1, "name": "Sahil Yadav", "batch": "CSE 2029", "score": 98.4, "solved": 142, "streak": "18 Days"},
@@ -1893,7 +1893,7 @@ def get_college_telemetry():
             {"rank": 5, "name": "Harshit Joon", "batch": "CSE 2029", "score": 91.0, "solved": 118, "streak": "9 Days"}
         ],
         "live": [
-            {"title": "Dynamic Programming Masterclass: Memoization vs Tabulation", "trainer": "Parul Lead Trainer", "time": "Today, 04:00 PM", "attendees": 184, "status": "Upcoming"},
+            {"title": "Dynamic Programming Masterclass: Memoization vs Tabulation", "trainer": "KRM Lead Trainer", "time": "Today, 04:00 PM", "attendees": 184, "status": "Upcoming"},
             {"title": "System Design: Rate Limiters & Token Bucket Algorithm", "trainer": "Dr. Ananya Sharma", "time": "Yesterday", "attendees": 210, "status": "Completed (Recording Ready)"}
         ],
         "video": [
