@@ -141,3 +141,10 @@ def test_responsive_media_queries_and_backdrop():
     assert "@media (max-width: 480px)" in content
     assert 'id="sidebar-backdrop"' in content
     assert ".sidebar.open" in content
+
+def test_sidebar_has_signout_option():
+    """Verify sign out button exists in the left sidebar footer."""
+    content = Path("apps/api/static/index.html").read_text(encoding="utf-8")
+    assert 'class="sidebar-footer"' in content
+    assert 'class="sidebar-signout-btn"' in content
+    assert 'handleFirebaseSignOut()' in content
