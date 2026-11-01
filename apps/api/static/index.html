@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>CampusPulse — Enterprise Student Success & Placement Readiness OS</title>
   <meta name="description" content="Explainable, CI-audited, deterministic student-success and placement-readiness operating system for colleges.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -2569,18 +2572,22 @@
       padding: 12px 14px;
       border-top: 1px solid var(--border-color);
       background: var(--bg-surface);
+      position: sticky;
+      bottom: 0;
+      z-index: 50;
       flex-shrink: 0;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04);
     }
     .sidebar-signout-btn {
       width: 100%;
-      border: 1px solid transparent;
-      background: transparent;
+      border: 1px solid var(--tier-ps-border);
+      background: var(--tier-ps-bg);
       color: var(--color-red-600);
-      font-size: 0.83rem;
-      font-weight: 600;
+      font-size: 0.84rem;
+      font-weight: 700;
       cursor: pointer;
       text-align: left;
-      padding: 8px 12px;
+      padding: 9px 12px;
       border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
@@ -2590,8 +2597,8 @@
       user-select: none;
     }
     .sidebar-signout-btn:hover {
-      background: var(--tier-ps-bg);
-      border-color: var(--tier-ps-border);
+      background: rgba(239, 68, 68, 0.18);
+      border-color: var(--color-red-600);
       color: var(--color-red-700);
     }
     .sidebar-signout-btn svg {
@@ -2901,6 +2908,10 @@
             <span class="brand-tag">OS v5.0</span>
           </div>
         </div>
+        <button type="button" class="sidebar-header-signout" onclick="handleFirebaseSignOut()" title="Sign out of current account" style="margin-left:auto; background:var(--tier-ps-bg); border:1px solid var(--tier-ps-border); color:var(--color-red-600); cursor:pointer; padding:4px 8px; border-radius:var(--radius-sm); display:flex; align-items:center; gap:5px; font-size:0.72rem; font-weight:700; transition:all 0.15s ease;">
+          <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>Exit</span>
+        </button>
       </div>
 
       <nav class="sidebar-nav">
@@ -3090,6 +3101,13 @@
         <a class="nav-item" data-roles="dean admin" onclick="switchNav('competitive-advantage')">
           <span class="nav-icon"><svg aria-hidden="true" class="h-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
           <span class="nav-label">CampusPulse Advantage</span>
+        </a>
+
+        <!-- ACCOUNT & SESSION -->
+        <div class="nav-section-title" style="color:var(--text-dim); margin-top:14px;">Account</div>
+        <a class="nav-item nav-item-signout" onclick="handleFirebaseSignOut()" style="color:var(--color-red-600); cursor:pointer; background:var(--tier-ps-bg); border-left:3px solid var(--color-red-600); font-weight:700;" title="Sign out of current account">
+          <span class="nav-icon" style="color:var(--color-red-600);"><svg aria-hidden="true" class="h-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
+          <span class="nav-label" style="color:var(--color-red-600); font-weight:700;">Sign Out</span>
         </a>
       </nav>
       <div class="sidebar-footer">
