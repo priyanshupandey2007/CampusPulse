@@ -45,7 +45,12 @@ def test_project_bank_branding_clean():
 
 
 def test_admin_department_faculty_hierarchy():
-    response = client.get("/api/v1/admin/department-faculty")
+    # Verify unauthorized/advisor request is rejected with 403 Forbidden
+    unauth_resp = client.get("/api/v1/admin/department-faculty")
+    assert unauth_resp.status_code == 403
+
+    # Authorized admin request succeeds
+    response = client.get("/api/v1/admin/department-faculty", headers={"X-User-Role": "admin"})
     assert response.status_code == 200
     json_data = response.json()
     assert "data" in json_data

@@ -1,28 +1,23 @@
-# CampusPulse — System Architecture & Implementation Audit Report
-**Version:** 5.0.0-FINAL  
+# CampusPulse: Architecture and implementation audit report
 
-**Target Architecture:** Monorepo (FastAPI + SQLAlchemy + Pure AST Domain + Tailwind/SPA UI)  
-**Audit Date:** October 2026  
+Version: 5.0.0-FINAL  
+Target architecture: Monorepo (FastAPI, SQLAlchemy, Pure AST Domain, Single Page Application)  
+Audit date: October 2026  
 
----
+## Executive summary and verification status
 
-## Executive Summary & Quality Gate Status
-
-| System Dimension | Target Requirement | Implemented Status | Verification Result |
+| Dimension | Target | Status | Verification result |
 | :--- | :--- | :---: | :--- |
-| **API Endpoints** | All core student, risk, ML, college, and other routes | **35 / 35 Endpoints Active** | **PASSED (100% in < 15ms latency)** |
-| **Unit & Integration Tests** | 100% test pass with zero regressions | **26 / 26 Tests Passing** | **PASSED (`pytest -v` exits code 0)** |
-| **Scoring Determinism** | 100% AST pure without network or black-box LLMs | **Verified Pure** | **PASSED (`POST /api/v1/admin/verify-ast`)** |
-| **ML Intelligence Layer** | Model Registry, Feature Importance, Risk Proxy | **3 Models + Proxy API** | **PASSED (`GET /api/v1/ml/models` & eval)** |
-| **Boot Hash Integrity** | Cryptographic validation of config and targets | **Verified Hash** | **PASSED (`scripts/boot_check.py`)** |
-| **Deliverables** | Working Prototype + Scoring Note + Pitch Deck | **3 / 3 Delivered** | **PASSED** |
+| API Endpoints | Core student, risk, ML, and college routes | 35 / 35 Active | Passed (< 15ms latency) |
+| Unit and Integration Tests | Test pass with zero regressions | 26 / 26 Passing | Passed (`pytest -v` exits code 0) |
+| Scoring Determinism | Pure AST calculation without external runtime calls | Verified Pure | Passed (`POST /api/v1/admin/verify-ast`) |
+| ML Reference Layer | Model registry, feature importance, risk proxy | 3 models + proxy API | Passed (`GET /api/v1/ml/models` and eval) |
+| Boot Hash Integrity | Verification of config and target files | Verified Hash | Passed (`scripts/boot_check.py`) |
+| Deliverables | Working prototype, methodology note, pitch deck | 3 / 3 Delivered | Passed |
+| Score Attribution | Point-by-point sub-index decomposition | Functional | Passed (`GET /api/v1/students/{ref}/explain`) |
+| Intervention Workflow | Detect, assign, and follow-up tracking | Functional | Passed (CRUD and outcome tracking) |
 
-| **Bonus: Explainability** | Waterfall driver attribution without black-box | **Fully Functional** | **PASSED (`GET /api/v1/students/{ref}/explain`)** |
-| **Closed-Loop Interventions** | Detect $\rightarrow$ Assign $\rightarrow$ Measure Lifecycle | **Fully Functional** | **PASSED (CRUD + Outcome Tracking)** |
-
----
-
-## 1. Architecture Found
+## 1. Directory structure
 
 ```
 ├── adapters/
@@ -52,64 +47,56 @@
 │   ├── ingestion/loader.py    # Multi-format CSV/Excel loader & SHA-256 deduplication
 │   └── pipeline.py            # End-to-end data processing pipeline
 └── tests/
-
     └── unit/                  # AST purity, determinism, boot check, momentum, and segment partition tests
 ```
 
----
+## 2. Verified features
 
-## 2. Working Features (Verified & Tested)
-
-1. **Deterministic Student Success Score ($S \in [0, 100]$)**:
+1. Deterministic student success score ($S \in [0, 100]$):
    - Formulated as $S = 0.25(I_{\text{acad}}) + 0.20(I_{\text{att}}) + 0.20(I_{\text{place}}) + 0.15(I_{\text{lms}}) + 0.10(I_{\text{eng}}) + 0.10(I_{\text{skills}})$.
-   - All weights strictly sum to $1.0000000000$ (cryptographically asserted during pre-flight boot checks).
+   - All weights sum to $1.0000000000$, asserted during startup boot checks.
 
-2. **Fail-Safe Hard-Floor Safety Rules**:
-   - `Attendance < 60%`, `Backlogs >= 2`, or `CGPA < 5.0` immediately overrides student tier to **Priority Support** and pins them to the top of the advisor queue.
+2. Hard-floor safety rules:
+   - `Attendance < 60%`, `Backlogs >= 2`, or `CGPA < 5.0` overrides student tier to Priority Support and pins the student to the top of the advisor queue.
 
-3. **2D Student Segmentation Quadrant Matrix (Bonus Feature)**:
+3. Student segmentation matrix:
    - 5 exclusive segments:
-     - *Academic Stars with Placement Gap* ($I_{\text{acad}} \ge 60, I_{\text{place}} < 48$)
-     - *Hustlers at Academic Risk* ($I_{\text{place}} \ge 52, I_{\text{acad}} < 65$)
-     - *Quietly Disengaged* ($I_{\text{lms}} < 60, I_{\text{eng}} < 45$)
-     - *Struggling on All Fronts* (Critical multi-dimensional deficit)
-     - *Balanced Performers* (Consistent high achievers)
-   - Rendered via an interactive 2D Chart.js scatter canvas and linked to actionable intervention playbooks.
+     - Academic Stars with Placement Gap ($I_{\text{acad}} \ge 60, I_{\text{place}} < 48$)
+     - Hustlers at Academic Risk ($I_{\text{place}} \ge 52, I_{\text{acad}} < 65$)
+     - Quietly Disengaged ($I_{\text{lms}} < 60, I_{\text{eng}} < 45$)
+     - Struggling on All Fronts (critical multi-dimensional deficit)
+     - Balanced Performers (consistent progress across dimensions)
+   - Displayed on a 2D Chart.js scatter view linked to intervention suggestions.
 
-4. **100% Explainable Score & Risk Decomposition (Bonus Feature)**:
-   - Waterfall contribution breakdown showing exact points contributed by each sub-index.
-   - Specific root-cause risk attribution without fabricated black-box AI outputs.
+4. Score and risk decomposition:
+   - Contribution breakdown showing positive points and negative deductions for each sub-index.
+   - Indicator-level risk attribution showing direct causes.
 
-5. **Closed-Loop Intervention OS**:
-   - Human-in-the-loop action assignment, target dates, faculty advisor notes, and quantitative pre- vs. post-intervention trajectory measurement.
+5. Intervention tracking:
+   - Advisor action assignment, target dates, structured notes, and quantitative pre- and post-intervention trajectory tracking.
 
-6. **What-If Simulation Sandbox (`POST /api/v1/what-if`)**:
-   - In-memory simulation allowing advisors to project score improvements before committing resources.
+6. What-if simulation (`POST /api/v1/what-if`):
+   - In-memory calculation that estimates potential score changes before advisors log new interventions.
 
-7. **Multi-Role Institutional Dashboard**:
-   - Integrated 16:9 Presentation Pitch Deck (7 interactive slides with auto-play and speaker notes).
-   - 9-Subtab College Telemetry Suite (*Overall*, *Editor*, *Nimbus*, *Labs*, *Assessments*, *Courses*, *Leaderboard*, *Live*, *Video*).
-   - Competitive Intelligence Feature Matrix comparing 9 platforms across 17 categories.
+7. Institutional dashboard views:
+   - Presentation view with 7 interactive slides.
+   - College telemetry panels across 9 areas: Overall, Editor, Nimbus, Labs, Assessments, Courses, Leaderboard, Live, and Video.
+   - Competitive matrix comparing 9 platforms across 17 categories.
 
----
+## 3. Security, purity, and performance
 
-## 3. Technical Debt, Security & Performance
+1. Privacy controls: Prometheus metrics endpoint (`/api/v1/metrics`) omits names, roll numbers, and contact details.
+2. Domain engine isolation: Scoring path in `packages/domain/` has zero external API dependencies.
+3. Health monitoring: Added `/health/db` and `/health/ml` sub-endpoints alongside `/health`.
+4. Response latency: Endpoints respond in under 15ms on SQLite and PostgreSQL with indexed queries.
 
-1. **PII Scope Protection**: Non-PII Prometheus metrics endpoint (`/api/v1/metrics`) strictly strips names, roll numbers, and contact details.
-2. **Deterministic Purity**: 0 external API dependencies (OpenAI, Anthropic, Gemini, external REST) in the mathematical scoring path (`packages/domain/`).
-3. **Observability**: Added `/health/db` and `/health/ml` sub-health check endpoints alongside the primary `/health` route.
-4. **Latency Benchmark**: All 30 endpoints return in $< 15\text{ms}$ on SQLite/PostgreSQL with indexed queries and zero $N+1$ query overhead.
-
----
-
-## 4. Test Report Summary
+## 4. Test summary
 
 ```
 ============================== 26 passed in 1.06s ==============================
 - tests/api/test_college_and_auth.py          [3 passed]
 - tests/api/test_competitive_intelligence.py  [6 passed]
 - tests/api/test_error_envelope.py            [3 passed]
-
 - tests/api/test_pii_scope.py                 [2 passed]
 - tests/unit/test_ai_execution_contract.py    [1 passed]
 - tests/unit/test_boot_check.py               [1 passed]
@@ -121,9 +108,7 @@
 - Root Health & Sub-Probes:   GET /health, /health/db, /health/ml, /api/v1/health
 - ML Layer & Registry:        GET /api/v1/ml/models, /feature-importance, /evaluation
 - ML Risk & Agreement Check:  POST /api/v1/ml/predict-risk, POST /api/v1/ml/agreement-check
-
 - Cohort Telemetry & Gaps:    GET /api/v1/cohorts/readiness, /gaps, /login-activity, /telemetry
 - Student 360 & Explainable:  GET /api/v1/students/{ref}, /{ref}/explain, /{ref}/trend
 - Decision Intelligence:      POST /api/v1/what-if, POST /api/v1/admin/verify-ast
 ```
-

@@ -7,6 +7,7 @@ deterministic scoring routes, explainability payloads, and PII scope protections
 from __future__ import annotations
 
 import datetime
+import html
 import os
 import re
 import shutil
@@ -117,10 +118,11 @@ app = FastAPI(
     redoc_url="/redoc" if IS_DEBUG else None,
 )
 
-# CORS middleware with secure origin & credentials handling
-allowed_origins_raw = os.getenv("ALLOWED_ORIGINS", "*")
+# CORS middleware with secure origin & credentials handling (Item 7)
+ALLOWED_ORIGINS_DEFAULT = "http://localhost:8000,http://127.0.0.1:8000,https://campuspulse-tau-ten.vercel.app"
+allowed_origins_raw = os.getenv("ALLOWED_ORIGINS", ALLOWED_ORIGINS_DEFAULT)
 allowed_origins = [o.strip() for o in allowed_origins_raw.split(",") if o.strip()]
-allow_credentials = False if allowed_origins == ["*"] else True
+allow_credentials = False if "*" in allowed_origins else True
 
 app.add_middleware(
     CORSMiddleware,
@@ -171,6 +173,12 @@ async def rate_limiting_middleware(request: Request, call_next):
     timestamps.append(now)
     RATE_LIMIT_STORE[key] = timestamps
 
+    # Memory bounded protection against state exhaustion (Item 4)
+    if len(RATE_LIMIT_STORE) > 10000:
+        stale_keys = [k for k, v in RATE_LIMIT_STORE.items() if not v or (now - v[-1] >= 60.0)]
+        for k in stale_keys[:2000]:
+            RATE_LIMIT_STORE.pop(k, None)
+
     response = await call_next(request)
     response.headers["X-RateLimit-Limit"] = str(limit)
     response.headers["X-RateLimit-Remaining"] = str(max(0, limit - len(timestamps)))
@@ -179,13 +187,25 @@ async def rate_limiting_middleware(request: Request, call_next):
 
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
-    """Enforce defensive HTTP response headers & HSTS."""
+    """Enforce defensive HTTP response headers, CSP, Permissions-Policy & HSTS (Items 7, 8, 17)."""
     response = await call_next(request)
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
     response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
+    response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=(), payment=(), usb=()"
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+        "font-src 'self' https://fonts.gstatic.com; "
+        "img-src 'self' data: https:; "
+        "connect-src 'self'; "
+        "frame-ancestors 'self'; "
+        "base-uri 'self'; "
+        "form-action 'self';"
+    )
     return response
 
 
@@ -220,8 +240,6 @@ async def get_current_user(request: Request) -> UserAuthContext:
     path = request.url.path
     if role_header:
         raw_role = role_header.lower()
-    elif path.startswith("/api/v1/admin"):
-        raw_role = "admin"
     elif "student" in email_header.lower():
         raw_role = "student"
     else:
@@ -433,7 +451,14 @@ MAX_FILE_SIZE_BYTES = 15 * 1024 * 1024  # 15 MB limit
 def upload_raw_file(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
+    current_user: UserAuthContext = Depends(get_current_user),
 ):
+    if current_user.role == "student":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied: Students cannot upload or ingest institutional dataset files.",
+        )
+
     if not file.filename:
         raise HTTPException(status_code=400, detail="Missing upload filename.")
 
@@ -446,6 +471,21 @@ def upload_raw_file(
             status_code=400,
             detail=f"Invalid file extension '{ext}'. Only {', '.join(sorted(ALLOWED_INGEST_EXTENSIONS))} are supported."
         )
+
+    # 2. Magic byte / MIME signature validation (Item 18)
+    first_chunk = file.file.read(4)
+    file.file.seek(0)
+    if ext == ".xlsx" and first_chunk != b"PK\x03\x04":
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid Excel file: Missing standard ZIP/OOXML magic header."
+        )
+    elif ext in (".csv", ".tsv"):
+        if first_chunk.startswith(b"MZ") or first_chunk.startswith(b"\x7fELF") or b"\x00" in first_chunk:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid tabular text file: Executable or binary content detected."
+            )
 
     # Sanitize base stem to safe alphanumeric and underscores
     clean_stem = re.sub(r"[^\w\s\-\.]", "", Path(raw_name).stem).strip() or "upload"
@@ -477,6 +517,19 @@ def upload_raw_file(
     try:
         res = execute_pipeline(temp_path, db)
         INGESTION_RUNS_CACHE.append(res)
+        # Audit log dataset upload (Item 20)
+        try:
+            db.add(AuditLog(
+                actor_id=current_user.user_id,
+                actor_role=current_user.role,
+                action="UPLOAD_DATASET",
+                target_type="dataset",
+                target_id=safe_filename,
+                metadata_json={"filename": raw_name, "size_bytes": bytes_read},
+            ))
+            db.commit()
+        except Exception:
+            db.rollback()
         return make_envelope(res)
     finally:
         # File is ingested; keep temp snapshot or cleanup if desired
@@ -484,7 +537,16 @@ def upload_raw_file(
 
 
 @app.post("/api/v1/ingest/preset/{preset_name}")
-def ingest_preset_file(preset_name: str, db: Session = Depends(get_db)):
+def ingest_preset_file(
+    preset_name: str,
+    db: Session = Depends(get_db),
+    current_user: UserAuthContext = Depends(get_current_user),
+):
+    if current_user.role == "student":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied: Students cannot trigger dataset ingestion pipelines.",
+        )
     mapping = {
         "section_c": Path("./data/raw/Section C.xlsx"),
         "section_d": Path("./data/raw/Section D.xlsx"),
@@ -574,7 +636,16 @@ def get_student(
 
 
 @app.get("/api/v1/students/{student_ref}/explain")
-def explain_student_score(student_ref: str, db: Session = Depends(get_db)):
+def explain_student_score(
+    student_ref: str,
+    db: Session = Depends(get_db),
+    current_user: UserAuthContext = Depends(get_current_user),
+):
+    if current_user.role == "student" and current_user.student_ref and student_ref != current_user.student_ref:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied: Students may only view their own score explanation.",
+        )
     """
     Explainable score breakdown showing indicators, contribution weights,
     raw values, sub-index scores, and reason drivers.
@@ -635,7 +706,13 @@ def explain_student_score(student_ref: str, db: Session = Depends(get_db)):
 def get_advisor_action_list(
     limit: int = Query(10, ge=1, le=50),
     db: Session = Depends(get_db),
+    current_user: UserAuthContext = Depends(get_current_user),
 ):
+    if current_user.role == "student":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied: Students cannot access advisor action queue.",
+        )
     repo = CampusPulseRepository(db)
     actions = repo.get_advisor_action_list(limit=limit)
     return make_envelope({
@@ -648,7 +725,13 @@ def get_advisor_action_list(
 @app.get("/api/v1/advisors/me/interventions")
 def get_interventions(
     db: Session = Depends(get_db),
+    current_user: UserAuthContext = Depends(get_current_user),
 ):
+    if current_user.role == "student":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied: Students cannot access advisor interventions.",
+        )
     repo = CampusPulseRepository(db)
     advisor = db.query(Advisor).first()
     advisor_id = advisor.id if advisor else None
@@ -677,6 +760,19 @@ def create_intervention(
         notes=payload.notes,
         due_at=payload.due_at,
     )
+    # Audit log state mutation (Item 20)
+    try:
+        db.add(AuditLog(
+            actor_id=current_user.user_id,
+            actor_role=current_user.role,
+            action="CREATE_INTERVENTION",
+            target_type="student",
+            target_id=payload.student_ref,
+            metadata_json={"action_code": payload.action_code},
+        ))
+        db.commit()
+    except Exception:
+        db.rollback()
     return make_envelope(res)
 
 
@@ -685,7 +781,13 @@ def update_intervention(
     intervention_id: str,
     payload: InterventionUpdate,
     db: Session = Depends(get_db),
+    current_user: UserAuthContext = Depends(get_current_user),
 ):
+    if current_user.role == "student":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied: Students cannot update advisor interventions.",
+        )
     repo = CampusPulseRepository(db)
     res = repo.update_intervention(
         intervention_id=intervention_id,
@@ -694,6 +796,19 @@ def update_intervention(
     )
     if not res:
         raise HTTPException(status_code=404, detail="Intervention not found")
+    # Audit log state mutation (Item 20)
+    try:
+        db.add(AuditLog(
+            actor_id=current_user.user_id,
+            actor_role=current_user.role,
+            action="UPDATE_INTERVENTION",
+            target_type="intervention",
+            target_id=intervention_id,
+            metadata_json={"status": payload.status},
+        ))
+        db.commit()
+    except Exception:
+        db.rollback()
     return make_envelope(res)
 
 
@@ -873,13 +988,14 @@ def advisor_assistant_chat(payload: ChatRequest, db: Session = Depends(get_db)):
             "60% of students meet academic targets, while 38% would benefit from coding bootcamps."
         )
     else:
+        safe_query_reflected = html.escape(payload.query.strip())
         response_text = (
-            f"CampusPulse Advisor Assistant: I have analyzed your query '{payload.query}'. "
+            f"CampusPulse Advisor Assistant: I have analyzed your query '{safe_query_reflected}'. "
             "You can ask about 'priority students', 'cohort readiness', or specific student interventions."
         )
 
     return make_envelope({
-        "query": payload.query,
+        "query": html.escape(payload.query),
         "reply": response_text,
         "read_only": True,
     })
@@ -891,7 +1007,16 @@ def advisor_assistant_chat(payload: ChatRequest, db: Session = Depends(get_db)):
 # ── Student Historical Trend ──────────────────────────────────────────────────
 
 @app.get("/api/v1/students/{student_ref}/trend")
-def get_student_trend_endpoint(student_ref: str, db: Session = Depends(get_db)):
+def get_student_trend_endpoint(
+    student_ref: str,
+    db: Session = Depends(get_db),
+    current_user: UserAuthContext = Depends(get_current_user),
+):
+    if current_user.role == "student" and current_user.student_ref and student_ref != current_user.student_ref:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied: Students may only view their own performance trend.",
+        )
     repo = CampusPulseRepository(db)
     # Check if student exists by ref or roll_number
     student = db.query(Student).filter((Student.student_ref == student_ref) | (Student.roll_number == student_ref)).first()
@@ -1342,17 +1467,36 @@ def delete_lab_session(
     session_id: str,
     current_user: UserAuthContext = Depends(get_current_user),
 ):
-    """Faculty removes a lab session."""
+    """Faculty removes a lab session with ownership verification."""
     if current_user.role == "student":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Access denied: Students cannot remove lab sessions.",
         )
     global LAB_SESSIONS
-    before = len(LAB_SESSIONS)
-    LAB_SESSIONS = [s for s in LAB_SESSIONS if s["id"] != session_id]
-    if len(LAB_SESSIONS) == before:
+    target_session = next((s for s in LAB_SESSIONS if s["id"] == session_id), None)
+    if not target_session:
         raise HTTPException(status_code=404, detail="Session not found")
+
+    creator = target_session.get("created_by") or target_session.get("instructor_id") or ""
+    if current_user.role not in ("admin", "dean", "hod") and creator and creator != current_user.user_id and creator != current_user.email:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied: You may only delete lab sessions you created.",
+        )
+    LAB_SESSIONS = [s for s in LAB_SESSIONS if s["id"] != session_id]
+    try:
+        db.add(AuditLog(
+            actor_id=current_user.user_id,
+            actor_role=current_user.role,
+            action="DELETE_LAB_SESSION",
+            target_type="lab_session",
+            target_id=session_id,
+            metadata_json={"deleted_by": current_user.email},
+        ))
+        db.commit()
+    except Exception:
+        db.rollback()
     return make_envelope({"message": "Lab session removed successfully."})
 
 

@@ -1,39 +1,20 @@
-# CampusPulse — Enterprise Student Success & Placement Readiness OS
+# CampusPulse: Student Success and Placement Readiness Platform
 
-> **Smart Campus Analytics — Predict, Optimize & Improve Student Success**  
-> Explainable, CI-audited, deterministic placement-readiness and student-success operating system for colleges.  
-> Built for the enterprise hackathon showcasing student success analytics.
+> Student analytics and advising platform for colleges and university departments.
 
----
+## Positioning and purpose
 
-## 🎯 Positioning & Purpose
+Higher education institutions frequently have student data scattered across LMS logs, attendance rosters, coding assessment tools, and placement records. CampusPulse brings these signals together into a deterministic student success score and generates a prioritized advisor action list. This helps faculty advisors and department chairs identify struggling students and record interventions quickly.
 
-CampusPulse is a **support tool, not a surveillance tool**. Higher education institutions frequently struggle with fragmented data silos across LMS logs, attendance systems, coding assessment platforms, and placement cells. 
+### Non-goals
 
-CampusPulse consolidates these disparate campus signals into an auditable, deterministic **Student Success Score** and presents a prioritized, humane **Advisor Action List**. This enables faculty advisors and department leadership to transition from passive dashboard observation to proactive, closed-loop student support in **under 30 seconds per student**.
+- Publicly ranking students or showing competitive leaderboards.
+- Making irreversible decisions based on a single score or assessment.
+- Comparing colleges against one another.
+- Sharing student personally identifiable information beyond assigned advisors.
+- Using opaque or non-deterministic language models to compute student scores.
 
-### Non-Goals
-- ❌ Ranking students publicly or displaying shaming leaderboards.
-- ❌ Making irreversible academic or placement determinations from a single assessment.
-- ❌ Comparing colleges against each other unfairly.
-- ❌ Exposing personally identifiable information (PII) beyond scoped faculty advisors.
-- ❌ Relying on opaque, black-box LLMs or non-deterministic runtime APIs to calculate student scores.
-
----
-
-
-
-
-
-
-
-
-
-
-
----
-
-## 🏗️ System Architecture & Technology Stack
+## System architecture and technology stack
 
 ```mermaid
 flowchart LR
@@ -41,108 +22,96 @@ flowchart LR
     Ingestion --> ScoringPath["packages/domain (Pure AST Mathematical Engine)"]
     ScoringPath --> DB[("Database: SQLite (Dev) / PostgreSQL 15 (Prod)")]
     DB --> API["apps/api: FastAPI REST Endpoints (60+ Routes)"]
-    API --> UI["apps/api/static: High-Performance Vanilla SPA + Chart.js"]
+    API --> UI["apps/api/static: Single Page Application + Chart.js"]
 ```
 
-### Technology Stack
-- **Backend Framework**: [FastAPI](https://fastapi.tiangolo.com/) (Python 3.11+) with async lifespan lifecycle management, strict Pydantic v2 schemas, and standardized `{ data, meta }` response envelopes.
-- **Frontend Architecture**: Zero-build, lightweight Single Page Application (HTML5, Vanilla CSS, Modern JavaScript) served directly by FastAPI at `/`, eliminating Node.js runtime overhead.
-- **Data Visualization**: [Chart.js 4.4](https://www.chartjs.org/) for responsive 2D quadrant scatter matrix, waterfall attribution graphs, and multi-week metric trajectories.
-- **Domain Engine**: Pure Python AST mathematical scoring engine (`packages/domain/`) with zero external network or LLM dependencies.
-- **Database & ORM**: [SQLAlchemy 2.0](https://www.sqlalchemy.org/) ORM with dual engine support:
-  - Development / Demo: Pre-seeded local SQLite (`campuspulse_local.db`).
+### Technology stack
+
+- Backend framework: [FastAPI](https://fastapi.tiangolo.com/) (Python 3.11+) with async lifespan lifecycle management, Pydantic schemas, and `{ data, meta }` response envelopes.
+- Frontend architecture: Single page application in vanilla HTML5, CSS, and modern JavaScript served directly by FastAPI at `/`.
+- Data visualization: [Chart.js 4.4](https://www.chartjs.org/) for quadrant scatter plots, contribution breakdown charts, and metric trajectories over time.
+- Domain engine: Pure Python mathematical scoring module (`packages/domain/`) with zero runtime network or LLM dependencies.
+- Database and ORM: [SQLAlchemy 2.0](https://www.sqlalchemy.org/) with dual engine support:
+  - Development and demo: Pre-seeded local SQLite (`campuspulse_local.db`).
   - Production: PostgreSQL 15+ via asyncpg connection pooling.
-- **Deployment Platform**: [Render](https://render.com) Web Service configured via `render.yaml` and `requirements.txt`.
+- Deployment platform: [Render](https://render.com) Web Service configured through `render.yaml` and `requirements.txt`.
 
----
+## Student success score calculation
 
-## 📐 Student Success Score Formulation
-
-The composite **Student Success Score** ($S \in [0, 100]$) is computed deterministically from six indicators:
+The composite success score ($S \in [0, 100]$) is computed deterministically from six indicators:
 
 $$S = 0.25(I_{\text{acad}}) + 0.20(I_{\text{att}}) + 0.20(I_{\text{place}}) + 0.15(I_{\text{lms}}) + 0.10(I_{\text{eng}}) + 0.10(I_{\text{skills}})$$
 
-### Indicator Definitions
+### Indicator definitions
 
-| Indicator | Weight | Mathematical Formulation | Rationale |
+| Indicator | Weight | Formulation | Rationale |
 | :--- | :---: | :--- | :--- |
-| **Academic** ($I_{\text{acad}}$) | **25%** | $\text{clamp}(\text{CGPA} \times 10 - 3 \times \min(\text{backlogs}, 5), 0, 100)$ | Core academic baseline penalized for active backlog drag. |
-| **Attendance** ($I_{\text{att}}$) | **20%** | $\text{clamp}(\mu_{\text{att}} - 5 \times N_{\text{sub} < 60\%}, 0, 100)$ | Penalizes localized subject absenteeism even if overall attendance seems acceptable. |
-| **Placement** ($I_{\text{place}}$) | **20%** | $0.35 \cdot \text{Aptitude} + 0.40 \cdot \text{Coding} + 0.25 \cdot \text{MockInterview}$ | Direct placement readiness signal. Fallback to assessment sub-score when coding logs are absent. |
-| **LMS Engagement** ($I_{\text{lms}}$) | **15%** | $0.50 \cdot \text{CompletionPct} + 0.50 \cdot \text{ScaledLogins}$ | Measures self-directed continuous learning habits. |
-| **Campus Engagement** ($I_{\text{eng}}$) | **10%** | $\text{clamp}\left(\frac{\text{WinsorizedSum}(\text{events}, \text{clubs}, \text{hackathons}, \text{certs})}{20} \times 100, 0, 100\right)$ | Extracurricular differentiation winsorized at 95th percentile to prevent extreme outlier skew. |
-| **Skills Profile** ($I_{\text{skills}}$) | **10%** | $0.60 \cdot \text{TechnicalAssessment} + 0.40 \cdot \text{SoftSkills}$ | Balanced technical competency and interpersonal readiness. |
+| Academic ($I_{\text{acad}}$) | 25% | $\text{clamp}(\text{CGPA} \times 10 - 3 \times \min(\text{backlogs}, 5), 0, 100)$ | Academic baseline penalized for active backlogs. |
+| Attendance ($I_{\text{att}}$) | 20% | $\text{clamp}(\mu_{\text{att}} - 5 \times N_{\text{sub} < 60\%}, 0, 100)$ | Penalizes subject-level absenteeism even if average attendance is acceptable. |
+| Placement ($I_{\text{place}}$) | 20% | $0.35 \cdot \text{Aptitude} + 0.40 \cdot \text{Coding} + 0.25 \cdot \text{MockInterview}$ | Placement readiness indicator. Uses general assessment sub-score when coding logs are absent. |
+| LMS Engagement ($I_{\text{lms}}$) | 15% | $0.50 \cdot \text{CompletionPct} + 0.50 \cdot \text{ScaledLogins}$ | Measures regular participation in course portal tasks. |
+| Campus Engagement ($I_{\text{eng}}$) | 10% | $\text{clamp}\left(\frac{\text{WinsorizedSum}(\text{events}, \text{clubs}, \text{hackathons}, \text{certs})}{20} \times 100, 0, 100\right)$ | Extracurricular activities, winsorized at the 95th percentile to limit extreme outlier skew. |
+| Skills Profile ($I_{\text{skills}}$) | 10% | $0.60 \cdot \text{TechnicalAssessment} + 0.40 \cdot \text{SoftSkills}$ | Technical competency and interpersonal evaluation. |
 
-> **Mathematical Invariant**: Weights strictly sum to $1.0000000000$. Validated cryptographically at startup by `scripts/boot_check.py`.
+Weights strictly sum to 1.0, verified at startup by `scripts/boot_check.py`.
 
----
+## Safety floors and tier rules
 
-## 🛡️ Fail-Safe Hard Safety Floors & Tiers
+To keep high-risk students visible even when they score well on other dimensions, tier classification evaluates safety floors before score bands:
 
-To ensure vulnerable students are never masked by high aggregate scores in other dimensions, the platform evaluates strict hard-floor safety triggers before ordinary tiering:
-
-1. **Hard Floor Trigger (Top-Priority Override)**:
+1. Hard floor trigger:
    $$\text{Attendance} < 57\% \quad \lor \quad \text{CGPA} < 4.7 \quad \lor \quad \text{Backlogs} \ge 3 \implies \mathbf{Priority\ Support\ [PINNED]}$$
-   Students triggering a hard floor are automatically pinned to the top of the Advisor Action List.
-2. **Review Band (Borderline Triage)**:
+   Students triggering a hard floor are pinned to the top of the advisor action list.
+2. Review band:
    $$57\% \le \text{Attendance} \le 63\% \quad \lor \quad 4.7 \le \text{CGPA} \le 5.3 \implies \mathbf{Review}$$
-3. **Standard Score Bands**:
-   - **On Track**: $\text{Score} \ge 60$
-   - **Watchlist**: $40 \le \text{Score} < 60$
-   - **Priority Support**: $\text{Score} < 40$
+3. Standard score bands:
+   - On Track: $\text{Score} \ge 60$
+   - Watchlist: $40 \le \text{Score} < 60$
+   - Priority Support: $\text{Score} < 40$
 
----
+## Student segmentation
 
-## 📊 2D Student Segmentation Matrix
+Students are classified into five mutually exclusive segments to suggest relevant support strategies:
 
-Students are classified into **five mutually exclusive segments** to drive targeted intervention playbooks:
+1. Struggling on All Fronts: Tier is `priority_support` with 4 or more sub-indices below the cohort 25th percentile ($p_{25}$).
+2. Academic Stars with Placement Gap: Strong academic score ($I_{\text{acad}} \ge 75$) alongside lower placement readiness ($I_{\text{place}} \le p_{25}$).
+3. Hustlers at Academic Risk: High extracurricular activity ($I_{\text{eng}} \ge 75$) but academic index falling below the cohort quartile ($I_{\text{acad}} < p_{25}$).
+4. Quietly Disengaged: Acceptable attendance ($I_{\text{att}} \ge 60\%$) paired with low LMS and campus participation ($I_{\text{lms}}, I_{\text{eng}} < p_{25}$).
+5. Balanced Performers: Steady progress across all evaluated areas.
 
-1. **Struggling on All Fronts**: Tier = `priority_support` with $\ge 4$ sub-indices below cohort $p_{25}$.
-2. **Academic Stars with Placement Gap**: High academic performance ($I_{\text{acad}} \ge 75$) but low coding/placement readiness ($I_{\text{place}} \le p_{25}$).
-3. **Hustlers at Academic Risk**: High extracurricular engagement ($I_{\text{eng}} \ge 75$) but academic index falling below cohort quartile ($I_{\text{acad}} < p_{25}$).
-4. **Quietly Disengaged**: Adequate attendance ($I_{\text{att}} \ge 60\%$) but stagnant LMS and campus participation ($I_{\text{lms}}, I_{\text{eng}} < p_{25}$).
-5. **Balanced Performers**: Consistent progression fulfilling institutional milestones across all dimensions.
+## Score breakdown and simulation
 
----
+- Point attribution: Every student record details the positive points gained and negative penalties incurred by each indicator (such as $+18.2$ from Academics or $-6.0$ from Backlog Penalty).
+- What-if simulation (`POST /api/v1/what-if`): Faculty advisors can project potential score changes in memory (for instance, the effect of raising attendance from 58% to 75% or improving a coding score by 15 points) without altering persistent database records.
 
-## 🔍 Explainability & What-If Decision Intelligence
+## Intervention workflow
 
-- **Waterfall Point Attribution**: Every student score card breaks down the exact positive points gained and negative penalties incurred by each indicator (e.g., $+18.2$ from Academics, $-6.0$ from Backlog Penalty).
-- **Interactive What-If Simulation (`POST /api/v1/what-if`)**: Faculty advisors can simulate potential score improvements (e.g., "What if attendance increases from 58% to 75%?" or "What if coding score improves by 15 points?") in memory before assigning resources, without altering persistent records.
+1. Detection: The system flags risk indicators and hard-floor triggers.
+2. Prioritization: The advisor action list ranks students by urgency, actionability, and recent trajectory.
+3. Assignment: Advisors log specific steps (such as a coding clinic, attendance check-in, or mentoring session) with target dates and notes.
+4. Follow-up: Status tracks progress (`OPEN` -> `IN_PROGRESS` -> `COMPLETED`) to evaluate whether the student's metrics improve.
 
----
+## Machine learning governance (G1-G8)
 
-## 🔄 Closed-Loop Intervention Operating System
+### Role of machine learning
 
-CampusPulse moves beyond diagnostic dashboards to closed-loop action:
+The core scoring pipeline uses deterministic formulas in `packages/domain/` to calculate student scores. Generative models and stochastic classifiers do not make automated academic tiering determinations.
 
-1. **Detect**: System identifies risk drivers and hard-floor triggers.
-2. **Prioritize**: Advisor Action List ranks students by an urgency formula combining severity, actionability, and trajectory momentum.
-3. **Assign**: Advisor logs targeted interventions (e.g., *Coding Clinic*, *Attendance Review*, *Placement Mentoring*) with structured notes and target completion dates.
-4. **Measure**: Status workflow (`OPEN` $\rightarrow$ `IN_PROGRESS` $\rightarrow$ `COMPLETED`) tracks completion and measures quantitative pre- vs. post-intervention trajectory.
+Machine learning models serve as a secondary analysis layer:
+- Model registry (`/api/v1/ml/models`): Baselines (Random Forest, Gradient Boosting, Logistic Regression) trained to detect non-linear risk patterns.
+- Feature importance (`/api/v1/ml/feature-importance`): Ranks indicators against historical data to evaluate domain weights.
+- Agreement audit (`/api/v1/ml/evaluation`): Checks for proxy bias across departments and tracks model agreement against deterministic rules.
+- Guardrails G1-G8: Enforced in code. Machine learning outputs do not override deterministic tiers, segments, or hard safety floors.
 
----
-
-## 🤖 ML/AI Philosophy & Governance (G1–G8)
-
-### "Where is the AI?"
-CampusPulse deliberately maintains an **AST-pure, deterministic mathematical core** for student scoring. Generative AI or black-box models are **never permitted** to make opaque, un-auditable classification decisions about students.
-
-Machine Learning operates as an **advisory intelligence and disagreement layer**:
-- **Model Registry (`/api/v1/ml/models`)**: Random Forest, Gradient Boosting, and Logistic Regression baselines trained to identify non-linear risk patterns.
-- **Feature Importance (`/api/v1/ml/feature-importance`)**: Transparent feature ranking validating domain weights against empirical data.
-- **Fairness & Agreement Audit (`/api/v1/ml/evaluation`)**: Audits proxy bias across departments and checks model agreement against deterministic rules.
-- **Guardrails G1–G8**: Enforced programmatically. ML outputs never override deterministic tiers, segments, or hard safety floors.
-
----
-
-## 🚀 Getting Started Locally
+## Local setup
 
 ### 1. Prerequisites
-- **Python**: 3.11+
-- **Database**: SQLite (included out-of-the-box) or PostgreSQL 15+
 
-### 2. Setup Environment
+- Python 3.11+
+- SQLite (included) or PostgreSQL 15+
+
+### 2. Environment configuration
+
 ```bash
 # Clone repository
 git clone https://github.com/bhavyaanand2101-coder/BYTEXL_HACKATHON_2026_OCT.git
@@ -152,49 +121,51 @@ cd BYTEXL_HACKATHON_2026_OCT
 cp .env.example .env
 ```
 
-### 3. Install Dependencies
+### 3. Install dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Run Pre-Flight Boot Validation
+### 4. Run pre-flight validation
+
 ```bash
 python scripts/boot_check.py
 ```
 
-### 5. Run Test Suite
+### 5. Run test suite
+
 ```bash
 pytest
 ```
 
-### 6. Start the API & Frontend Server
+### 6. Start the application server
+
 ```bash
 uvicorn apps.api.main:app --reload --host 0.0.0.0 --port 8000
 ```
-Open **`http://localhost:8000`** in your browser to access the full Single Page Application, Advisor Dashboard, 2D Scatter Matrix, and 16:9 Presentation Deck.
 
----
+Open `http://localhost:8000` in your browser to view the application interface, advisor queue, and student views.
 
-## 🧪 Testing & Quality Gates
+## Testing
 
-The test suite enforces mathematical determinism, API contract compliance, and PII protection:
+The test suite verifies arithmetic determinism, API schemas, and privacy controls:
 
 ```bash
 pytest -v
 ```
 
-### Verification Checks
-- **`tests/unit/test_boot_check.py`**: Cryptographic weight summation ($1.0000000000$) and configuration integrity.
-- **`tests/unit/test_determinism.py`**: Asserts identical inputs produce bitwise identical scores.
-- **`tests/unit/test_ai_execution_contract.py`**: AST-pure scan prohibiting runtime LLM or network imports in scoring paths.
-- **`tests/api/test_pii_scope.py`**: Non-PII Prometheus metrics endpoint strictly masks names and roll numbers.
-- **`tests/api/test_interventions.py`**: Validates closed-loop intervention lifecycle (Create, Update, List).
+### Test coverage areas
 
----
+- `tests/unit/test_boot_check.py`: Verifies weight summation ($1.0000000000$) and configuration file integrity.
+- `tests/unit/test_determinism.py`: Confirms identical inputs yield identical outputs.
+- `tests/unit/test_ai_execution_contract.py`: Scans AST to prevent runtime model imports in scoring modules.
+- `tests/api/test_pii_scope.py`: Confirms metric endpoints omit names and student roll numbers.
+- `tests/api/test_interventions.py`: Tests the full intervention lifecycle (create, update, list).
 
-## ☁️ Deployment on Render
+## Deployment on Render
 
-The repository includes a ready-to-deploy [render.yaml](file:///Users/bhavya/Desktop/Final_Hack/render.yaml) blueprint:
+The repository includes a deployment configuration in `render.yaml`:
 
 ```yaml
 services:
@@ -212,14 +183,9 @@ services:
         value: production
 ```
 
----
+## Safeguards and limitations
 
-## ⚖️ Ethical Safeguards & Limitations
-
-- **Support, Not Punishment**: Risk indicators are signals for advisor coaching, never punitive disciplinary measures.
-- **Transparent Attribution**: Every recommendation cites auditable indicators rather than automated decisions.
-- **Scope Limitations**: The system evaluates campus engagement and readiness indicators within the collegiate context; it does not predict real-world lifetime career outcomes.
-- **PII Scope Protection**: Sensitive personal attributes (socio-economic status, caste, religion, gender) are excluded from data ingestion.
-# BYTEXL_HACKATHON
-#   C a m p u s P u l s e  
- 
+- Support focus: Risk indicators are signals for advisor coaching, not punitive measures.
+- Transparent attribution: Recommendations cite specific indicators rather than automated decisions.
+- Collegiate scope: Evaluates campus engagement and readiness indicators within academic programs; does not project lifetime career outcomes.
+- Privacy boundaries: Sensitive demographic attributes (such as socio-economic status, caste, religion, or gender) are excluded from ingestion.

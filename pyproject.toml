@@ -28,7 +28,6 @@ dependencies = [
     # --- Auth / Security ---
     "python-jose[cryptography]>=3.3.0",
     "cryptography>=42.0.0",
-    "passlib[bcrypt]>=1.7.4",
     "python-multipart>=0.0.18",
     # --- Observability ---
     "prometheus-client>=0.20.0",

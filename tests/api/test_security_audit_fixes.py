@@ -161,3 +161,166 @@ def test_unauthenticated_request_rejected():
     body = response.json()
     assert "Authentication required" in body["error"]["message"]
 
+
+
+def test_student_cannot_view_other_student_explain():
+    """Verify student role cannot access another student's score explanation (IDOR)."""
+    response = client.get(
+        "/api/v1/students/stu_other_student_999/explain",
+        headers={
+            "X-User-Role": "student",
+            "X-User-Ref": "stu_2023cse001",
+            "X-User-Email": "aarav.sharma@krmu.edu.in",
+        },
+    )
+    assert response.status_code == 403
+    body = response.json()
+    assert "Access denied" in body["error"]["message"]
+
+
+def test_student_cannot_view_other_student_trend():
+    """Verify student role cannot access another student's performance trend (IDOR)."""
+    response = client.get(
+        "/api/v1/students/stu_other_student_999/trend",
+        headers={
+            "X-User-Role": "student",
+            "X-User-Ref": "stu_2023cse001",
+            "X-User-Email": "aarav.sharma@krmu.edu.in",
+        },
+    )
+    assert response.status_code == 403
+    body = response.json()
+    assert "Access denied" in body["error"]["message"]
+
+
+def test_student_cannot_update_interventions():
+    """Verify student role cannot update advisor interventions (Authorization)."""
+    response = client.patch(
+        "/api/v1/advisors/me/interventions/any_id",
+        json={"status": "RESOLVED"},
+        headers={"X-User-Role": "student"},
+    )
+    assert response.status_code == 403
+    body = response.json()
+    assert "Access denied" in body["error"]["message"]
+
+
+def test_assistant_chat_escapes_reflected_xss():
+    """Verify /api/v1/assistant/chat sanitizes reflected user input against XSS."""
+    payload = {"query": "<script>alert('xss')</script>"}
+    response = client.post("/api/v1/assistant/chat", json=payload)
+    assert response.status_code == 200
+    data = response.json()["data"]
+    assert "<script>" not in data["reply"]
+    assert "&lt;script&gt;" in data["reply"]
+    assert "<script>" not in data["query"]
+    assert "&lt;script&gt;" in data["query"]
+
+
+def test_assistant_chat_rejects_oversized_query():
+    """Verify /api/v1/assistant/chat rejects queries exceeding 1000 characters."""
+    payload = {"query": "A" * 1005}
+    response = client.post("/api/v1/assistant/chat", json=payload)
+    assert response.status_code == 422
+
+
+def test_student_cannot_upload_dataset():
+    """Verify students are forbidden from uploading datasets."""
+    dummy_file = io.BytesIO(b"Roll Number,Name\n1,Test\n")
+    response = client.post(
+        "/api/v1/data-import/upload",
+        files={"file": ("dataset.csv", dummy_file, "text/csv")},
+        headers={"X-User-Role": "student"},
+    )
+    assert response.status_code == 403
+    assert "Access denied" in response.json()["error"]["message"]
+
+
+def test_student_cannot_trigger_preset_ingestion():
+    """Verify students are forbidden from triggering preset dataset ingestion."""
+    response = client.post(
+        "/api/v1/ingest/preset/sample",
+        headers={"X-User-Role": "student"},
+    )
+    assert response.status_code == 403
+    assert "Access denied" in response.json()["error"]["message"]
+
+
+def test_upload_rejects_binary_exe_in_csv():
+    """Verify upload rejects Windows PE/executable magic bytes disguised as CSV (Item 18)."""
+    # Starts with 'MZ' (DOS executable header)
+    dummy_file = io.BytesIO(b"MZ\x90\x00\x03\x00\x00\x00fake executable content")
+    response = client.post(
+        "/api/v1/data-import/upload",
+        files={"file": ("trojan.csv", dummy_file, "text/csv")},
+    )
+    assert response.status_code == 400
+    assert "Executable or binary content detected" in response.json()["error"]["message"]
+
+
+def test_upload_rejects_non_zip_in_xlsx():
+    """Verify upload rejects non-OOXML/ZIP files disguised as XLSX (Item 18)."""
+    dummy_file = io.BytesIO(b"NOT_A_ZIP_HEADER_CONTENT")
+    response = client.post(
+        "/api/v1/data-import/upload",
+        files={"file": ("fake_table.xlsx", dummy_file, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")},
+    )
+    assert response.status_code == 400
+    assert "Missing standard ZIP/OOXML magic header" in response.json()["error"]["message"]
+
+
+def test_csp_and_permissions_policy_headers_present():
+    """Verify CSP and Permissions-Policy security headers are enforced (Item 17)."""
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert "Content-Security-Policy" in response.headers
+    csp = response.headers["Content-Security-Policy"]
+    assert "default-src 'self'" in csp
+    assert "frame-ancestors 'self'" in csp
+
+    assert "Permissions-Policy" in response.headers
+    perm = response.headers["Permissions-Policy"]
+    assert "geolocation=()" in perm
+    assert "camera=()" in perm
+
+
+def test_cors_preflight_allowlisted_origin():
+    """Verify CORS preflight succeeds for allowlisted origin (Item 7)."""
+    response = client.options(
+        "/api/v1/config/effective",
+        headers={
+            "Origin": "https://campuspulse-tau-ten.vercel.app",
+            "Access-Control-Request-Method": "GET",
+        },
+    )
+    assert response.status_code == 200
+    assert response.headers.get("access-control-allow-origin") == "https://campuspulse-tau-ten.vercel.app"
+    assert response.headers.get("access-control-allow-credentials") == "true"
+
+
+def test_intervention_creation_writes_audit_log():
+    """Verify state-changing actions write to AuditLog (Item 20)."""
+    from adapters.postgres.models import AuditLog, Student
+    from adapters.postgres.repository import get_db
+
+    db = next(get_db())
+    student = db.query(Student).first()
+    student_ref = student.student_ref if student else "stu_00362b128d7c"
+    initial_count = db.query(AuditLog).count()
+
+    response = client.post(
+        "/api/v1/advisors/me/interventions",
+        json={
+            "student_ref": student_ref,
+            "action_code": "MENTOR_CHECKIN",
+            "notes": "Security verification check-in",
+        },
+        headers={"X-User-Role": "advisor"},
+    )
+    assert response.status_code == 200
+
+    new_count = db.query(AuditLog).count()
+    assert new_count == initial_count + 1
+    latest = db.query(AuditLog).order_by(AuditLog.id.desc()).first()
+    assert latest.action == "CREATE_INTERVENTION"
+    assert latest.target_id == student_ref

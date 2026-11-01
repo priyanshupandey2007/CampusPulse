@@ -7243,15 +7243,15 @@ Available Nimbus Shell commands:
 
         document.getElementById('d360-contribs').innerHTML = (exp.contributions || []).map(c => `
           <div style="display:flex; justify-content:space-between; font-size:0.78rem; margin-bottom:4px;">
-            <span style="text-transform:capitalize; font-weight:600;">${c.indicator} (${c.formula})</span>
-            <span style="font-family:var(--font-mono); color:var(--primary-blue);">+${c.points_contributed} pts</span>
+            <span style="text-transform:capitalize; font-weight:600;">${escapeHtml(c.indicator)} (${escapeHtml(c.formula)})</span>
+            <span style="font-family:var(--font-mono); color:var(--primary-blue);">+${Number(c.points_contributed) || 0} pts</span>
           </div>
         `).join('');
 
         document.getElementById('d360-actions').innerHTML = (exp.top_drivers || []).map(d => `
           <div style="padding:10px; background:#f8fafc; border-left:3px solid var(--primary-blue); border-radius:4px; margin-bottom:6px;">
-            <div style="font-weight:700; font-size:0.82rem; color:#0f172a;">${d.title}</div>
-            <div style="font-size:0.78rem; color:var(--text-muted);">${d.body}</div>
+            <div style="font-weight:700; font-size:0.82rem; color:#0f172a;">${escapeHtml(d.title)}</div>
+            <div style="font-size:0.78rem; color:var(--text-muted);">${escapeHtml(d.body)}</div>
           </div>
         `).join('') || '<div style="font-size:0.78rem; color:var(--text-muted);">Standard progress.</div>';
 
@@ -7305,7 +7305,7 @@ Available Nimbus Shell commands:
 
     function openNominationModal() {
       const sel = document.getElementById('nom-student-select');
-      sel.innerHTML = studentListCache.map(s => `<option value="${s.student_ref}">${s.name || 'Student'} (${s.department} • Score: ${s.success_score || 0})</option>`).join('');
+      sel.innerHTML = studentListCache.map(s => `<option value="${escapeHtml(s.student_ref)}">${escapeHtml(s.name || 'Student')} (${escapeHtml(s.department)} • Score: ${s.success_score || 0})</option>`).join('');
       document.getElementById('modal-nomination').style.display = 'flex';
     }
 
@@ -8272,7 +8272,7 @@ Available Nimbus Shell commands:
         if (repTitle) repTitle.innerText = "Student Success Dossier";
         if (sel) {
           sel.style.display = 'inline-block';
-          sel.innerHTML = studentListCache.map(s => `<option value="${s.student_ref}">${s.name || 'Student'} (${s.student_ref})</option>`).join('');
+          sel.innerHTML = studentListCache.map(s => `<option value="${escapeHtml(s.student_ref)}">${escapeHtml(s.name || 'Student')} (${escapeHtml(s.student_ref)})</option>`).join('');
         }
         if (badge) badge.style.display = 'none';
         if (studentListCache.length > 0) {
@@ -8377,8 +8377,8 @@ Available Nimbus Shell commands:
         // Contrib math
         document.getElementById('rep-contrib-list').innerHTML = (exp.contributions || []).map(c => `
           <div style="display:flex; justify-content:space-between; font-size:0.8rem; padding:6px 8px; background:#f8fafc; border-radius:4px;">
-            <span><strong style="text-transform:capitalize;">${c.indicator}</strong> (${c.formula})</span>
-            <span style="font-family:var(--font-mono); color:var(--primary-blue); font-weight:700;">+${c.points_contributed} pts</span>
+            <span><strong style="text-transform:capitalize;">${escapeHtml(c.indicator)}</strong> (${escapeHtml(c.formula)})</span>
+            <span style="font-family:var(--font-mono); color:var(--primary-blue); font-weight:700;">+${Number(c.points_contributed) || 0} pts</span>
           </div>
         `).join('');
 
@@ -8386,17 +8386,17 @@ Available Nimbus Shell commands:
         const sub = m.sub_indices || {};
         document.getElementById('rep-subindices-grid').innerHTML = Object.entries(sub).map(([k, v]) => `
           <div class="subindex-card">
-            <div class="subindex-card-header"><span style="text-transform:capitalize;">${k}</span><span>/ 100</span></div>
-            <div class="subindex-val">${v}</div>
-            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${Math.min(100, v)}%;"></div></div>
+            <div class="subindex-card-header"><span style="text-transform:capitalize;">${escapeHtml(k)}</span><span>/ 100</span></div>
+            <div class="subindex-val">${Number(v) || 0}</div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${Math.min(100, Number(v) || 0)}%;"></div></div>
           </div>
         `).join('');
 
         // Actions
         document.getElementById('rep-actions-list').innerHTML = (exp.top_drivers || []).map(d => `
           <div style="padding:10px; background:#f8fafc; border-left:3px solid var(--primary-blue); border-radius:4px; margin-bottom:6px;">
-            <div style="font-weight:700; font-size:0.82rem; color:#0f172a;">${d.title}</div>
-            <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">${d.body}</div>
+            <div style="font-weight:700; font-size:0.82rem; color:#0f172a;">${escapeHtml(d.title)}</div>
+            <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">${escapeHtml(d.body)}</div>
           </div>
         `).join('') || '<div style="font-size:0.8rem; color:var(--text-muted);">No urgent actions required.</div>';
 
@@ -8593,10 +8593,10 @@ Available Nimbus Shell commands:
         const d = json.data;
 
         if (d.status === 'ACCEPTED') {
-          out.innerHTML = `<span style="color:#4ade80;">✓ ACCEPTED (Runtime: ${d.execution_time_ms}ms, Memory: ${d.memory_mb}MB)</span>\n\n${d.stdout}`;
+          out.innerHTML = `<span style="color:#4ade80;">✓ ACCEPTED (Runtime: ${Number(d.execution_time_ms) || 0}ms, Memory: ${Number(d.memory_mb) || 0}MB)</span>\n\n${escapeHtml(d.stdout || '')}`;
           showToast('✓ Code executed successfully! All test cases passed.');
         } else {
-          out.innerHTML = `<span style="color:#f87171;">✕ ${d.status}</span>\n\n${d.stderr}`;
+          out.innerHTML = `<span style="color:#f87171;">✕ ${escapeHtml(d.status || 'ERROR')}</span>\n\n${escapeHtml(d.stderr || '')}`;
         }
       } catch (err) {
         out.innerText = 'Execution service error.';
@@ -9266,7 +9266,7 @@ Available Nimbus Shell commands:
 
     function openBookSessionModal() {
       const sel = document.getElementById('book-student-select');
-      sel.innerHTML = studentListCache.map(s => `<option value="${s.name || 'Student'}">${s.name || 'Student'} (${s.department})</option>`).join('');
+      sel.innerHTML = studentListCache.map(s => `<option value="${escapeHtml(s.name || 'Student')}">${escapeHtml(s.name || 'Student')} (${escapeHtml(s.department)})</option>`).join('');
       document.getElementById('modal-book-session').style.display = 'flex';
     }
 
@@ -9899,14 +9899,14 @@ Available Nimbus Shell commands:
         } catch (e) {}
         if (sel) {
           sel.style.display = 'none';
-          sel.innerHTML = `<option value="${targetRef}" selected>${currentStudentName} (${targetRef})</option>`;
+          sel.innerHTML = `<option value="${escapeHtml(targetRef)}" selected>${escapeHtml(currentStudentName)} (${escapeHtml(targetRef)})</option>`;
           sel.value = targetRef;
         }
         if (badge) badge.style.display = 'inline-flex';
       } else {
         if (sel) {
           sel.style.display = 'inline-block';
-          sel.innerHTML = studentListCache.map(s => `<option value="${s.student_ref}">${s.name || 'Student'} (${s.student_ref})</option>`).join('');
+          sel.innerHTML = studentListCache.map(s => `<option value="${escapeHtml(s.student_ref)}">${escapeHtml(s.name || 'Student')} (${escapeHtml(s.student_ref)})</option>`).join('');
         }
         if (badge) badge.style.display = 'none';
       }
@@ -10085,7 +10085,7 @@ Available Nimbus Shell commands:
         loadActionList();
         loadIngestionRuns();
       } catch (err) {
-        statusBox.innerHTML = `<div style="background:#fef2f2; border:1px solid #fecaca; padding:10px; border-radius:6px; color:#b91c1c; font-size:0.85rem;">❌ Ingestion failed: ${err.message}</div>`;
+        statusBox.innerHTML = `<div style="background:#fef2f2; border:1px solid #fecaca; padding:10px; border-radius:6px; color:#b91c1c; font-size:0.85rem;">❌ Ingestion failed: ${escapeHtml(err.message)}</div>`;
       }
     }
 
@@ -10111,7 +10111,7 @@ Available Nimbus Shell commands:
         loadActionList();
         loadIngestionRuns();
       } catch (err) {
-        statusBox.innerHTML = `<div style="background:#fef2f2; border:1px solid #fecaca; padding:10px; border-radius:6px; color:#b91c1c; font-size:0.85rem;">❌ Preset execution failed: ${err.message}</div>`;
+        statusBox.innerHTML = `<div style="background:#fef2f2; border:1px solid #fecaca; padding:10px; border-radius:6px; color:#b91c1c; font-size:0.85rem;">❌ Preset execution failed: ${escapeHtml(err.message)}</div>`;
       }
     }
 
@@ -10136,17 +10136,17 @@ Available Nimbus Shell commands:
           }
           return `
             <tr>
-              <td><span style="font-family:var(--font-mono); font-weight:700; color:var(--primary-blue);">${r.run_id}</span></td>
-              <td><strong>${r.file_name}</strong></td>
-              <td><span class="badge" style="background:#dcfce7; color:#15803d;">${r.processed_students} students</span></td>
-              <td>${r.quarantined_students > 0 ? `<span class="badge" style="background:#fee2e2; color:#b91c1c;">${r.quarantined_students}</span>` : `<span style="color:#64748b;">0</span>`}</td>
-              <td><code style="font-size:0.75rem; background:#f1f5f9; padding:2px 6px; border-radius:4px;">${sha}</code></td>
+              <td><span style="font-family:var(--font-mono); font-weight:700; color:var(--primary-blue);">${escapeHtml(r.run_id)}</span></td>
+              <td><strong>${escapeHtml(r.file_name)}</strong></td>
+              <td><span class="badge" style="background:#dcfce7; color:#15803d;">${Number(r.processed_students) || 0} students</span></td>
+              <td>${r.quarantined_students > 0 ? `<span class="badge" style="background:#fee2e2; color:#b91c1c;">${Number(r.quarantined_students)}</span>` : `<span style="color:#64748b;">0</span>`}</td>
+              <td><code style="font-size:0.75rem; background:#f1f5f9; padding:2px 6px; border-radius:4px;">${escapeHtml(sha)}</code></td>
               <td><span class="badge badge-success">✓ Processed &amp; Scored</span></td>
             </tr>
           `;
         }).join('');
       } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#ef4444; padding:16px;">Failed to load runs: ${err.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#ef4444; padding:16px;">Failed to load runs: ${escapeHtml(err.message)}</td></tr>`;
       }
     }
 
@@ -10350,17 +10350,17 @@ Available Nimbus Shell commands:
           return `
             <tr>
               <td>
-                <strong style="color:#0f172a;">${item.student_name || 'Student'}</strong>
-                <div style="font-size:0.7rem; color:var(--text-muted); font-family:var(--font-mono);">${item.student_ref}</div>
+                <strong style="color:#0f172a;">${escapeHtml(item.student_name || 'Student')}</strong>
+                <div style="font-size:0.7rem; color:var(--text-muted); font-family:var(--font-mono);">${escapeHtml(item.student_ref)}</div>
               </td>
-              <td>${item.department || 'Engineering'} • ${item.batch || '2026'}</td>
-              <td><span class="brand-tag">${item.action_code}</span></td>
-              <td><span style="padding:2px 8px; border-radius:4px; font-size:0.75rem; font-weight:700; background:${statusBg}; color:${statusFg};">${item.status}</span></td>
-              <td style="font-size:0.75rem; color:var(--text-muted);">${item.created_at ? item.created_at.substring(0, 10) : 'Recent'}</td>
-              <td style="font-size:0.78rem; color:#334155; max-width:280px;">${item.notes || 'Target intervention assigned.'}</td>
+              <td>${escapeHtml(item.department || 'Engineering')} • ${escapeHtml(item.batch || '2026')}</td>
+              <td><span class="brand-tag">${escapeHtml(item.action_code)}</span></td>
+              <td><span style="padding:2px 8px; border-radius:4px; font-size:0.75rem; font-weight:700; background:${statusBg}; color:${statusFg};">${escapeHtml(item.status)}</span></td>
+              <td style="font-size:0.75rem; color:var(--text-muted);">${item.created_at ? escapeHtml(item.created_at.substring(0, 10)) : 'Recent'}</td>
+              <td style="font-size:0.78rem; color:#334155; max-width:280px;">${escapeHtml(item.notes || 'Target intervention assigned.')}</td>
               <td style="text-align:right;">
                 ${isDone ? '<span style="color:#166534; font-size:0.75rem; font-weight:700;">✓ Resolved</span>' : `
-                  <button class="btn btn-sm ${isProg ? 'btn-outline' : 'btn-primary'}" onclick="updateInterventionStatus('${item.id}', '${isProg ? 'COMPLETED' : 'IN_PROGRESS'}')">
+                  <button class="btn btn-sm ${isProg ? 'btn-outline' : 'btn-primary'}" onclick="updateInterventionStatus('${escapeHtml(item.id)}', '${isProg ? 'COMPLETED' : 'IN_PROGRESS'}')">
                     ${isProg ? '✓ Mark Complete' : '⚡ Start Progress'}
                   </button>
                 `}
@@ -10381,8 +10381,8 @@ Available Nimbus Shell commands:
       const select = document.getElementById('modal-student-select');
       if (select && studentListCache.length > 0) {
         select.innerHTML = studentListCache.map(s => `
-          <option value="${s.student_ref}" ${s.student_ref === preselectedRef ? 'selected' : ''}>
-            ${s.name} (${s.student_ref}) • ${s.department}
+          <option value="${escapeHtml(s.student_ref)}" ${s.student_ref === preselectedRef ? 'selected' : ''}>
+            ${escapeHtml(s.name || 'Student')} (${escapeHtml(s.student_ref)}) • ${escapeHtml(s.department)}
           </option>
         `).join('');
       }
@@ -10563,7 +10563,7 @@ Available Nimbus Shell commands:
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
       toast.className = 'toast';
-      toast.innerHTML = `<span>⚡</span> <span>${msg}</span>`;
+      toast.innerHTML = `<span>⚡</span> <span>${escapeHtml(msg)}</span>`;
       container.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
     }
@@ -10661,7 +10661,7 @@ Available Nimbus Shell commands:
           const catSelect = document.getElementById('comp-filter-category');
           if (catSelect) {
             catSelect.innerHTML = '<option value="">All 17 Categories</option>' +
-              compCategoriesCache.map(c => `<option value="${c.id}">${c.name} (${(c.features || []).length})</option>`).join('');
+              compCategoriesCache.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)} (${(c.features || []).length})</option>`).join('');
           }
         }
 
@@ -10672,7 +10672,7 @@ Available Nimbus Shell commands:
           const compSelect = document.getElementById('comp-filter-competitor');
           if (compSelect) {
             compSelect.innerHTML = '<option value="">All Competitors</option>' +
-              compCompetitorsCache.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+              compCompetitorsCache.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)}</option>`).join('');
           }
         }
 
@@ -10883,8 +10883,8 @@ Available Nimbus Shell commands:
         document.getElementById('modal-ev-platform').innerText = comp.name;
         document.getElementById('modal-ev-status').innerHTML = badgeHtml;
         document.getElementById('modal-ev-evidence').innerHTML = `
-          <div>${cf.evidence || 'No public documentation verified for this capability.'}</div>
-          <div style="font-size:0.72rem; color:var(--text-muted); margin-top:6px;">Last Verified: ${cf.last_verified || '2026-10-01'}</div>
+          <div>${escapeHtml(cf.evidence || 'No public documentation verified for this capability.')}</div>
+          <div style="font-size:0.72rem; color:var(--text-muted); margin-top:6px;">Last Verified: ${escapeHtml(cf.last_verified || '2026-10-01')}</div>
         `;
         document.getElementById('modal-ev-campuspulse').innerText = `CampusPulse Approach: Connects to ${comp.name} as a signal feeder and applies closed-loop student intervention tracking without displacing institutional software investments.`;
       }
@@ -11380,7 +11380,7 @@ Available Nimbus Shell commands:
       const info = SEGMENT_PLAYBOOKS[segName] || SEGMENT_PLAYBOOKS["Academic Stars with Placement Gap"];
       const titleEl = document.getElementById('selected-segment-playbook-title');
       const bodyEl = document.getElementById('selected-segment-playbook-body');
-      if (titleEl) titleEl.innerHTML = `${info.icon} ${segName} — Playbook`;
+      if (titleEl) titleEl.innerHTML = `${info.icon} ${escapeHtml(segName)} — Playbook`;
 
       if (bodyEl) {
         bodyEl.innerHTML = `
@@ -11429,17 +11429,17 @@ Available Nimbus Shell commands:
         return `
           <tr>
             <td>
-              <div style="font-weight:700; color:#0f172a;">${s.name}</div>
-              <div style="font-size:0.72rem; color:var(--text-muted); font-family:var(--font-mono);">${s.student_ref}</div>
+              <div style="font-weight:700; color:#0f172a;">${escapeHtml(s.name)}</div>
+              <div style="font-size:0.72rem; color:var(--text-muted); font-family:var(--font-mono);">${escapeHtml(s.student_ref)}</div>
             </td>
-            <td><div style="font-weight:600;">${s.department}</div><div style="font-size:0.72rem; color:var(--text-muted);">${s.batch}</div></td>
+            <td><div style="font-weight:600;">${escapeHtml(s.department)}</div><div style="font-size:0.72rem; color:var(--text-muted);">${escapeHtml(s.batch)}</div></td>
             <td><span style="font-weight:700; font-family:var(--font-mono);">${s.academic_index}</span></td>
             <td><span style="font-weight:700; font-family:var(--font-mono);">${s.placement_index}</span></td>
             <td><span style="font-size:1.1rem; font-weight:800; font-family:var(--font-mono); color:#0f172a;">${s.success_score}</span></td>
             <td><span class="tier-badge ${tierClass}">${tierLabel}</span></td>
-            <td><span style="font-size:0.75rem; font-weight:700; color:${segInfo.color};">${s.segment}</span></td>
+            <td><span style="font-size:0.75rem; font-weight:700; color:${segInfo.color};">${escapeHtml(s.segment)}</span></td>
             <td style="text-align:right;">
-              <button class="btn btn-primary btn-sm" onclick="openStudent360('${s.student_ref}')">View 360</button>
+              <button class="btn btn-primary btn-sm" onclick="openStudent360('${escapeHtml(s.student_ref)}')">View 360</button>
             </td>
           </tr>
         `;
