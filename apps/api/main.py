@@ -19,6 +19,7 @@ from typing import Any, Dict, List, Optional
 from fastapi import Depends, FastAPI, File, HTTPException, Query, Request, Response, UploadFile, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
@@ -134,6 +135,8 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 
 # ── Rate Limiting Engine ───────────────────────────────────────────────────────
@@ -339,20 +342,29 @@ async def generic_exception_handler(request: Request, exc: Exception):
 def get_favicon():
     svg_path = Path(__file__).parent / "static" / "favicon.svg"
     if svg_path.exists():
-        return FileResponse(svg_path, media_type="image/svg+xml")
+        return FileResponse(svg_path, media_type="image/svg+xml", headers={"Cache-Control": "public, max-age=86400"})
     raise HTTPException(status_code=404, detail="Favicon not found")
 
 
 # ── UI Dashboard ─────────────────────────────────────────────────────────────
 
+_INDEX_HTML_CACHE: Optional[str] = None
+
+
 @app.get("/", response_class=HTMLResponse)
 @app.get("/dashboard", response_class=HTMLResponse)
 def get_dashboard():
-    static_file = Path(__file__).parent / "static" / "index.html"
-    if static_file.exists():
-        with open(static_file, "r", encoding="utf-8") as f:
-            return f.read()
-    return "<h1>CampusPulse API v5.0</h1><p>Dashboard UI static file not found.</p>"
+    global _INDEX_HTML_CACHE
+    if _INDEX_HTML_CACHE is None:
+        static_file = Path(__file__).parent / "static" / "index.html"
+        if static_file.exists():
+            _INDEX_HTML_CACHE = static_file.read_text(encoding="utf-8")
+    if _INDEX_HTML_CACHE:
+        return HTMLResponse(
+            content=_INDEX_HTML_CACHE,
+            headers={"Cache-Control": "public, max-age=300, stale-while-revalidate=60"},
+        )
+    return HTMLResponse("<h1>CampusPulse API v5.0</h1><p>Dashboard UI static file not found.</p>")
 
 
 # ── Firebase Config ─────────────────────────────────────────────────────────

@@ -63,3 +63,4 @@
 
 **The single first thing to fix before anything else**:
 Ensure the authentication screen never uses unconstrained `margin: auto` inside a flex container with `overflow-y: auto`. Flex vertical centering without bounds causes negative coordinates that cannot be reached by scrolling, permanently hiding headings and critical CTAs on standard laptop screens.
+

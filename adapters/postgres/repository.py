@@ -428,7 +428,7 @@ class CampusPulseRepository:
                     "resource_type": "config.yaml",
                     "resource_id": "c4520cb10d798f6b",
                     "meta_json": {"status": "PASSED", "weights_sum": 1.0, "pure_ast": True},
-                    "logged_at": datetime.datetime.utcnow().isoformat(),
+                    "logged_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                     "block_hash": "a8fbc394d0e819b78e82a321cf5741b8a1c9e8e7456d68b919a32c819a84d82f",
                 },
                 {
@@ -437,7 +437,7 @@ class CampusPulseRepository:
                     "resource_type": "advisors",
                     "resource_id": "adv_ananya_sharma",
                     "meta_json": {"cohort": "CSE 2029", "students_scanned": 13},
-                    "logged_at": (datetime.datetime.utcnow() - datetime.timedelta(minutes=15)).isoformat(),
+                    "logged_at": (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(minutes=15)).isoformat(),
                     "block_hash": "d4e219ba382bc194a28f89c47e810a9c8b7f6e5d4c3b2a1980e7d6c5b4a3210f",
                 },
                 {
@@ -446,7 +446,7 @@ class CampusPulseRepository:
                     "resource_type": "raw_snapshots",
                     "resource_id": "Section_C_Week_4.xlsx",
                     "meta_json": {"records_processed": 13, "quarantined": 0},
-                    "logged_at": (datetime.datetime.utcnow() - datetime.timedelta(minutes=30)).isoformat(),
+                    "logged_at": (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(minutes=30)).isoformat(),
                     "block_hash": "b2c3d4e5f60718293a4b5c6d7e8f90123456789abcdef0123456789abcdef012",
                 }
             ]

@@ -32,7 +32,7 @@ def generate_student_ref(roll_number: Optional[str], name: Optional[str]) -> Tup
         h = hashlib.sha256((norm_name + STUDENT_ID_SALT).encode("utf-8")).hexdigest()[:12]
         return f"stu_quarantine_{h}", False, "Missing roll number (synthesized ref generated)"
     else:
-        h = hashlib.sha256(f"unknown_{datetime.datetime.utcnow().timestamp()}".encode()).hexdigest()[:12]
+        h = hashlib.sha256(f"unknown_{datetime.datetime.now(datetime.timezone.utc).timestamp()}".encode()).hexdigest()[:12]
         return f"stu_quarantine_{h}", True, "Missing both roll number and name"
 
 
@@ -170,7 +170,7 @@ def clean_student_assessment_record(
                 "raw_row": raw_row,
                 "issue_type": "total_score_out_of_range",
                 "resolution": "flagged_not_clamped",
-                "logged_at": datetime.datetime.utcnow().isoformat(),
+                "logged_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
             })
     except (ValueError, TypeError):
         score_val = 0.0
@@ -180,7 +180,7 @@ def clean_student_assessment_record(
             "raw_row": raw_row,
             "issue_type": "non_numeric_score",
             "resolution": "set_to_zero_and_flagged",
-            "logged_at": datetime.datetime.utcnow().isoformat(),
+            "logged_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         })
 
     # 4. Tab Switches (int >= 0, negatives set to 0 and flagged)
@@ -195,7 +195,7 @@ def clean_student_assessment_record(
                 "raw_row": raw_row,
                 "issue_type": "negative_tab_switches",
                 "resolution": "set_to_0",
-                "logged_at": datetime.datetime.utcnow().isoformat(),
+                "logged_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
             })
     except (ValueError, TypeError):
         tab_switches = 0
@@ -209,7 +209,7 @@ def clean_student_assessment_record(
             "raw_row": raw_row,
             "issue_type": time_issue,
             "resolution": "fallback_to_expected_time",
-            "logged_at": datetime.datetime.utcnow().isoformat(),
+            "logged_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         })
         time_spent = 30.0  # fallback to standard expected time
 
@@ -232,7 +232,7 @@ def clean_student_assessment_record(
                         "raw_row": raw_row,
                         "issue_type": "plag_over_100",
                         "resolution": "clipped_to_100",
-                        "logged_at": datetime.datetime.utcnow().isoformat(),
+                        "logged_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                     })
                 plag_vals.append(max(0.0, p_float))
             except (ValueError, TypeError):
@@ -247,7 +247,7 @@ def clean_student_assessment_record(
         else:
             sub_date_iso = str(sub_date)
     else:
-        sub_date_iso = datetime.datetime.utcnow().isoformat()
+        sub_date_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
     cleaned = {
         "student_ref": student_ref,

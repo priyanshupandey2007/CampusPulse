@@ -74,7 +74,7 @@ def execute_pipeline(
             raw_row=log_item.get("raw_row", {}),
             issue_type=log_item.get("issue_type", "unknown"),
             resolution=log_item.get("resolution", "logged"),
-            logged_at=datetime.datetime.utcnow(),
+            logged_at=datetime.datetime.now(datetime.timezone.utc),
         )
         session.add(cl)
 
@@ -205,7 +205,7 @@ def execute_pipeline(
             multi_ip=item["multi_ip"],
             speed_anomaly=(item["time_spent_min"] < assessment_cfg.get("speed_anomaly_threshold_min", 15)),
             integrity_flag=item["integrity_flag"],
-            submission_at=datetime.datetime.utcnow(),
+            submission_at=datetime.datetime.now(datetime.timezone.utc),
             ip_list=item["ip_list"],
             is_primary=True,
         )
@@ -234,7 +234,7 @@ def execute_pipeline(
             config_hash=config_hash,
             targets_hash=targets_hash,
             score_version="v5.0",
-            generated_at=datetime.datetime.utcnow(),
+            generated_at=datetime.datetime.now(datetime.timezone.utc),
         )
         session.add(wm)
 
@@ -275,7 +275,7 @@ def execute_pipeline(
     session.commit()
 
     return {
-        "run_id": hashlib.sha256(f"{file_path.name}_{datetime.datetime.utcnow()}".encode()).hexdigest()[:12],
+        "run_id": hashlib.sha256(f"{file_path.name}_{datetime.datetime.now(datetime.timezone.utc)}".encode()).hexdigest()[:12],
         "file_name": file_path.name,
         "processed_students": processed_count,
         "quarantined_students": len(quarantine_records),

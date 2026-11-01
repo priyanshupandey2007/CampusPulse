@@ -1,12 +1,14 @@
 """
 Ponytail Ruthless QA Regression Tests.
-Verifies fixes for Blocker and High bugs identified during audit:
+Verifies fixes for Blocker, High, and lagging categories identified during audit:
 1. CSP headers permit Firebase/Google Auth endpoints.
 2. Auth overlay layout prevents heading clipping on standard viewports.
 3. Role badge is present in auth modal markup.
 4. Static directory contains no orphan patch/scratch scripts.
 5. Unused dependencies removed from manifests.
-6. Error envelopes standard on boundary failures.
+6. Accessibility: form labels have programmatic 'for' attributes.
+7. Performance: Caching headers on dashboard and favicon.
+8. Code Economy: Zero deprecated datetime.utcnow calls in services.
 """
 
 from pathlib import Path
@@ -62,3 +64,33 @@ def test_dependency_diet_verified():
 
     reqs = Path("requirements.txt").read_text(encoding="utf-8")
     assert "passlib" not in reqs, "passlib still present in requirements.txt"
+
+
+def test_accessibility_labels_have_for_attributes():
+    """Verify form labels in auth modal have programmatic 'for' links to input IDs."""
+    index_path = Path("apps/api/static/index.html")
+    content = index_path.read_text(encoding="utf-8")
+    assert 'for="auth-signin-email"' in content, "Missing for='auth-signin-email' in faculty label"
+    assert 'for="auth-signin-password"' in content, "Missing for='auth-signin-password' in faculty password label"
+    assert 'for="auth-student-id"' in content, "Missing for='auth-student-id' in student label"
+    assert 'for="auth-dean-id"' in content, "Missing for='auth-dean-id' in dean label"
+    assert 'for="auth-hod-id"' in content, "Missing for='auth-hod-id' in hod label"
+
+
+def test_performance_caching_headers():
+    """Verify Cache-Control headers on dashboard UI and static favicon."""
+    res_dash = client.get("/")
+    assert res_dash.status_code == 200
+    assert "public" in res_dash.headers.get("cache-control", "")
+
+    res_fav = client.get("/favicon.svg")
+    assert res_fav.status_code == 200
+    assert "max-age=86400" in res_fav.headers.get("cache-control", "")
+
+
+def test_no_deprecated_utcnow_calls_in_services():
+    """Ensure zero datetime.utcnow calls in services/ for Python 3.12+ forward compatibility."""
+    services_dir = Path("services")
+    for py_file in services_dir.rglob("*.py"):
+        content = py_file.read_text(encoding="utf-8")
+        assert "datetime.datetime.utcnow()" not in content, f"Found deprecated datetime.utcnow() in {py_file}"

@@ -135,7 +135,7 @@ def process_ingestion_file(
                 "raw_payload": canonical_raw,
                 "quarantine_reason": q_reason,
                 "row_sha256": row_sha,
-                "ingested_at": datetime.datetime.utcnow().isoformat(),
+                "ingested_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
             })
             quarantine_reasons[q_reason] = quarantine_reasons.get(q_reason, 0) + 1
         else:

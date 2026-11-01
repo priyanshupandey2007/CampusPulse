@@ -101,3 +101,4 @@ The frontend is an enterprise single-page application served from `apps/api/stat
 | `ALLOWED_ORIGINS` | `localhost:8000, 127.0.0.1:8000, campuspulse-tau-ten.vercel.app` | Medium | CORS allowed cross-origins |
 | `RATE_LIMIT_MAX_PER_MIN` | `120` | Low | General IP request rate limit |
 | `ENFORCE_STRICT_AUTH` | `false` | High | Toggles strict 401 requirement on all routes |
+

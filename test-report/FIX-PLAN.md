@@ -88,3 +88,4 @@
 - **Problem**: Single 11,082-line HTML file mixes styles, templates, logic, and dataset defaults.
 - **Fix**: Split into `src/styles/`, `src/components/`, `src/modules/` with a lightweight, no-build asset aggregator or clean ESM module imports (`type="module"` native in all modern browsers).
 - **Ponytail Ladder Justification**: Native ES Modules require zero bundler or build step (`<script type="module" src="/static/js/app.js">`), keeping build steps at zero.
+
