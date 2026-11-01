@@ -49,12 +49,13 @@
 | **PONY-07** | Network Transfer Weight (703 KB HTML) | **Performance** | Performance | Added Starlette `GZipMiddleware(minimum_size=1000)` and in-memory cache for `index.html`. |
 | **PONY-08** | Unlinked Form Control Labels in Auth Modal | **Accessibility** | a11y | Added programmatic `for="..."` attributes linking all 8 inputs to their labels. |
 | **PONY-09** | Deprecated datetime.utcnow() Warnings | **Code Economy** | Code Health | Replaced all occurrences across `services/` and `adapters/` with `datetime.now(timezone.utc)`. |
+| **PONY-10** | KPMG Showcase Page & Dead Presentation Deck Code | **Code Economy** | YAGNI (Rung 1) | Removed `view-kpmg-showcase`, navbar button, sidebar link, deck autoplay/slide JS (-361 lines). |
 
 ---
 
 ## 4. Automated Regression Verification
 
-The test suite runs 74 tests with 0 failures:
-- `test-report/regression-tests/test_ponytail_regressions.py` (8 automated regression tests covering all audit fixes)
+The test suite runs 76 tests with 0 failures:
+- `test-report/regression-tests/test_ponytail_regressions.py` (10 automated regression tests covering all audit fixes)
 - `tests/api/` (51 API integration tests)
 - `tests/unit/` (15 unit and domain determinism tests)

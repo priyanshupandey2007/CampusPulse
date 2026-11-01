@@ -104,3 +104,16 @@ def test_default_theme_is_light_and_buttons_removed():
     assert 'data-theme="light"' in content, "HTML root missing data-theme='light'"
     assert "auth-theme-toggle" not in content, "Floating auth-theme-toggle button still present in HTML"
     assert "theme-toggle-btn" not in content, "Navbar theme-toggle-btn still present in HTML"
+
+
+def test_kpmg_showcase_page_removed():
+    """Verify KPMG showcase page, deck scripts, and nav buttons are cleanly removed."""
+    index_path = Path("apps/api/static/index.html")
+    content = index_path.read_text(encoding="utf-8")
+    assert "kpmg-showcase" not in content, "view-kpmg-showcase still present in index.html"
+    assert "loadKpmgShowcase" not in content, "loadKpmgShowcase() still present in index.html"
+    assert "renderDeckSlide" not in content, "renderDeckSlide() still present in index.html"
+    # Verify functional KPMG pages (segmentation & formulation) are preserved
+    assert "loadKpmgSegmentationMatrix" in content, "Segmentation matrix function missing"
+    assert "loadKpmgFormulation" in content, "Formulation whitepaper function missing"
+
