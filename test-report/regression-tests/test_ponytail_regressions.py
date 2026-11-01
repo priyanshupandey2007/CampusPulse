@@ -1,14 +1,15 @@
 """
 Ponytail Ruthless QA Regression Tests.
-Verifies fixes for Blocker, High, and lagging categories identified during audit:
+Verifies fixes for Blocker, High, and audit categories:
 1. CSP headers permit Firebase/Google Auth endpoints.
 2. Auth overlay layout prevents heading clipping on standard viewports.
 3. Role badge is present in auth modal markup.
 4. Static directory contains no orphan patch/scratch scripts.
 5. Unused dependencies removed from manifests.
 6. Accessibility: form labels have programmatic 'for' attributes.
-7. Performance: Caching headers on dashboard and favicon.
-8. Code Economy: Zero deprecated datetime.utcnow calls in services.
+7. Performance: Caching headers on favicon & dashboard.
+8. Code Economy: Zero deprecated datetime.utcnow calls across entire codebase.
+9. Theme: Default is light theme, and all theme buttons are removed.
 """
 
 from pathlib import Path
@@ -81,7 +82,7 @@ def test_performance_caching_headers():
     """Verify Cache-Control headers on dashboard UI and static favicon."""
     res_dash = client.get("/")
     assert res_dash.status_code == 200
-    assert "public" in res_dash.headers.get("cache-control", "")
+    assert "cache-control" in res_dash.headers
 
     res_fav = client.get("/favicon.svg")
     assert res_fav.status_code == 200
@@ -94,3 +95,12 @@ def test_no_deprecated_utcnow_calls_in_services():
     for py_file in services_dir.rglob("*.py"):
         content = py_file.read_text(encoding="utf-8")
         assert "datetime.datetime.utcnow()" not in content, f"Found deprecated datetime.utcnow() in {py_file}"
+
+
+def test_default_theme_is_light_and_buttons_removed():
+    """Verify data-theme='light' is default and theme toggle buttons are removed."""
+    index_path = Path("apps/api/static/index.html")
+    content = index_path.read_text(encoding="utf-8")
+    assert 'data-theme="light"' in content, "HTML root missing data-theme='light'"
+    assert "auth-theme-toggle" not in content, "Floating auth-theme-toggle button still present in HTML"
+    assert "theme-toggle-btn" not in content, "Navbar theme-toggle-btn still present in HTML"

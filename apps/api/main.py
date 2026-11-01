@@ -348,21 +348,14 @@ def get_favicon():
 
 # ── UI Dashboard ─────────────────────────────────────────────────────────────
 
-_INDEX_HTML_CACHE: Optional[str] = None
-
-
 @app.get("/", response_class=HTMLResponse)
 @app.get("/dashboard", response_class=HTMLResponse)
 def get_dashboard():
-    global _INDEX_HTML_CACHE
-    if _INDEX_HTML_CACHE is None:
-        static_file = Path(__file__).parent / "static" / "index.html"
-        if static_file.exists():
-            _INDEX_HTML_CACHE = static_file.read_text(encoding="utf-8")
-    if _INDEX_HTML_CACHE:
+    static_file = Path(__file__).parent / "static" / "index.html"
+    if static_file.exists():
         return HTMLResponse(
-            content=_INDEX_HTML_CACHE,
-            headers={"Cache-Control": "public, max-age=300, stale-while-revalidate=60"},
+            content=static_file.read_text(encoding="utf-8"),
+            headers={"Cache-Control": "no-cache, no-store, must-revalidate"},
         )
     return HTMLResponse("<h1>CampusPulse API v5.0</h1><p>Dashboard UI static file not found.</p>")
 
