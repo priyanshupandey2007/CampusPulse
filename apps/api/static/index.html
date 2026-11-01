@@ -6579,51 +6579,10 @@ Available Nimbus Shell commands:
       showAuthOverlay();
 
       // If Firebase Auth is active, listen for its own token-verified session
+      // Firebase Auth state listener (prevent silent auto-login on load)
       if (fbAuthInstance && fbAuthInstance.onAuthStateChanged) {
         fbAuthInstance.onAuthStateChanged((fbUser) => {
-          // Only auto-restore if Firebase itself confirms an active signed-in user
-          // AND the login overlay is still visible (user hasn't manually signed in yet)
-          const overlay = document.getElementById('auth-overlay-screen');
-          const overlayVisible = overlay && overlay.style.display !== 'none';
-          if (fbUser && overlayVisible) {
-            let user = null;
-            const storedSession = localStorage.getItem('campuspulse_auth_user');
-            if (storedSession) {
-              try {
-                user = JSON.parse(storedSession);
-              } catch (e) { /* ignore */ }
-            }
-            if (!user) {
-              const email = fbUser.email || '';
-              const isStudent = email.includes('student') || email.includes('priyanshu') || !!email.match(/[0-9]{4}/);
-              let displayName = fbUser.displayName;
-              if (!displayName && email) {
-                if (email.toLowerCase().includes('priyanshu')) displayName = 'Priyanshu Pandey';
-                else displayName = email.split('@')[0];
-              }
-              if (!displayName) displayName = isStudent ? 'Priyanshu Pandey' : 'Faculty Member';
-
-              const initials = displayName
-                .split(' ')
-                .filter(Boolean)
-                .map(n => n[0])
-                .join('')
-                .substring(0, 2)
-                .toUpperCase() || 'PP';
-
-              user = {
-                uid: fbUser.uid,
-                email: email || (isStudent ? 'priyanshupandey2864@gmail.com' : 'faculty@campuspulse.edu'),
-                displayName: displayName,
-                role: isStudent ? 'student' : 'teacher',
-                roleTitle: isStudent ? 'Student (CSE Sec A <span class="meta-sep" style="color:var(--text-dim);">/</span> Roll #001)' : 'Faculty Mentor',
-                avatarInitials: initials,
-                provider: 'firebase'
-              };
-            }
-            applyAuthenticatedUser(user);
-            hideAuthOverlay();
-          }
+          // Do not automatically bypass login screen without user interaction
         });
       }
     }
@@ -6757,34 +6716,36 @@ Available Nimbus Shell commands:
       const btnId = 'btn-google-signin-' + (wanted === 'teacher' ? 'faculty' : wanted);
       const activeBtn = document.getElementById(btnId);
       const originalHtml = activeBtn ? activeBtn.innerHTML : '';
-      if (activeBtn) activeBtn.innerHTML = 'Signing in with Google...';
-
-      let googleUser = null;
+      if (activeBtn) activeBtn.innerHTML = 'Opening Google Sign-In...';
 
       try {
-        if (typeof firebase !== 'undefined' && firebase.auth) {
-          try {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            provider.addScope('profile');
-            provider.addScope('email');
-            provider.setCustomParameters({ prompt: 'select_account' });
-
-            const result = await firebase.auth().signInWithPopup(provider);
-            if (result && result.user) {
-              googleUser = result.user;
-            }
-          } catch (popupErr) {
-            console.warn('Firebase Google Auth popup status:', popupErr.code, popupErr.message);
-            if (popupErr.code === 'auth/popup-closed-by-user' || popupErr.code === 'auth/cancelled-popup-request') {
-              if (activeBtn) activeBtn.innerHTML = originalHtml;
-              showToast('Google sign-in popup was closed.');
-              return;
-            }
-            // If domain unauthorized in Firebase Console or network issue, continue with verified Google user profile
-          }
+        if (typeof firebase === 'undefined' || !firebase.auth) {
+          alert('Firebase Auth is initializing or unavailable. Please check your connection and refresh.');
+          return;
         }
 
-        const role = wanted;
+        const auth = firebase.auth();
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('profile');
+        provider.addScope('email');
+        // Force the Google account selection popup so user explicitly chooses their account
+        provider.setCustomParameters({ prompt: 'select_account' });
+
+        const result = await auth.signInWithPopup(provider);
+        if (!result || !result.user) {
+          throw new Error('No user returned from Google popup.');
+        }
+
+        const googleUser = result.user;
+
+        // Map allowed role or default to selected portal
+        const ALLOWED = {
+          'ananya.sharma@campuspulse.edu': 'teacher',
+          'rajesh.gupta@campuspulse.edu': 'dean',
+          'sk.venkatraman@campuspulse.edu': 'hod'
+        };
+        const role = ALLOWED[(googleUser.email || '').toLowerCase()] || wanted;
+
         const roleTitles = {
           teacher: 'Lead Faculty Advisor (CSE)',
           student: 'Student (CSE Sec A / Roll #001)',
@@ -6792,29 +6753,26 @@ Available Nimbus Shell commands:
           hod: 'Head of Department (CSE)'
         };
 
-        // Authenticate as Priyanshu Pandey (real Google user) — never dummy account
-        const displayName = googleUser ? (googleUser.displayName || 'Priyanshu Pandey') : 'Priyanshu Pandey';
-        const email = googleUser ? (googleUser.email || 'priyanshupandey2864@gmail.com') : 'priyanshupandey2864@gmail.com';
-        const photoURL = googleUser ? googleUser.photoURL : null;
-
+        const displayName = googleUser.displayName || (googleUser.email ? googleUser.email.split('@')[0] : 'Google User');
+        const email = googleUser.email || '';
         const initials = displayName
           .split(' ')
           .filter(Boolean)
           .map(n => n[0])
           .join('')
           .substring(0, 2)
-          .toUpperCase() || 'PP';
+          .toUpperCase() || 'GU';
 
         const roleTitle = (ROLE_METADATA[role] && ROLE_METADATA[role].roleTitle) || roleTitles[role] || 'Institutional User';
 
         const userObj = {
-          uid: googleUser && googleUser.uid ? googleUser.uid : ('goog_' + Math.random().toString(36).substring(2, 10)),
+          uid: googleUser.uid,
           email: email,
           displayName: displayName,
           role: role,
           roleTitle: roleTitle,
           avatarInitials: initials,
-          photoURL: photoURL,
+          photoURL: googleUser.photoURL || null,
           provider: 'google.com',
           loginTime: new Date().toISOString()
         };
@@ -6824,8 +6782,18 @@ Available Nimbus Shell commands:
         hideAuthOverlay();
         showToast(`✓ Welcome, ${displayName}! Signed in with Google (${roleTitles[role] || role}).`);
       } catch (err) {
-        console.error('Google Sign-In failed:', err);
-        showToast('Google Sign-In failed: ' + (err.code || err.message));
+        console.error('Google Sign-In failed:', err.code, err.message);
+        if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
+          showToast('Google sign-in popup was closed.');
+        } else if (err.code === 'auth/popup-blocked') {
+          alert('Google Sign-In popup was blocked by your browser.\n\nPlease allow popups for campuspulse-tau-ten.vercel.app and try again.');
+        } else if (err.code === 'auth/unauthorized-domain') {
+          alert('Authorized Domain required in Firebase Console:\n\n1. Go to Firebase Console -> campuspulse-33839\n2. Authentication -> Settings -> Authorized Domains\n3. Click "Add domain" and enter:\ncampuspulse-tau-ten.vercel.app');
+        } else if (err.code === 'auth/operation-not-allowed') {
+          alert('Google Provider disabled in Firebase Console:\n\n1. Go to Firebase Console -> campuspulse-33839\n2. Authentication -> Sign-in method\n3. Enable "Google" provider and save.');
+        } else {
+          showToast('Google sign-in failed: ' + (err.code || err.message));
+        }
       } finally {
         if (activeBtn) activeBtn.innerHTML = originalHtml;
       }
