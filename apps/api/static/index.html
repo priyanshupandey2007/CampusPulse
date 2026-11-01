@@ -1966,108 +1966,6 @@
     }
 
     /* ══════════════════════════════════════════════════════════════════════════ */
-    /* KPMG IN INDIA PRESENTATION DECK & SHOWCASE STYLES */
-    /* ══════════════════════════════════════════════════════════════════════════ */
-    .kpmg-deck-viewport {
-      background: linear-gradient(135deg, var(--color-slate-950) 0%, var(--color-slate-900) 60%, var(--color-slate-900) 100%);
-      border-radius: var(--radius-lg);
-      padding: 36px 44px;
-      color: var(--color-white);
-      box-shadow: 0 24px 48px var(--alpha-black-40), inset 0 1px 0 var(--alpha-white-10);
-      margin-bottom: 24px;
-      position: relative;
-      overflow: hidden;
-      min-height: 460px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      border: 1px solid var(--alpha-indigo-25);
-    }
-    .kpmg-deck-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      border-bottom: 1px solid var(--overlay-light);
-      padding-bottom: 12px;
-    }
-    .kpmg-deck-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--alpha-indigo-25);
-      border: 1px solid var(--alpha-indigo-60);
-      color: var(--color-indigo-200);
-      padding: 4px 12px;
-      border-radius: 9999px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: normal; text-transform: none;
-    }
-    .kpmg-deck-title {
-      font-size: 1.75rem;
-      font-weight: 800;
-      color: var(--color-white);
-      line-height: 1.25;
-      margin-bottom: 8px;
-    }
-    .kpmg-deck-subtitle {
-      font-size: 0.95rem;
-      color: var(--color-slate-400);
-      line-height: 1.45;
-      margin-bottom: 20px;
-    }
-    .kpmg-deck-content-box {
-      background: var(--alpha-white-04);
-      border: 1px solid var(--alpha-white-08);
-      border-radius: var(--radius-md);
-      padding: 22px;
-      margin-bottom: 18px;
-      backdrop-filter: blur(8px);
-    }
-    .kpmg-deck-bullet {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 12px;
-      font-size: 0.92rem;
-      color: var(--color-slate-200);
-      line-height: 1.5;
-    }
-    .kpmg-deck-bullet:last-child { margin-bottom: 0; }
-    .kpmg-deck-bullet-icon {
-      color: var(--color-indigo-500);
-      font-weight: 700;
-      flex-shrink: 0;
-      font-size: 1.1rem;
-    }
-    .kpmg-deck-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-top: 1px solid var(--overlay-light);
-      padding-top: 16px;
-    }
-    .kpmg-deck-dots {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .kpmg-deck-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--overlay-light);
-      cursor: pointer;
-      transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
-    }
-    .kpmg-deck-dot.active {
-      background: var(--color-indigo-500);
-      width: 26px;
-      border-radius: 13px;
-    }
-
-    /* 2D Quadrant Matrix Visualizer */
     .kpmg-quadrant-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -2882,16 +2780,6 @@
           <span class="nav-badge" id="nav-test-papers-badge" style="background:var(--color-purple-100); color:var(--color-purple-700);">Superadmin</span>
         </a>
 
-        <!-- KPMG SHOWCASE (Dean & Admin only) -->
-        <div class="nav-section-title" data-roles="dean admin" style="color:var(--primary-blue); font-weight:800; display:flex; align-items:center; justify-content:space-between;">
-          <span>KPMG Showcase</span>
-          <span style="background:var(--color-indigo-100); color:var(--color-indigo-700); padding:1px 6px; border-radius:4px; font-size:0.65rem; font-weight:700;">100 PTS</span>
-        </div>
-        <a class="nav-item" data-roles="dean admin" onclick="switchNav('kpmg-showcase')" style="border-left:3px solid var(--primary-blue); background:var(--alpha-indigo-04);">
-          <span class="nav-icon"><svg aria-hidden="true" class="h-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"/><path d="M18 4H6v7a6 6 0 0 0 12 0V4z"/></svg></span>
-          <span class="nav-label">Pitch Deck (16:9)</span>
-        </a>
-
         <!-- COMPETITIVE INTELLIGENCE (Dean & Admin only) -->
         <div class="nav-section-title" data-roles="dean admin">Competitive Intel</div>
         <a class="nav-item" data-roles="dean admin" onclick="switchNav('competitive-overview')">
@@ -2935,10 +2823,6 @@
 
         <div class="nav-right">
           <!-- Quick Tools Group -->
-          <button data-roles="dean admin" class="btn btn-sm" onclick="switchNav('kpmg-showcase')" style="background:linear-gradient(135deg, var(--primary-blue), var(--primary-blue)); color:var(--bg-surface); font-weight:700; border:none; box-shadow:0 2px 10px var(--alpha-indigo-30); display:flex; align-items:center; gap:6px; border-radius:20px; padding:6px 12px;">
-            <span><svg aria-hidden="true" class="h-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"/><path d="M18 4H6v7a6 6 0 0 0 12 0V4z"/></svg></span> KPMG Deck
-          </button>
-
           <button class="btn btn-sm" onclick="switchNav('naac-evaluator')" style="background:linear-gradient(135deg, var(--color-purple-600), var(--color-purple-600)); color:var(--bg-surface); font-weight:700; border:none; box-shadow:0 2px 10px var(--alpha-purple-30); display:flex; align-items:center; gap:6px; border-radius:20px; padding:6px 13px;" title="Open NAAC RAF Accreditation & NEP 2020 Platform">
             <span><svg aria-hidden="true" class="h-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V10l7-5 7 5v11"/><path d="M9 14h6"/><path d="M9 21v-3h6v3"/></svg></span> NAAC A++ (3.65)
           </button>
@@ -5757,135 +5641,6 @@ Available Nimbus Shell commands:
             </div>
           </div>
 
-          <!-- ════════════════════════════════════════════════════════════════════ -->
-          <!-- VIEW: KPMG CHALLENGE SHOWCASE & INTERACTIVE PITCH DECK -->
-          <!-- ════════════════════════════════════════════════════════════════════ -->
-          <div id="view-kpmg-showcase" class="tab-view">
-            <div class="breadcrumbs"><span>Home</span> / <span>KPMG in India</span> / <span class="current">Showcase &amp; Pitch Deck</span></div>
-
-            <!-- Challenge Hero Banner -->
-            <div class="card" style="margin-bottom:20px; background:linear-gradient(135deg, var(--color-slate-900) 0%, var(--color-indigo-900) 60%, var(--text-main) 100%); color:var(--bg-surface); border:none; box-shadow:0 8px 30px var(--alpha-indigo-35);">
-              <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
-                <div>
-                  <div style="display:inline-flex; align-items:center; gap:8px; background:var(--alpha-white-12); padding:4px 12px; border-radius:20px; font-size:0.75rem; font-weight:700; letter-spacing:0.04em; margin-bottom:10px; border:1px solid var(--alpha-white-20);">
-                    <span><svg aria-hidden="true" class="h-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"/><path d="M18 4H6v7a6 6 0 0 0 12 0V4z"/></svg></span> KPMG IN INDIA — SMART CAMPUS ANALYTICS
-                  </div>
-                  <h1 style="font-size:1.6rem; font-weight:800; margin:0 0 6px; color:var(--bg-surface);">AI-Powered Student Analytics and Success Platform</h1>
-                  <p style="font-size:0.88rem; color:var(--text-muted); margin:0; max-width:850px; line-height:1.5;">
-                    Predict, Guide &amp; Improve Student Success — Connecting separate campus data into clear, understandable insights and personalized guidance for every student.
-                  </p>
-                </div>
-                <div style="display:flex; gap:8px;">
-                  <button class="btn btn-sm" onclick="switchNav('kpmg-segmentation')" style="background:var(--color-cyan-500); color:var(--bg-surface); border:none; font-weight:700;"><svg aria-hidden="true" class="h-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Student Groups Matrix</button>
-                  <button class="btn btn-sm" onclick="switchNav('kpmg-formulation')" style="background:var(--color-purple-500); color:var(--bg-surface); border:none; font-weight:700;"><svg aria-hidden="true" class="h-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/></svg> How Scores Work</button>
-                </div>
-              </div>
-
-              <!-- Quick Evaluation Rubric Badges -->
-              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px; margin-top:20px; border-top:1px solid var(--alpha-white-15); padding-top:16px;">
-                <div style="background:var(--alpha-white-08); padding:10px 12px; border-radius:6px; border-left:3px solid var(--primary-blue);">
-                  <div style="font-size:0.68rem; color:var(--text-dim); text-transform:uppercase; font-weight:700;">Data Integration</div>
-                  <div style="font-size:0.95rem; font-weight:800; color:var(--primary-blue);">30% Weight</div>
-                  <div style="font-size:0.7rem; color:var(--border-color);">7-Source Unified Schema</div>
-                </div>
-                <div style="background:var(--alpha-white-08); padding:10px 12px; border-radius:6px; border-left:3px solid var(--color-purple-500);">
-                  <div style="font-size:0.68rem; color:var(--text-dim); text-transform:uppercase; font-weight:700;">Success Score &amp; Risk</div>
-                  <div style="font-size:0.95rem; font-weight:800; color:var(--color-purple-500);">25% Weight</div>
-                  <div style="font-size:0.7rem; color:var(--border-color);">6-Dim Score + Hard Floors</div>
-                </div>
-                <div style="background:var(--alpha-white-08); padding:10px 12px; border-radius:6px; border-left:3px solid var(--color-emerald-400);">
-                  <div style="font-size:0.68rem; color:var(--text-dim); text-transform:uppercase; font-weight:700;">Dashboard &amp; Viz</div>
-                  <div style="font-size:0.95rem; font-weight:800; color:var(--color-emerald-400);">25% Weight</div>
-                  <div style="font-size:0.7rem; color:var(--border-color);">Multi-Role Decision OS</div>
-                </div>
-                <div style="background:var(--alpha-white-08); padding:10px 12px; border-radius:6px; border-left:3px solid var(--color-amber-500);">
-                  <div style="font-size:0.68rem; color:var(--text-dim); text-transform:uppercase; font-weight:700;">Problem Understanding</div>
-                  <div style="font-size:0.95rem; font-weight:800; color:var(--color-amber-500);">10% Weight</div>
-                  <div style="font-size:0.7rem; color:var(--border-color);">Higher-Ed Context &amp; Actions</div>
-                </div>
-                <div style="background:var(--alpha-white-08); padding:10px 12px; border-radius:6px; border-left:3px solid var(--color-rose-500);">
-                  <div style="font-size:0.68rem; color:var(--text-dim); text-transform:uppercase; font-weight:700;">Bonus Features</div>
-                  <div style="font-size:0.95rem; font-weight:800; color:var(--color-red-400);">+10 Bonus PTS</div>
-                  <div style="font-size:0.7rem; color:var(--border-color);">Segmentation + Explainability</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- INTERACTIVE 16:9 PITCH DECK COMPONENT (DELIVERABLE 3) -->
-            <div class="kpmg-deck-viewport" id="kpmg-deck-container">
-              <div>
-                <div class="kpmg-deck-header">
-                  <div style="display:flex; align-items:center; gap:12px;">
-                    <span class="kpmg-deck-badge" id="deck-badge">Slide 1 of 7</span>
-                    <span style="font-size:0.75rem; color:var(--text-dim);" id="deck-topic">Executive Vision &amp; Problem Alignment</span>
-                  </div>
-                  <div style="display:flex; align-items:center; gap:8px;">
-                    <button class="btn btn-sm" onclick="toggleDeckAutoPlay()" id="deck-autoplay-btn" style="background:var(--alpha-white-10); color:var(--bg-surface); border:1px solid var(--alpha-white-20);">▶ Auto-Play</button>
-                  </div>
-                </div>
-
-                <div class="kpmg-deck-title" id="deck-title">Smart Campus Analytics: Beyond the Traditional Dashboard</div>
-                <div class="kpmg-deck-subtitle" id="deck-subtitle">KPMG in India Hackathon — AI-Powered Student Analytics &amp; Success Platform</div>
-
-                <div class="kpmg-deck-content-box" id="deck-content-box">
-                  <!-- Injected dynamically by JS -->
-                </div>
-              </div>
-
-              <div class="kpmg-deck-controls">
-                <button class="btn btn-sm" onclick="prevDeckSlide()" style="background:var(--alpha-white-12); color:var(--bg-surface); border:1px solid var(--alpha-white-20); font-weight:600;">⏮ Previous</button>
-                <div class="kpmg-deck-dots" id="deck-dots-container">
-                  <!-- Dots rendered dynamically -->
-                </div>
-                <button class="btn btn-sm" onclick="nextDeckSlide()" style="background:linear-gradient(135deg, var(--primary-blue), var(--primary-blue)); color:var(--bg-surface); border:none; font-weight:700;">Next Slide ⏭</button>
-              </div>
-            </div>
-
-            <!-- 100-POINT EVALUATION RUBRIC & EVIDENCE SCORECARD -->
-            <div class="card" style="margin-bottom:20px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-                <div>
-                  <h3 style="font-size:1.1rem; font-weight:700; color:var(--text-main); margin:0 0 4px;">KPMG Evaluation Rubric &amp; Architecture Fulfillment (100 Points + Bonus)</h3>
-                  <p style="font-size:0.8rem; color:var(--text-muted); margin:0;">Transparent mapping of every challenge requirement to working software components.</p>
-                </div>
-                <span class="tier-badge on_track" style="font-size:0.75rem;">100% Complete &amp; Verified</span>
-              </div>
-
-              <div class="table-container">
-                <table class="data-table">
-                  <thead>
-                    <tr>
-                      <th>Evaluation Criterion</th>
-                      <th>Weight</th>
-                      <th>What Judges Look For</th>
-                      <th>CampusPulse Implementation &amp; Evidence</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody id="kpmg-rubric-table-body">
-                    <!-- Populated dynamically from API -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- 7-SOURCE MULTI-DATA INTEGRATION SPEC -->
-            <div class="card">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-                <div>
-                  <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-main); margin:0 0 4px;">Unified 7-Source Institutional Data Integration Layer</h3>
-                  <p style="font-size:0.8rem; color:var(--text-muted); margin:0;">Eliminating campus data silos into a single, longitudinal student record.</p>
-                </div>
-                <button class="btn btn-outline btn-sm" onclick="switchNav('ingestion-pipeline')">View ingestion engine</button>
-              </div>
-
-              <div id="kpmg-data-sources-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px;">
-                <!-- Populated dynamically -->
-              </div>
-            </div>
-          </div>
-
-          <!-- ════════════════════════════════════════════════════════════════════ -->
           <!-- VIEW: 2D STUDENT SEGMENTATION QUADRANT MATRIX (BONUS FEATURE) -->
           <!-- ════════════════════════════════════════════════════════════════════ -->
           <div id="view-kpmg-segmentation" class="tab-view">
@@ -6846,7 +6601,6 @@ Available Nimbus Shell commands:
           'whatif-sandbox',
           'ingestion-pipeline',
           'governance-hashes',
-          'kpmg-showcase',
           'kpmg-formulation',
           'educator-reports',
           'trainers-schedule',
@@ -7369,7 +7123,6 @@ Available Nimbus Shell commands:
         }
       });
 
-      if (viewId === 'kpmg-showcase') loadKpmgShowcase();
       if (viewId === 'kpmg-segmentation') loadKpmgSegmentationMatrix();
       if (viewId === 'kpmg-formulation') loadKpmgFormulation();
       if (viewId === 'risk-support') loadRiskSupport();
@@ -10894,7 +10647,6 @@ Available Nimbus Shell commands:
         { label: '2D Student Segmentation', view: 'kpmg-segmentation' },
         { label: 'ML Risk & Fairness', view: 'risk-support' },
         { label: 'Interventions OS', view: 'interventions-os' },
-        { label: 'KPMG Presentation Deck', view: 'kpmg-showcase' },
         { label: 'Competitive Intelligence: Market Overview', view: 'competitive-overview' },
         { label: 'Competitive Intelligence: Feature Matrix', view: 'competitive-matrix' },
         { label: 'Competitive Intelligence: Competitor Profiles', view: 'competitive-competitors' },
@@ -11469,121 +11221,9 @@ Available Nimbus Shell commands:
       }
     }
 
-    /* ══════════════════════════════════════════════════════════════════════════ */
-    /* KPMG IN INDIA CHALLENGE SHOWCASE & PRESENTATION DECK JAVASCRIPT */
-    /* ══════════════════════════════════════════════════════════════════════════ */
-    let kpmgDeliverablesCache = null;
-    let kpmgDeckSlides = [];
-    let currentDeckIndex = 0;
-    let deckAutoPlayTimer = null;
-    let kpmgScatterChartInst = null;
+        let kpmgScatterChartInst = null;
     let kpmgStudentsCache = [];
     let activeSegmentFilter = '';
-
-    async function loadKpmgShowcase() {
-      try {
-        const res = await fetch('/api/v1/kpmg/deliverables');
-        const json = await res.json();
-        kpmgDeliverablesCache = json.data || {};
-
-        kpmgDeckSlides = kpmgDeliverablesCache.pitch_deck || [];
-        renderDeckSlide(0);
-
-        // Render Rubric Table
-        const rubricBody = document.getElementById('kpmg-rubric-table-body');
-        if (rubricBody && kpmgDeliverablesCache.evaluation_rubric_mapping) {
-          rubricBody.innerHTML = kpmgDeliverablesCache.evaluation_rubric_mapping.map(r => `
-            <tr>
-              <td><strong style="color:var(--text-main);">${r.criterion}</strong></td>
-              <td><span class="badge" style="background:var(--color-indigo-100); color:var(--color-indigo-800); font-weight:700;">${r.weight}</span></td>
-              <td style="color:var(--text-muted); font-size:0.8rem;">Evaluates complete multi-dimensional student analytics capabilities</td>
-              <td style="font-size:0.82rem; color:var(--text-main);">${r.coverage}</td>
-              <td><span class="tier-badge on_track" style="font-size:0.72rem;">✓ ${r.status}</span></td>
-            </tr>
-          `).join('');
-        }
-
-        // Render 7-Source Data Layer Grid
-        const dataGrid = document.getElementById('kpmg-data-sources-grid');
-        if (dataGrid && kpmgDeliverablesCache.data_integration && kpmgDeliverablesCache.data_integration.sources) {
-          dataGrid.innerHTML = kpmgDeliverablesCache.data_integration.sources.map(s => `
-            <div style="background:var(--bg-app); border:1px solid var(--border-color); border-radius:6px; padding:12px 14px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                <span style="font-weight:700; color:var(--text-main); font-size:0.88rem;">${s.category}</span>
-                <span class="reason-chip" style="background:var(--bg-subtle); color:var(--text-muted);">${s.stream}</span>
-              </div>
-              <div style="font-size:0.76rem; color:var(--text-muted); margin-bottom:6px;"><strong>Fields:</strong> ${s.fields}</div>
-              <div style="font-size:0.72rem; color:var(--tier-wl-fg); font-weight:600;"> Update Cadence: ${s.cadence}</div>
-            </div>
-          `).join('');
-        }
-      } catch (err) {
-        console.error('Error loading KPMG showcase:', err);
-      }
-    }
-
-    function renderDeckSlide(idx) {
-      if (!kpmgDeckSlides || kpmgDeckSlides.length === 0) return;
-      if (idx < 0) idx = 0;
-      if (idx >= kpmgDeckSlides.length) idx = kpmgDeckSlides.length - 1;
-      currentDeckIndex = idx;
-
-      const slide = kpmgDeckSlides[idx];
-      document.getElementById('deck-badge').innerText = `Slide ${idx + 1} of ${kpmgDeckSlides.length} <span class="meta-sep" style="color:var(--text-dim);">/</span> ${slide.badge || ''}`;
-      document.getElementById('deck-title').innerText = slide.title;
-      document.getElementById('deck-subtitle').innerText = slide.subtitle;
-
-      const contentBox = document.getElementById('deck-content-box');
-      if (contentBox && slide.highlights) {
-        contentBox.innerHTML = slide.highlights.map(h => {
-          const parts = h.split(':');
-          const prefix = parts.length > 1 ? `<strong>${parts[0]}:</strong>` : '';
-          const body = parts.length > 1 ? parts.slice(1).join(':') : parts[0];
-          return `
-            <div class="kpmg-deck-bullet">
-              <span class="kpmg-deck-bullet-icon">✦</span>
-              <div>${prefix} ${body}</div>
-            </div>
-          `;
-        }).join('');
-      }
-
-      // Render Dots
-      const dotsContainer = document.getElementById('deck-dots-container');
-      if (dotsContainer) {
-        dotsContainer.innerHTML = kpmgDeckSlides.map((_, i) => `
-          <div class="kpmg-deck-dot ${i === idx ? 'active' : ''}" onclick="goToDeckSlide(${i})" title="Slide ${i + 1}"></div>
-        `).join('');
-      }
-    }
-
-    function nextDeckSlide() {
-      const nextIdx = (currentDeckIndex + 1) % (kpmgDeckSlides.length || 1);
-      renderDeckSlide(nextIdx);
-    }
-
-    function prevDeckSlide() {
-      const prevIdx = (currentDeckIndex - 1 + (kpmgDeckSlides.length || 1)) % (kpmgDeckSlides.length || 1);
-      renderDeckSlide(prevIdx);
-    }
-
-    function goToDeckSlide(idx) {
-      renderDeckSlide(idx);
-    }
-
-    function toggleDeckAutoPlay() {
-      const btn = document.getElementById('deck-autoplay-btn');
-      if (deckAutoPlayTimer) {
-        clearInterval(deckAutoPlayTimer);
-        deckAutoPlayTimer = null;
-        if (btn) btn.innerHTML = '▶ Auto-Play';
-        showToast('Deck Auto-Play Paused');
-      } else {
-        deckAutoPlayTimer = setInterval(nextDeckSlide, 5000);
-        if (btn) btn.innerHTML = '⏸ Pause Deck';
-        showToast('Deck Auto-Play Active (5s per slide)');
-      }
-    }
 
     // ══════════════════════════════════════════════════════════════════════════
     // 2D STUDENT SEGMENTATION QUADRANT MATRIX JAVASCRIPT (BONUS FEATURE)
