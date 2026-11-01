@@ -19,15 +19,15 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
   <script>
-    // CampusPulse Firebase Configuration — campuspulse-d014f
+    // CampusPulse Firebase Configuration — campuspulse-33839
     const FALLBACK_FB_CONFIG = {
-      apiKey: "AIzaSyBXDZipeGgUFOyczUfbCrZZmInmEgT9x8k",
-      authDomain: "campuspulse-d014f.firebaseapp.com",
-      projectId: "campuspulse-d014f",
-      storageBucket: "campuspulse-d014f.firebasestorage.app",
-      messagingSenderId: "469605355904",
-      appId: "1:469605355904:web:e529f8cd949a4cff62b165",
-      measurementId: "G-V90RQZM1PP"
+      apiKey: "AIzaSyA74upX3XABaMe-IFRENry2Mk_G0UmtZfY",
+      authDomain: "campuspulse-33839.firebaseapp.com",
+      projectId: "campuspulse-33839",
+      storageBucket: "campuspulse-33839.firebasestorage.app",
+      messagingSenderId: "377026980878",
+      appId: "1:377026980878:web:f726f2868f32469d02205f",
+      measurementId: "G-CQ23JV7BBL"
     };
     window.firebaseConfig = FALLBACK_FB_CONFIG;
     if (typeof firebase !== 'undefined' && !firebase.apps.length) {
@@ -6763,33 +6763,22 @@ Available Nimbus Shell commands:
       const originalHtml = activeBtn ? activeBtn.innerHTML : '';
       if (activeBtn) activeBtn.innerHTML = 'Signing in with Google...';
 
-      let googleUser = null;
-
       try {
-        if (typeof firebase !== 'undefined' && firebase.auth) {
-          try {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            provider.addScope('profile');
-            provider.addScope('email');
-            provider.setCustomParameters({ prompt: 'select_account' });
-
-            const result = await firebase.auth().signInWithPopup(provider);
-            if (result && result.user) {
-              googleUser = result.user;
-            }
-          } catch (popupErr) {
-            console.warn('Firebase Google popup status:', popupErr.code, popupErr.message);
-            // If user explicitly closed the popup, stop and restore button
-            if (popupErr.code === 'auth/popup-closed-by-user' || popupErr.code === 'auth/cancelled-popup-request') {
-              if (activeBtn) activeBtn.innerHTML = originalHtml;
-              showToast('Google sign-in popup was closed.');
-              return;
-            }
-            // For auth/unauthorized-domain or network issues on cloud hosting,
-            // continue seamlessly with authenticated Google session fallback below.
-          }
+        if (typeof firebase === 'undefined' || !firebase.auth) {
+          throw new Error('Firebase Auth SDK is not available.');
         }
 
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('profile');
+        provider.addScope('email');
+        provider.setCustomParameters({ prompt: 'select_account' });
+
+        const result = await firebase.auth().signInWithPopup(provider);
+        if (!result || !result.user) {
+          throw new Error('No Google credentials returned.');
+        }
+
+        const googleUser = result.user;
         const role = wanted;
         const roleTitles = {
           teacher: 'Lead Faculty Advisor (CSE)',
@@ -6798,43 +6787,26 @@ Available Nimbus Shell commands:
           hod: 'Head of Department (CSE)'
         };
 
-        let displayName = googleUser ? (googleUser.displayName || googleUser.email) : '';
-        let email = googleUser ? googleUser.email : '';
-
-        if (!displayName) {
-          if (role === 'student') {
-            displayName = 'Priyanshu Pandey';
-            email = email || 'priyanshupandey2864@gmail.com';
-          } else if (role === 'dean') {
-            displayName = 'Prof. Rajesh Gupta';
-            email = email || 'dean@campuspulse.edu';
-          } else if (role === 'hod') {
-            displayName = 'Dr. S. K. Venkatraman';
-            email = email || 'sk.venkatraman@campuspulse.edu';
-          } else {
-            displayName = 'Dr. Ananya Sharma';
-            email = email || 'ananya.sharma@campuspulse.edu';
-          }
-        }
-
+        const displayName = googleUser.displayName || (googleUser.email ? googleUser.email.split('@')[0] : 'Google User');
+        const email = googleUser.email || '';
         const initials = displayName
           .split(' ')
           .filter(Boolean)
           .map(n => n[0])
           .join('')
           .substring(0, 2)
-          .toUpperCase() || 'CP';
+          .toUpperCase() || 'GU';
 
         const roleTitle = (ROLE_METADATA[role] && ROLE_METADATA[role].roleTitle) || roleTitles[role] || 'Institutional User';
 
         const userObj = {
-          uid: googleUser && googleUser.uid ? googleUser.uid : ('goog_' + Math.random().toString(36).substring(2, 10)),
+          uid: googleUser.uid,
           email: email,
           displayName: displayName,
           role: role,
           roleTitle: roleTitle,
           avatarInitials: initials,
-          photoURL: googleUser && googleUser.photoURL ? googleUser.photoURL : null,
+          photoURL: googleUser.photoURL || null,
           provider: 'google.com',
           loginTime: new Date().toISOString()
         };
@@ -6842,10 +6814,20 @@ Available Nimbus Shell commands:
         localStorage.setItem('campuspulse_auth_user', JSON.stringify(userObj));
         applyAuthenticatedUser(userObj);
         hideAuthOverlay();
-        showToast('✓ Welcome, ' + displayName + '! Signed in via Google.');
+        showToast(`✓ Welcome, ${displayName}! Signed in with Google.`);
       } catch (err) {
-        console.error('Google Sign-In fallback error:', err);
-        showToast('Google Sign-In could not be completed.');
+        console.error('Google Sign-In failed:', err.code, err.message);
+        if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
+          showToast('Google sign-in popup was closed.');
+        } else if (err.code === 'auth/unauthorized-domain') {
+          showToast('Domain unauthorized: Add campuspulse-tau-ten.vercel.app in Firebase Console.');
+          alert('Firebase Authorized Domain required:\n\nIn Firebase Console -> Authentication -> Settings -> Authorized Domains, click "Add domain" and enter:\n\ncampuspulse-tau-ten.vercel.app');
+        } else if (err.code === 'auth/operation-not-allowed') {
+          showToast('Google provider not enabled in Firebase Console.');
+          alert('Google Provider disabled:\n\nIn Firebase Console -> Authentication -> Sign-in method, click "Google" and toggle "Enable".');
+        } else {
+          showToast('Google sign-in failed: ' + (err.code || err.message));
+        }
       } finally {
         if (activeBtn) activeBtn.innerHTML = originalHtml;
       }
