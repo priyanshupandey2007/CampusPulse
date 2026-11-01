@@ -133,5 +133,11 @@ def test_no_parul_trainer_references():
     assert "parul" not in index_content.lower(), "Found 'parul' in index.html"
     assert "parul" not in main_content.lower(), "Found 'parul' in main.py"
 
-
-
+def test_responsive_media_queries_and_backdrop():
+    """Verify multi-tier responsive breakpoints, off-canvas sidebar and backdrop exist."""
+    content = Path("apps/api/static/index.html").read_text(encoding="utf-8")
+    assert "@media (max-width: 992px)" in content
+    assert "@media (max-width: 768px)" in content
+    assert "@media (max-width: 480px)" in content
+    assert 'id="sidebar-backdrop"' in content
+    assert ".sidebar.open" in content
