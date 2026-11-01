@@ -366,13 +366,13 @@ def get_dashboard():
 def get_firebase_config():
     """Return public client Firebase configuration from environment or defaults."""
     return make_envelope({
-        "apiKey": os.getenv("FIREBASE_API_KEY") or "AIzaSyA74upX3XABaMe-IFRENry2Mk_G0UmtZfY",
-        "authDomain": os.getenv("FIREBASE_AUTH_DOMAIN") or "campuspulse-33839.firebaseapp.com",
-        "projectId": os.getenv("FIREBASE_PROJECT_ID") or "campuspulse-33839",
-        "storageBucket": os.getenv("FIREBASE_STORAGE_BUCKET") or "campuspulse-33839.firebasestorage.app",
-        "messagingSenderId": os.getenv("FIREBASE_MESSAGING_SENDER_ID") or "377026980878",
-        "appId": os.getenv("FIREBASE_APP_ID") or "1:377026980878:web:f726f2868f32469d02205f",
-        "measurementId": os.getenv("FIREBASE_MEASUREMENT_ID") or "G-CQ23JV7BBL",
+        "apiKey": os.getenv("FIREBASE_API_KEY", ""),
+        "authDomain": os.getenv("FIREBASE_AUTH_DOMAIN", ""),
+        "projectId": os.getenv("FIREBASE_PROJECT_ID", ""),
+        "storageBucket": os.getenv("FIREBASE_STORAGE_BUCKET", ""),
+        "messagingSenderId": os.getenv("FIREBASE_MESSAGING_SENDER_ID", ""),
+        "appId": os.getenv("FIREBASE_APP_ID", ""),
+        "measurementId": os.getenv("FIREBASE_MEASUREMENT_ID", ""),
     })
 
 
