@@ -117,3 +117,12 @@ def test_kpmg_showcase_page_removed():
     assert "loadKpmgSegmentationMatrix" in content, "Segmentation matrix function missing"
     assert "loadKpmgFormulation" in content, "Formulation whitepaper function missing"
 
+
+def test_dean_page_svg_removed():
+    """Verify raw landmark SVG is removed from Dean role pill and ROLE_METADATA."""
+    index_path = Path("apps/api/static/index.html")
+    content = index_path.read_text(encoding="utf-8")
+    assert '<span class="active-role-pill role-pill-dean">Dean (Superadmin)</span>' in content
+    assert "badgeClass: 'role-pill-dean',\n        badgeIcon: ''," in content or 'badgeClass: "role-pill-dean",\n        badgeIcon: "",' in content
+
+
