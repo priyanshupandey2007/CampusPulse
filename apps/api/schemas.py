@@ -114,3 +114,23 @@ class UserAuthContext(BaseModel):
     email: str = "ananya.sharma@campuspulse.edu"
     role: str = "advisor"  # 'admin', 'dean', 'hod', 'faculty', 'advisor', 'student'
     student_ref: Optional[str] = None
+
+
+# ── Compliance & Trust Schemas (Launch Checklist §4, §12, §13) ───────────────
+
+class TermsAcceptanceRequest(BaseModel):
+    user_id: str = Field(..., max_length=128)
+    document: str = Field("terms_and_privacy", max_length=64)
+    version: str = Field("1.0.0", max_length=32)
+    mechanism: str = Field("auth_checkbox", max_length=64)
+
+
+class PrivacyRightRequest(BaseModel):
+    request_type: str = Field(..., max_length=32)  # 'export', 'delete', 'rectify', 'restrict'
+    email: str = Field(..., max_length=128)
+    student_ref: Optional[str] = Field(None, max_length=64)
+    details: Optional[str] = Field(None, max_length=1000)
+
+
+class DataPurgeRequest(BaseModel):
+    retention_days: int = Field(365, ge=30, le=3650)

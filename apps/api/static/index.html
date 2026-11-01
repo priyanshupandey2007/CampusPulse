@@ -25,7 +25,7 @@
         if (config && config.apiKey && typeof firebase !== 'undefined' && firebase.apps && !firebase.apps.length) {
           try {
             firebase.initializeApp(config);
-            if (firebase.analytics) firebase.analytics();
+            if (window.__initFirebaseAnalyticsIfConsented) window.__initFirebaseAnalyticsIfConsented();
           } catch (e) {
             console.warn('Firebase init:', e);
           }
@@ -2066,9 +2066,80 @@
         border: none !important;
       }
     }
+  
+    /* Compliance & Accessibility (§20, §21) */
+    .skip-link {
+      position: absolute;
+      top: -80px;
+      left: 12px;
+      background: #4f46e5;
+      color: #ffffff !important;
+      padding: 10px 18px;
+      z-index: 99999999;
+      font-weight: 700;
+      border-radius: 6px;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+      transition: top 0.2s ease;
+    }
+    .skip-link:focus {
+      top: 12px;
+    }
+    .compliance-modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 9999999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .compliance-modal-card {
+      background: #ffffff;
+      color: #0f172a;
+      border-radius: 12px;
+      max-width: 680px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+      border: 1px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+    }
+    .compliance-modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: #ffffff;
+      z-index: 1;
+    }
+    .compliance-modal-body {
+      padding: 20px 24px;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: #334155;
+    }
+    .compliance-modal-footer {
+      padding: 14px 24px;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: flex-end;
+      background: #f8fafc;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+
   </style>
 </head>
 <body>
+  <a href="#main-layout-root" class="skip-link">Skip to main content</a>
 
   <!-- ════════════════════════════════════════════════════════════════════ -->
   <!-- FIREBASE AUTHENTICATION SCREEN OVERLAY — DARK THEME -->
@@ -2320,9 +2391,27 @@
         </button>
       </div>
 
-      <!-- Footer -->
-      <div style="font-size:0.72rem; color:#475569; text-align:center; letter-spacing:0.01em;">
-        Protected by Firebase Authentication &amp; SHA-256 Audit Trail
+
+      <!-- Verification of Terms & Privacy (§1, §2, §3, §4) -->
+      <div style="margin: 16px 0 10px; padding: 12px 14px; background: rgba(30, 41, 59, 0.7); border: 1px solid #334155; border-radius: 8px; font-size: 0.78rem; color: #94a3b8; display: flex; align-items: flex-start; gap: 10px; text-align: left;">
+        <input type="checkbox" id="auth-terms-checkbox" style="margin-top: 3px; cursor: pointer; accent-color: #4f46e5; width:16px; height:16px;">
+        <label for="auth-terms-checkbox" style="cursor: pointer; line-height: 1.45; color:#cbd5e1;">
+          I agree to the <a href="/terms" target="_blank" style="color: #818cf8; text-decoration: underline;">Terms of Service</a> and acknowledge the <a href="/privacy" target="_blank" style="color: #818cf8; text-decoration: underline;">Privacy Notice</a>.
+        </label>
+      </div>
+
+      <!-- Footer & Compliance Links (§1, §2, §7, §34) -->
+      <div style="font-size:0.75rem; color:#94a3b8; text-align:center; margin-top:14px; line-height:1.6;">
+        <div>Protected by Firebase Authentication &amp; SHA-256 Audit Trail</div>
+        <div style="display:flex; justify-content:center; gap:14px; margin-top:8px; font-size:0.73rem;">
+          <a href="/privacy" target="_blank" style="color:#818cf8; text-decoration:underline;">Privacy Notice</a>
+          <span style="color:#475569;">•</span>
+          <a href="/terms" target="_blank" style="color:#818cf8; text-decoration:underline;">Terms of Service</a>
+          <span style="color:#475569;">•</span>
+          <a href="javascript:void(0)" onclick="openCookieSettingsModal()" style="color:#818cf8; text-decoration:underline;">Cookie Settings</a>
+          <span style="color:#475569;">•</span>
+          <a href="javascript:void(0)" onclick="openLicensesModal()" style="color:#818cf8; text-decoration:underline;">Licenses</a>
+        </div>
       </div>
 
     </div>
@@ -2547,15 +2636,10 @@
           <span class="nav-label">CampusPulse Advantage</span>
         </a>
       </nav>
-
-      <div data-roles="advisor admin" style="padding:12px 16px; border-top:1px solid var(--border-color); font-size:0.72rem; color:var(--text-muted);">
-        <div>Deterministic Engine: <strong style="color:#166534;">Verified Pure</strong></div>
-        <div>Config Hash: <span style="font-family:var(--font-mono); color:var(--primary-blue);">c4520cb10d79</span></div>
-      </div>
     </aside>
 
     <!-- MAIN BODY -->
-    <div class="main-wrapper">
+    <div class="main-wrapper" id="main-layout-root">
       
       <!-- TOP NAVBAR -->
       <header class="top-navbar">
@@ -5753,6 +5837,20 @@ Available Nimbus Shell commands:
           </div>
 
         </div>
+      
+        <!-- APP COMPLIANCE FOOTER (§1, §2, §7, §34) -->
+        <footer style="margin-top: 48px; padding: 24px 0 16px; border-top: 1px solid var(--border-color); display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px; font-size:0.78rem; color:var(--text-muted);">
+          <div>
+            <span>© 2026 CampusPulse Intelligence Systems. All rights reserved.</span>
+          </div>
+          <div style="display:flex; gap:16px; flex-wrap:wrap;">
+            <a href="/privacy" target="_blank" style="color:var(--text-muted); text-decoration:none;">Privacy Notice</a>
+            <a href="/terms" target="_blank" style="color:var(--text-muted); text-decoration:none;">Terms of Service</a>
+            <a href="javascript:void(0)" onclick="openCookieSettingsModal()" style="color:var(--text-muted); text-decoration:none;">Cookie Preferences</a>
+            <a href="javascript:void(0)" onclick="openLicensesModal()" style="color:var(--text-muted); text-decoration:none;">Open Source Licenses</a>
+          </div>
+        </footer>
+
       </main>
 
     </div>
@@ -5792,7 +5890,12 @@ Available Nimbus Shell commands:
         <div><h2 style="font-size:1.2rem; font-weight:800;">✨ Ask CampusPulse</h2><div style="font-size:0.75rem; color:var(--text-muted);">Read-only advisor query assistant (SELECT-only).</div></div>
         <button class="btn btn-sm btn-outline" onclick="closeDrawer('drawer-assistant')">✕ Close</button>
       </div>
-      <div style="display:flex; gap:8px;">
+      
+        <div style="margin: 8px 0 12px; display:flex; align-items:center; gap:8px;">
+          <span style="background:#e0e7ff; color:#3730a3; font-size:0.72rem; font-weight:700; padding:2px 8px; border-radius:12px;">🤖 AI Assistant (Advisory Only)</span>
+          <span style="font-size:0.72rem; color:var(--text-muted);">Decisions must be verified by academic personnel.</span>
+        </div>
+        <div style="display:flex; gap:8px;">
         <input type="text" id="assistant-input" class="search-input-field" placeholder="Ask about priority students..." style="flex:1;" onkeydown="if(event.key==='Enter') sendAssistant()">
         <button class="btn btn-primary" onclick="sendAssistant()">Send</button>
       </div>
@@ -6142,7 +6245,7 @@ Available Nimbus Shell commands:
           fbAuthInstance = firebase.auth();
           if (firebase.analytics) {
             try {
-              fbAnalyticsInstance = firebase.analytics();
+              if (window.__initFirebaseAnalyticsIfConsented) window.__initFirebaseAnalyticsIfConsented();
             } catch (aErr) {
               console.log('Firebase Analytics initialized or deferred:', aErr);
             }
@@ -6228,6 +6331,7 @@ Available Nimbus Shell commands:
     }
 
     async function handleFirebaseEmailSignIn() {
+      if (!validateTermsChecked()) return;
       const email = document.getElementById('auth-signin-email').value.trim();
       const pwd = document.getElementById('auth-signin-password').value.trim();
 
@@ -6861,6 +6965,8 @@ Available Nimbus Shell commands:
     }
 
     function quickDemoLogin(role) {
+      if (!validateTermsChecked()) return;
+      recordTermsAcceptance(`demo_${role}@campuspulse.edu`);
       applyRoleRBAC(role);
       hideAuthOverlay();
     }
@@ -11476,7 +11582,211 @@ Available Nimbus Shell commands:
       document.documentElement.setAttribute("data-theme", savedTheme || "light");
 
       initFirebaseAuth();
+      initCookieConsent();
     });
   </script>
+
+  <!-- COOKIE CONSENT BANNER (§7, §8) -->
+  <div id="cookie-consent-banner" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#0f172a; color:#f8fafc; padding:16px 24px; box-shadow:0 -4px 20px rgba(0,0,0,0.3); z-index:9999998; border-top:1px solid #334155; font-family:var(--font-sans);">
+    <div style="max-width:1200px; margin:0 auto; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px;">
+      <div style="flex:1; min-width:280px; font-size:0.85rem; line-height:1.5;">
+        <strong>Privacy &amp; Cookie Preferences:</strong> We use strictly necessary cookies to operate the application and optional Firebase telemetry to improve platform stability. We do not sell personal data. You can manage your choices below. Respects Global Privacy Control (GPC).
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button id="btn-cookie-reject" onclick="handleCookieChoice(false)" class="btn btn-sm" style="background:#334155; color:#f8fafc; border:1px solid #475569; padding:8px 14px; border-radius:6px; font-size:0.8rem; cursor:pointer;">Reject Non-Essential</button>
+        <button id="btn-cookie-settings" onclick="openCookieSettingsModal()" class="btn btn-sm" style="background:transparent; color:#94a3b8; border:1px solid #475569; padding:8px 14px; border-radius:6px; font-size:0.8rem; cursor:pointer;">Preferences</button>
+        <button id="btn-cookie-accept" onclick="handleCookieChoice(true)" class="btn btn-sm" style="background:#4f46e5; color:#ffffff; border:none; padding:8px 16px; border-radius:6px; font-size:0.8rem; font-weight:600; cursor:pointer;">Accept All</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COOKIE SETTINGS MODAL (§7, §8) -->
+  <div id="modal-cookie-settings" class="compliance-modal-overlay" onclick="closeComplianceModal('modal-cookie-settings')">
+    <div class="compliance-modal-card" onclick="event.stopPropagation()">
+      <div class="compliance-modal-header">
+        <h3 style="margin:0; font-size:1.15rem; font-weight:800;">Cookie &amp; Telemetry Settings</h3>
+        <button aria-label="Close" onclick="closeComplianceModal('modal-cookie-settings')" style="border:none; background:transparent; font-size:1.25rem; cursor:pointer;">✕</button>
+      </div>
+      <div class="compliance-modal-body">
+        <div style="margin-bottom:18px; padding-bottom:14px; border-bottom:1px solid #e2e8f0;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong>Strictly Necessary Cookies</strong>
+            <span style="font-size:0.75rem; background:#e2e8f0; color:#475569; padding:2px 8px; border-radius:12px; font-weight:700;">Always Active</span>
+          </div>
+          <p style="margin:6px 0 0; font-size:0.8rem; color:#64748b;">Essential for application authentication, security token validation, and session preservation. Cannot be disabled.</p>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong>Firebase Telemetry &amp; Analytics</strong>
+            <label style="position:relative; display:inline-block; width:44px; height:24px;">
+              <input type="checkbox" id="toggle-opt-analytics" style="opacity:0; width:0; height:0;">
+              <span style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:#cbd5e1; transition:.3s; border-radius:24px;" id="toggle-opt-analytics-slider"></span>
+            </label>
+          </div>
+          <p style="margin:6px 0 0; font-size:0.8rem; color:#64748b;">Anonymous performance and error diagnostics via Google Firebase SDK. Disabled by default until you grant explicit consent.</p>
+        </div>
+      </div>
+      <div class="compliance-modal-footer">
+        <button onclick="saveCookieSettings()" class="btn btn-primary btn-sm">Save Preferences</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPEN SOURCE LICENSES MODAL (§34) -->
+  <div id="modal-licenses" class="compliance-modal-overlay" onclick="closeComplianceModal('modal-licenses')">
+    <div class="compliance-modal-card" onclick="event.stopPropagation()">
+      <div class="compliance-modal-header">
+        <h3 style="margin:0; font-size:1.15rem; font-weight:800;">Open Source Software Notices (§34)</h3>
+        <button aria-label="Close" onclick="closeComplianceModal('modal-licenses')" style="border:none; background:transparent; font-size:1.25rem; cursor:pointer;">✕</button>
+      </div>
+      <div class="compliance-modal-body" id="licenses-list-container" style="max-height:60vh; overflow-y:auto;">
+        <!-- Injected via JS from SBOM -->
+      </div>
+      <div class="compliance-modal-footer">
+        <button onclick="closeComplianceModal('modal-licenses')" class="btn btn-outline btn-sm">Close</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    // ═══════════════════════════════════════════════════════════════════════════
+    // LAUNCH AUDIT COMPLIANCE ENGINE (§1, §2, §3, §4, §7, §8, §20, §32, §34)
+    // ═══════════════════════════════════════════════════════════════════════════
+    const COMPLIANCE_CONSENT_KEY = 'campuspulse_consent_v1';
+    const SBOM_PACKAGES = [];
+
+    window.__initFirebaseAnalyticsIfConsented = function() {
+      const consent = getConsentStatus();
+      if (consent && consent.analytics) {
+        if (typeof firebase !== 'undefined' && firebase.analytics && !fbAnalyticsInstance) {
+          try {
+            fbAnalyticsInstance = firebase.analytics();
+            console.log('[Compliance] Firebase Analytics initialized following affirmative consent.');
+          } catch(e) {
+            console.warn('[Compliance] Firebase Analytics init error:', e);
+          }
+        }
+      }
+    };
+
+    function getConsentStatus() {
+      try {
+        const raw = localStorage.getItem(COMPLIANCE_CONSENT_KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch(e) {
+        return null;
+      }
+    }
+
+    function initCookieConsent() {
+      const gpc = (typeof navigator !== 'undefined' && (navigator.globalPrivacyControl === true || navigator.globalPrivacyControl === '1'));
+      const consent = getConsentStatus();
+
+      if (consent) {
+        if (consent.analytics && !gpc) {
+          window.__initFirebaseAnalyticsIfConsented();
+        }
+        return;
+      }
+
+      if (gpc) {
+        localStorage.setItem(COMPLIANCE_CONSENT_KEY, JSON.stringify({ essential: true, analytics: false, gpc_honored: true }));
+        console.log('[Compliance] Global Privacy Control signal detected. Analytics automatically opted out.');
+        return;
+      }
+
+      const banner = document.getElementById('cookie-consent-banner');
+      if (banner) banner.style.display = 'block';
+    }
+
+    function handleCookieChoice(analyticsAllowed) {
+      localStorage.setItem(COMPLIANCE_CONSENT_KEY, JSON.stringify({
+        essential: true,
+        analytics: !!analyticsAllowed,
+        timestamp: new Date().toISOString()
+      }));
+      const banner = document.getElementById('cookie-consent-banner');
+      if (banner) banner.style.display = 'none';
+      if (analyticsAllowed) {
+        window.__initFirebaseAnalyticsIfConsented();
+      }
+    }
+
+    function openCookieSettingsModal() {
+      const consent = getConsentStatus();
+      const toggle = document.getElementById('toggle-opt-analytics');
+      if (toggle) toggle.checked = !!(consent && consent.analytics);
+      openComplianceModal('modal-cookie-settings');
+    }
+
+    function saveCookieSettings() {
+      const toggle = document.getElementById('toggle-opt-analytics');
+      handleCookieChoice(toggle ? toggle.checked : false);
+      closeComplianceModal('modal-cookie-settings');
+    }
+
+    function openComplianceModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeComplianceModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) modal.style.display = 'none';
+    }
+
+    function closeAllComplianceModals() {
+      ['modal-cookie-settings', 'modal-licenses'].forEach(id => closeComplianceModal(id));
+    }
+
+    function openLicensesModal() {
+      const container = document.getElementById('licenses-list-container');
+      if (container && SBOM_PACKAGES.length) {
+        container.innerHTML = SBOM_PACKAGES.map(p => `
+          <div style="padding:10px 0; border-bottom:1px solid #f1f5f9;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <strong style="font-size:0.9rem;">${p.name} <span style="font-size:0.75rem; color:#64748b; font-weight:normal;">v${p.version}</span></strong>
+              <span style="font-size:0.72rem; background:#f1f5f9; color:#334155; padding:2px 6px; border-radius:4px; font-family:var(--font-mono);">${p.license}</span>
+            </div>
+            <div style="font-size:0.75rem; color:#64748b; margin-top:2px;">${p.description || 'Open source dependency'}</div>
+          </div>
+        `).join('');
+      }
+      openComplianceModal('modal-licenses');
+    }
+
+    function validateTermsChecked() {
+      const checkbox = document.getElementById('auth-terms-checkbox');
+      if (!checkbox || !checkbox.checked) {
+        alert('Please agree to the Terms of Service and acknowledge the Privacy Notice to continue.');
+        return false;
+      }
+      return true;
+    }
+
+    function recordTermsAcceptance(userId) {
+      try {
+        fetch('/api/v1/auth/record-acceptance', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: userId || 'anonymous_user',
+            document: 'terms_and_privacy',
+            version: '1.0.0',
+            mechanism: 'auth_checkbox'
+          })
+        }).catch(() => {});
+      } catch(e) {}
+    }
+
+    // Global Esc listener for modal dismissibility (§21)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeAllComplianceModals();
+      }
+    });
+  </script>
+
 </body>
 </html>

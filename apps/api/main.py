@@ -41,6 +41,7 @@ from apps.api.schemas import (
     ApiResponse,
     ChatRequest,
     CodeSandboxRequest,
+    DataPurgeRequest,
     ErrorEnvelope,
     ExcellenceNominationCreate,
     InterventionCreate,
@@ -48,9 +49,11 @@ from apps.api.schemas import (
     LabSessionCreate,
     NaacSimulationRequest,
     NimbusCommandRequest,
+    PrivacyRightRequest,
     ProjectAssignRequest,
     ResponseMeta,
     SprintModuleToggleRequest,
+    TermsAcceptanceRequest,
     UserAuthContext,
     WhatIfRequest,
 )
@@ -998,6 +1001,7 @@ def advisor_assistant_chat(payload: ChatRequest, db: Session = Depends(get_db)):
         "query": html.escape(payload.query),
         "reply": response_text,
         "read_only": True,
+        "ai_disclaimer": "AI-generated assistant insights are advisory only and must be verified by educational professionals.",
     })
 
 
@@ -2621,3 +2625,244 @@ def get_naac_ssr_export(db: Session = Depends(get_db)):
 
 
 
+
+
+
+# ── Compliance, Privacy & Trust Endpoints (Launch Checklist §1, §2, §4, §12, §13) ───
+
+@app.get("/privacy", response_class=HTMLResponse)
+@app.get("/api/v1/privacy/policy")
+def get_privacy_policy_endpoint():
+    """Serves publicly readable privacy policy without requiring login or cookies (§1)."""
+    privacy_path = Path("launch-audit/DRAFT-PRIVACY-POLICY.md")
+    md_content = privacy_path.read_text(encoding="utf-8") if privacy_path.exists() else "CampusPulse Privacy Policy"
+    html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CampusPulse - Privacy Notice</title>
+  <style>
+    body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #1e293b; background: #f8fafc; }}
+    .card {{ background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }}
+    h1, h2, h3 {{ color: #0f172a; }}
+    pre {{ background: #f1f5f9; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 0.88rem; }}
+    a {{ color: #4338ca; text-decoration: none; }}
+    a:hover {{ text-decoration: underline; }}
+    .badge {{ display: inline-block; background: #e0e7ff; color: #3730a3; padding: 4px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <span class="badge">Legal Compliance Notice</span>
+    <h1>CampusPulse Privacy Notice</h1>
+    <p><strong>Status:</strong> Pre-Launch Draft (Pending Outside Counsel Review)</p>
+    <p><strong>Effective Date:</strong> November 1, 2026 | <strong>Version:</strong> 1.0.0</p>
+    <hr style="border:none; border-top: 1px solid #e2e8f0; margin: 20px 0;">
+    <div><pre style="white-space: pre-wrap; word-wrap: break-word;">{html.escape(md_content)}</pre></div>
+    <p style="margin-top: 24px; font-size: 0.85rem; color: #64748b;"><a href="/">← Return to CampusPulse Application</a></p>
+  </div>
+</body>
+</html>"""
+    return HTMLResponse(content=html_content)
+
+
+@app.get("/terms", response_class=HTMLResponse)
+@app.get("/api/v1/terms/service")
+def get_terms_endpoint():
+    """Serves publicly readable terms of service without requiring login or cookies (§2)."""
+    terms_path = Path("launch-audit/DRAFT-TERMS-OF-SERVICE.md")
+    md_content = terms_path.read_text(encoding="utf-8") if terms_path.exists() else "CampusPulse Terms of Service"
+    html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CampusPulse - Terms of Service</title>
+  <style>
+    body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #1e293b; background: #f8fafc; }}
+    .card {{ background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }}
+    h1, h2, h3 {{ color: #0f172a; }}
+    pre {{ background: #f1f5f9; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 0.88rem; }}
+    a {{ color: #4338ca; text-decoration: none; }}
+    a:hover {{ text-decoration: underline; }}
+    .badge {{ display: inline-block; background: #e0e7ff; color: #3730a3; padding: 4px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <span class="badge">Legal Terms of Use</span>
+    <h1>CampusPulse Terms of Service</h1>
+    <p><strong>Status:</strong> Pre-Launch Draft (Pending Outside Counsel Review)</p>
+    <p><strong>Effective Date:</strong> November 1, 2026 | <strong>Version:</strong> 1.0.0</p>
+    <hr style="border:none; border-top: 1px solid #e2e8f0; margin: 20px 0;">
+    <div><pre style="white-space: pre-wrap; word-wrap: break-word;">{html.escape(md_content)}</pre></div>
+    <p style="margin-top: 24px; font-size: 0.85rem; color: #64748b;"><a href="/">← Return to CampusPulse Application</a></p>
+  </div>
+</body>
+</html>"""
+    return HTMLResponse(content=html_content)
+
+
+@app.post("/api/v1/auth/record-acceptance")
+def record_terms_acceptance(
+    payload: TermsAcceptanceRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    """
+    Records verifiable consent and terms acceptance in AuditLog (§4).
+    Stores timestamp, document, version, acceptance mechanism, client IP, and user agent.
+    """
+    client_ip = request.client.host if request.client else "unknown"
+    user_agent = request.headers.get("user-agent", "unknown")
+
+    audit_entry = AuditLog(
+        actor_id=payload.user_id,
+        actor_role="user",
+        action="terms_acceptance",
+        target_type="document",
+        target_id=payload.document,
+        metadata_json={
+            "version": payload.version,
+            "mechanism": payload.mechanism,
+            "ip": client_ip,
+            "user_agent": user_agent[:256],
+        },
+    )
+    db.add(audit_entry)
+    db.commit()
+
+    return make_envelope({
+        "status": "recorded",
+        "user_id": payload.user_id,
+        "document": payload.document,
+        "version": payload.version,
+        "recorded_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    })
+
+
+@app.get("/api/v1/students/{student_ref}/export")
+def export_student_data(
+    student_ref: str,
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: UserAuthContext = Depends(get_current_user),
+):
+    """
+    Data Subject Access Right (DSAR) export endpoint (§13).
+    Returns complete structured portable JSON of all records for the student.
+    Enforces authorization check to prevent unauthorized student IDOR.
+    """
+    if current_user.role == "student" and current_user.student_ref and student_ref != current_user.student_ref:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied: Students may only export their own personal records.",
+        )
+
+    repo = CampusPulseRepository(db)
+    student_data = repo.get_student_360(student_ref)
+    if not student_data:
+        raise HTTPException(status_code=404, detail=f"Student {student_ref} not found.")
+
+    audit_entry = AuditLog(
+        actor_id=current_user.user_id,
+        actor_role=current_user.role,
+        action="dsar_export",
+        target_type="student",
+        target_id=student_ref,
+        metadata_json={"requester_email": current_user.email},
+    )
+    db.add(audit_entry)
+    db.commit()
+
+    export_payload = {
+        "student_profile": {
+            "ref": student_data.get("student_ref"),
+            "name": student_data.get("name"),
+            "roll_number": student_data.get("roll_number"),
+            "department": student_data.get("department"),
+            "batch": student_data.get("batch"),
+            "section": student_data.get("section"),
+        },
+        "latest_metrics": student_data.get("latest_metrics"),
+        "history": student_data.get("history", []),
+        "interventions": student_data.get("interventions", []),
+        "flags": student_data.get("flags", []),
+        "assessments": student_data.get("assessments", []),
+        "export_metadata": {
+            "format": "JSON",
+            "exported_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "regulatory_frameworks": ["GDPR Art 15/20", "DPDP Act Sec 11", "CCPA Sec 1798.100"],
+        },
+    }
+    return make_envelope(export_payload)
+
+
+@app.post("/api/v1/privacy/requests")
+def submit_privacy_request(
+    payload: PrivacyRightRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    """
+    Data Subject Rights intake portal endpoint (§13).
+    Supports erasure/deletion, rectification, restriction, or inquiries.
+    """
+    client_ip = request.client.host if request.client else "unknown"
+    tracking_id = f"dsr_{uuid.uuid4().hex[:12]}"
+
+    audit_entry = AuditLog(
+        actor_id=payload.email,
+        actor_role="data_subject",
+        action=f"dsar_{payload.request_type}",
+        target_type="privacy_request",
+        target_id=tracking_id,
+        metadata_json={
+            "request_type": payload.request_type,
+            "student_ref": payload.student_ref,
+            "details": payload.details,
+            "ip": client_ip,
+        },
+    )
+    db.add(audit_entry)
+    db.commit()
+
+    return make_envelope({
+        "tracking_id": tracking_id,
+        "status": "received",
+        "request_type": payload.request_type,
+        "email": payload.email,
+        "submitted_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "sla_days": 30,
+        "message": "Your privacy right request has been logged and assigned to the Data Protection Officer.",
+    })
+
+
+@app.post("/api/v1/admin/purge-expired-data")
+def purge_expired_data(
+    payload: DataPurgeRequest,
+    db: Session = Depends(get_db),
+    admin: UserAuthContext = Depends(require_admin),
+):
+    """
+    Admin maintenance endpoint for data retention policy enforcement (§12).
+    Purges audit logs older than the configured retention threshold (excluding consent records).
+    """
+    cutoff = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=payload.retention_days)
+
+    deleted_logs = (
+        db.query(AuditLog)
+        .filter(AuditLog.created_at < cutoff)
+        .filter(AuditLog.action != "terms_acceptance")
+        .delete(synchronize_session=False)
+    )
+    db.commit()
+
+    return make_envelope({
+        "status": "purged",
+        "records_purged": deleted_logs,
+        "retention_days": payload.retention_days,
+        "cutoff_date": cutoff.isoformat(),
+        "executed_by": admin.email,
+    })

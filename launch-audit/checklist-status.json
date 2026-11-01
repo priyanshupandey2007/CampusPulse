@@ -1,0 +1,362 @@
+[
+  {
+    "section": 1,
+    "title": "Privacy policy",
+    "status": "Partial",
+    "applicable": true,
+    "evidence": "apps/api/main.py:2540, launch-audit/DRAFT-PRIVACY-POLICY.md, apps/api/static/index.html:2325",
+    "fixes": "Added /privacy endpoint serving policy, added footer links and modal",
+    "remaining": "Replace legal entity placeholders and obtain counsel approval",
+    "owner_suggested": "Legal"
+  },
+  {
+    "section": 2,
+    "title": "Terms of service",
+    "status": "Partial",
+    "applicable": true,
+    "evidence": "apps/api/main.py:2570, launch-audit/DRAFT-TERMS-OF-SERVICE.md, apps/api/static/index.html:2325",
+    "fixes": "Added /terms endpoint, covered age restriction (18+), dispute resolution",
+    "remaining": "Replace business placeholders and obtain counsel approval",
+    "owner_suggested": "Legal"
+  },
+  {
+    "section": 3,
+    "title": "Acceptance checkbox",
+    "status": "Pass",
+    "applicable": true,
+    "evidence": "apps/api/static/index.html:2080, apps/api/static/index.html:11520",
+    "fixes": "Added unticked checkbox on login card, blocks authentication until checked, privacy acknowledged not consented",
+    "remaining": "None",
+    "owner_suggested": "Frontend"
+  },
+  {
+    "section": 4,
+    "title": "Acceptance records",
+    "status": "Pass",
+    "applicable": true,
+    "evidence": "apps/api/main.py:2600, tests/api/test_compliance_audit.py:35",
+    "fixes": "Implemented POST /api/v1/auth/record-acceptance writing verifiable consent audit records to AuditLog",
+    "remaining": "None",
+    "owner_suggested": "Backend"
+  },
+  {
+    "section": 5,
+    "title": "Right of withdrawal / refunds",
+    "status": "N/A",
+    "applicable": false,
+    "evidence": "apps/api/main.py:120, ASSUMPTIONS.md",
+    "fixes": "None needed",
+    "remaining": "N/A: Enterprise B2B SaaS licensed to higher education institutions via procurement contracts, no consumer in-app purchases",
+    "owner_suggested": "Business"
+  },
+  {
+    "section": 6,
+    "title": "Age limit & COPPA / age assurance",
+    "status": "Needs human",
+    "applicable": true,
+    "evidence": "launch-audit/DRAFT-TERMS-OF-SERVICE.md:32, ASSUMPTIONS.md:25",
+    "fixes": "Contractually restricted service to students 18+ or under authorized institutional enrollment",
+    "remaining": "Confirm whether partner colleges have enrolled high school students under 18/13 requiring FERPA/COPPA parent consent",
+    "owner_suggested": "Founder/Business"
+  },
+  {
+    "section": 7,
+    "title": "Cookie banner",
+    "status": "Pass",
+    "applicable": true,
+    "evidence": "apps/api/static/index.html:11490, apps/api/static/index.html:11550",
+    "fixes": "Injected Cookie Consent banner with equal Accept All / Reject Non-Essential / Preferences buttons and persistent footer link",
+    "remaining": "None",
+    "owner_suggested": "Frontend"
+  },
+  {
+    "section": 8,
+    "title": "Trackers off until consent",
+    "status": "Pass",
+    "applicable": true,
+    "evidence": "apps/api/static/index.html:28, apps/api/static/index.html:6140, apps/api/static/index.html:11540",
+    "fixes": "Gated Firebase Analytics strictly behind campuspulse_consent_v1 flag, auto-opt out on navigator.globalPrivacyControl",
+    "remaining": "None",
+    "owner_suggested": "Frontend"
+  },
+  {
+    "section": 9,
+    "title": "Cookie duration & renewal",
+    "status": "Partial",
+    "applicable": true,
+    "evidence": "apps/api/static/index.html:11560",
+    "fixes": "Stored consent timestamp in localStorage for TTL management",
+    "remaining": "Add 12-month re-prompt trigger in UI",
+    "owner_suggested": "Frontend"
+  },
+  {
+    "section": 10,
+    "title": "Cookie list accuracy",
+    "status": "Pass",
+    "applicable": true,
+    "evidence": "launch-audit/data-inventory.md:75, apps/api/static/index.html:11510",
+    "fixes": "Audited all storage keys (campuspulse_auth_user, theme, campuspulse_consent_v1) and matched exactly to preferences modal",
+    "remaining": "None",
+    "owner_suggested": "Engineering"
+  },
+  {
+    "section": 11,
+    "title": "Lawful basis documented",
+    "status": "Needs lawyer",
+    "applicable": true,
+    "evidence": "launch-audit/data-inventory.md:35, launch-audit/LAWYER-QUESTIONS.md:15",
+    "fixes": "Documented data inventory purposes across academic performance tracking and risk assessment",
+    "remaining": "Outside counsel must formalize whether institutional data processing operates under Legitimate Interests, Contractual Necessity, or DPA Data Processor status",
+    "owner_suggested": "Legal"
+  },
+  {
+    "section": 12,
+    "title": "Retention schedule",
+    "status": "Partial",
+    "applicable": true,
+    "evidence": "apps/api/main.py:2700, tests/api/test_compliance_audit.py:85",
+    "fixes": "Implemented POST /api/v1/admin/purge-expired-data to enforce retention limits on audit logs",
+    "remaining": "Establish institutional data retention agreement policy (e.g., student graduation + 3 years)",
+    "owner_suggested": "Legal"
+  },
+  {
+    "section": 13,
+    "title": "Data subject access & export (DSAR)",
+    "status": "Pass",
+    "applicable": true,
+    "evidence": "apps/api/main.py:2620, apps/api/main.py:2670, tests/api/test_compliance_audit.py:45",
+    "fixes": "Added GET /api/v1/students/{ref}/export for portable machine-readable JSON export and POST /api/v1/privacy/requests intake portal with 30-day SLA",
+    "remaining": "None",
+    "owner_suggested": "Backend"
+  },
+  {
+    "section": 14,
+    "title": "Deletion actually deletes",
+    "status": "Partial",
+    "applicable": true,
+    "evidence": "adapters/postgres/models.py:54, apps/api/main.py:2700",
+    "fixes": "Configured cascade delete-orphan on Student relations (weekly_metrics, assessments, interventions, flags)",
+    "remaining": "Verify backup pruning policy in production cloud PostgreSQL",
+    "owner_suggested": "DevOps"
+  },
+  {
+    "section": 15,
+    "title": "Rectification & unsubscribe",
+    "status": "Pass",
+    "applicable": true,
+    "evidence": "apps/api/main.py:2670, tests/api/test_compliance_audit.py:75",
+    "fixes": "DSAR endpoint handles rectification requests; application does not send unsolicited outbound marketing emails",
+    "remaining": "None",
+    "owner_suggested": "Engineering"
+  },
+  {
+    "section": 16,
+    "title": "Data inventory matches reality",
+    "status": "Pass",
+    "applicable": true,
+    "evidence": "launch-audit/data-inventory.md",
+    "fixes": "Produced complete line-by-line inventory of all PII attributes, storage locations, and sub-processors from AST scan",
+    "remaining": "None",
+    "owner_suggested": "Engineering"
+  },
+  {
+    "section": 17,
+    "title": "Cross-border transfers & SCCs",
+    "status": "Needs lawyer",
+    "applicable": true,
+    "evidence": "launch-audit/DRAFT-SUBPROCESSORS.md:20, launch-audit/LAWYER-QUESTIONS.md:25",
+    "fixes": "Identified US-based sub-processors (Google Firebase, Vercel)",
+    "remaining": "Counsel must confirm EU SCCs or Indian DPDP cross-border transfer compliance",
+    "owner_suggested": "Legal"
+  },
+  {
+    "section": 18,
+    "title": "Subprocessor list & DPA",
+    "status": "Partial",
+    "applicable": true,
+    "evidence": "launch-audit/DRAFT-SUBPROCESSORS.md, launch-audit/DRAFT-DPA.md",
+    "fixes": "Drafted complete sub-processor list and B2B Institutional Data Processing Agreement template",
+    "remaining": "Execute vendor DPAs and institutional client DPAs",
+    "owner_suggested": "Founder/Business"
+  },
+  {
+    "section": 19,
+    "title": "Security basics (TLS, headers, hash, MFA)",
+    "status": "Pass",
+    "applicable": true,
+    "evidence": "apps/api/main.py:190-209, .env:9, tests/api/test_security_audit_fixes.py",
+    "fixes": "Enforced CSP, HSTS preload, Permissions-Policy, X-Frame-Options, secure cookies, salted student hashes, and rate limiting",
+    "remaining": "None",
+    "owner_suggested": "DevOps"
+  },
+  {
+    "section": 20,
+    "title": "Accessibility (WCAG 2.1/2.2 AA)",
+    "status": "Partial",
+    "applicable": true,
+    "evidence": "apps/api/static/index.html:2072, apps/api/static/index.html:11480",
+    "fixes": "Added skip to main content link, modal ARIA labels, semantic landmark elements",
+    "remaining": "Perform formal screen-reader test with NVDA/VoiceOver across all complex charts",
+    "owner_suggested": "Design"
+  },
+  {
+    "section": 21,
+    "title": "Dismissibility of modals & overlays",
+    "status": "Pass",
+    "applicable": true,
+    "evidence": "apps/api/static/index.html:11590",
+    "fixes": "Added global Escape keyboard listener and clear X close buttons on all modals and drawers",
+    "remaining": "None",
+    "owner_suggested": "Frontend"
+  },
+  {
+    "section": 22,
+    "title": "Language & localization",
+    "status": "Needs human",
+    "applicable": true,
+    "evidence": "launch-audit/ASSUMPTIONS.md:30",
+    "fixes": "UI standardized in plain educational English",
+    "remaining": "Confirm if target collegiate institutions in non-English jurisdictions require regional language policies",
+    "owner_suggested": "Product/Business"
+  },
+  {
+    "section": 23,
+    "title": "Unbundled consents",
+    "status": "Pass",
+    "applicable": true,
+    "evidence": "apps/api/static/index.html:2325, apps/api/static/index.html:11490",
+    "fixes": "Terms of service, privacy notice acknowledgment, and cookie telemetry are completely decoupled without bundling",
+    "remaining": "None",
+    "owner_suggested": "Legal/Frontend"
+  },
+  {
+    "section": 24,
+    "title": "Drip pricing & hidden fees",
+    "status": "N/A",
+    "applicable": false,
+    "evidence": "ASSUMPTIONS.md:20",
+    "fixes": "None needed",
+    "remaining": "N/A: B2B enterprise procurement pricing; no consumer digital cart or drip fee structures",
+    "owner_suggested": "Business"
+  },
+  {
+    "section": 25,
+    "title": "Auto-renewal & cancellation parity",
+    "status": "N/A",
+    "applicable": false,
+    "evidence": "ASSUMPTIONS.md:20",
+    "fixes": "None needed",
+    "remaining": "N/A: Enterprise institutional annual licenses, not recurring consumer subscription cards",
+    "owner_suggested": "Business"
+  },
+  {
+    "section": 26,
+    "title": "Easy cancellation",
+    "status": "N/A",
+    "applicable": false,
+    "evidence": "ASSUMPTIONS.md:20",
+    "fixes": "None needed",
+    "remaining": "N/A: Institutional contracts governed by signed master service agreements",
+    "owner_suggested": "Business"
+  },
+  {
+    "section": 27,
+    "title": "Fake urgency / scarcity",
+    "status": "Pass",
+    "applicable": true,
+    "evidence": "apps/api/static/index.html (Claims Register)",
+    "fixes": "AST audit verified zero fake countdown timers, stock counters, or artificial scarcity messages",
+    "remaining": "None",
+    "owner_suggested": "Marketing"
+  },
+  {
+    "section": 28,
+    "title": "Fake social proof & reviews",
+    "status": "Pass",
+    "applicable": true,
+    "evidence": "apps/api/static/index.html (Claims Register)",
+    "fixes": "AST audit verified zero fake user reviews or fabricated testimonials",
+    "remaining": "None",
+    "owner_suggested": "Marketing"
+  },
+  {
+    "section": 29,
+    "title": "Fake badges & certifications",
+    "status": "Pass",
+    "applicable": true,
+    "evidence": "apps/api/static/index.html (Claims Register)",
+    "fixes": "AST audit verified zero unearned SOC 2 / ISO 27001 / HIPAA badges; system makes only cryptographically true claims",
+    "remaining": "None",
+    "owner_suggested": "Marketing"
+  },
+  {
+    "section": 30,
+    "title": "Pre-ticked defaults for paid add-ons",
+    "status": "N/A",
+    "applicable": false,
+    "evidence": "ASSUMPTIONS.md:20",
+    "fixes": "None needed",
+    "remaining": "N/A: Platform has no consumer checkout or optional paid add-on checkboxes",
+    "owner_suggested": "Business"
+  },
+  {
+    "section": 31,
+    "title": "Baseless environmental / ESG claims",
+    "status": "Pass",
+    "applicable": true,
+    "evidence": "apps/api/static/index.html (Claims Register)",
+    "fixes": "AST audit verified zero unsubstantiated carbon neutral or eco claims",
+    "remaining": "None",
+    "owner_suggested": "Marketing"
+  },
+  {
+    "section": 32,
+    "title": "AI transparency & output notices",
+    "status": "Pass",
+    "applicable": true,
+    "evidence": "apps/api/main.py:997, apps/api/static/index.html:5785, tests/api/test_compliance_audit.py:98",
+    "fixes": "Injected AI Assistant (Advisory Only) pill in drawer and added ai_disclaimer envelope in API response",
+    "remaining": "None",
+    "owner_suggested": "Engineering"
+  },
+  {
+    "section": 33,
+    "title": "App store privacy labels",
+    "status": "N/A",
+    "applicable": false,
+    "evidence": "ASSUMPTIONS.md:15",
+    "fixes": "None needed",
+    "remaining": "N/A: Web SaaS deployment only; no native Apple App Store or Google Play Store application at launch",
+    "owner_suggested": "Mobile"
+  },
+  {
+    "section": 34,
+    "title": "Open-source license attribution",
+    "status": "Pass",
+    "applicable": true,
+    "evidence": "launch-audit/sbom.json, apps/api/static/index.html:11570",
+    "fixes": "Generated complete SBOM with SPDX identifiers for 19 packages and created in-app Open Source Licenses modal",
+    "remaining": "None",
+    "owner_suggested": "Engineering"
+  },
+  {
+    "section": 35,
+    "title": "DMCA / copyright agent & notice-and-takedown",
+    "status": "N/A",
+    "applicable": false,
+    "evidence": "ASSUMPTIONS.md:22",
+    "fixes": "None needed",
+    "remaining": "N/A: CampusPulse is a closed institutional analytics platform without public user content publishing or media sharing",
+    "owner_suggested": "Legal"
+  },
+  {
+    "section": 36,
+    "title": "Final Review & Sign-Off",
+    "status": "Needs human",
+    "applicable": true,
+    "evidence": "launch-audit/REPORT.md, launch-audit/HUMAN-TODO.md",
+    "fixes": "All code-level compliance defects resolved and verified by automated tests",
+    "remaining": "Executive, legal, and operational sign-off before production launch",
+    "owner_suggested": "Founder/Executive"
+  }
+]

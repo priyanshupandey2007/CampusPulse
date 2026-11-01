@@ -1,0 +1,157 @@
+{
+  "schema_version": "1.0",
+  "components": [
+    {
+      "name": "fastapi",
+      "version": "0.142.2",
+      "license": "MIT",
+      "author": "Unknown",
+      "summary": "FastAPI framework, high performance, easy to learn, fast to code, ready for production",
+      "spdx_license": "MIT"
+    },
+    {
+      "name": "uvicorn",
+      "version": "0.54.0",
+      "license": "BSD-3-Clause",
+      "author": "Unknown",
+      "summary": "The lightning-fast ASGI server.",
+      "spdx_license": "BSD-3-Clause"
+    },
+    {
+      "name": "pandas",
+      "version": "3.0.6",
+      "license": "BSD-3-Clause",
+      "author": "Unknown",
+      "summary": "Powerful data structures for data analysis, time series, and statistics",
+      "spdx_license": "BSD-3-Clause"
+    },
+    {
+      "name": "openpyxl",
+      "version": "3.1.5",
+      "license": "MIT",
+      "author": "See AUTHORS",
+      "summary": "A Python library to read/write Excel 2010 xlsx/xlsm files",
+      "spdx_license": "MIT"
+    },
+    {
+      "name": "pyarrow",
+      "version": "25.0.1",
+      "license": "Apache-2.0",
+      "author": "Unknown",
+      "summary": "Python library for Apache Arrow",
+      "spdx_license": "Apache-2.0"
+    },
+    {
+      "name": "numpy",
+      "version": "2.5.3",
+      "license": "BSD-3-Clause",
+      "author": "Travis E. Oliphant et al.",
+      "summary": "Fundamental package for array computing in Python",
+      "spdx_license": "BSD-3-Clause"
+    },
+    {
+      "name": "scipy",
+      "version": "1.18.1",
+      "license": "BSD-3-Clause",
+      "author": "Unknown",
+      "summary": "Fundamental algorithms for scientific computing in Python",
+      "spdx_license": "BSD-3-Clause"
+    },
+    {
+      "name": "sqlalchemy",
+      "version": "2.1.4",
+      "license": "MIT",
+      "author": "Unknown",
+      "summary": "Database Abstraction Library",
+      "spdx_license": "MIT"
+    },
+    {
+      "name": "asyncpg",
+      "version": "0.32.0",
+      "license": "Apache-2.0",
+      "author": "Unknown",
+      "summary": "An asyncio PostgreSQL driver",
+      "spdx_license": "Apache-2.0"
+    },
+    {
+      "name": "alembic",
+      "version": "1.20.0",
+      "license": "MIT",
+      "author": "Unknown",
+      "summary": "A database migration tool for SQLAlchemy.",
+      "spdx_license": "MIT"
+    },
+    {
+      "name": "pydantic",
+      "version": "2.13.5",
+      "license": "MIT",
+      "author": "Unknown",
+      "summary": "Data validation using Python type hints",
+      "spdx_license": "MIT"
+    },
+    {
+      "name": "pydantic-settings",
+      "version": "2.15.0",
+      "license": "MIT",
+      "author": "Unknown",
+      "summary": "Settings management using Pydantic",
+      "spdx_license": "MIT"
+    },
+    {
+      "name": "python-dotenv",
+      "version": "1.2.4",
+      "license": "BSD-3-Clause",
+      "author": "Unknown",
+      "summary": "Read key-value pairs from a .env file and set them as environment variables",
+      "spdx_license": "BSD-3-Clause"
+    },
+    {
+      "name": "pyyaml",
+      "version": "6.0.3",
+      "license": "MIT",
+      "author": "Kirill Simonov",
+      "summary": "YAML parser and emitter for Python",
+      "spdx_license": "MIT"
+    },
+    {
+      "name": "python-jose",
+      "version": "3.5.0",
+      "license": "MIT",
+      "author": "Michael Davis",
+      "summary": "JOSE implementation in Python",
+      "spdx_license": "MIT"
+    },
+    {
+      "name": "cryptography",
+      "version": "50.0.2",
+      "license": "Apache-2.0 OR BSD-3-Clause",
+      "author": "Unknown",
+      "summary": "cryptography is a package which provides cryptographic recipes and primitives to Python developers.",
+      "spdx_license": "Apache-2.0 OR BSD-3-Clause"
+    },
+    {
+      "name": "python-multipart",
+      "version": "0.0.32",
+      "license": "Apache-2.0",
+      "author": "Unknown",
+      "summary": "A streaming multipart parser for Python",
+      "spdx_license": "Apache-2.0"
+    },
+    {
+      "name": "prometheus-client",
+      "version": "0.26.0",
+      "license": "Apache-2.0",
+      "author": "Unknown",
+      "summary": "Python client for the Prometheus monitoring system.",
+      "spdx_license": "Apache-2.0"
+    },
+    {
+      "name": "structlog",
+      "version": "26.1.0",
+      "license": "Apache-2.0 OR MIT",
+      "author": "Unknown",
+      "summary": "Structured Logging for Python",
+      "spdx_license": "Apache-2.0 OR MIT"
+    }
+  ]
+}
