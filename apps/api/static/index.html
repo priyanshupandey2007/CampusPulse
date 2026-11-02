@@ -49,6 +49,55 @@
       outline: 2px solid var(--border-focus);
       outline-offset: 2px;
     }
+    /* Typography & Enterprise Numerics (ui-ux-pro-max) */
+    html {
+      font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .kpi-value,
+    .data-table td,
+    .metric-value,
+    .score-value,
+    .nav-badge,
+    .badge {
+      font-variant-numeric: tabular-nums;
+    }
+    /* Modern Micro-interactions & Tactile Responses */
+    button, .btn, .btn-primary, .btn-outline, .btn-auth-primary {
+      transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+    }
+    button:active, .btn:active, .btn-primary:active, .btn-outline:active {
+      transform: scale(0.985);
+    }
+    .data-table tbody tr {
+      transition: background-color 0.12s ease;
+    }
+    .data-table tbody tr:hover {
+      background-color: var(--bg-hover) !important;
+    }
+    /* Modern Thin Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--color-slate-300);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-slate-400);
+    }
+    [data-theme="dark"] ::-webkit-scrollbar-thumb {
+      background: var(--color-slate-700);
+    }
+    [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-slate-600);
+    }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -4174,13 +4223,13 @@
                   </div>
 
                   <div style="margin-top:20px;">
-                    <button class="btn btn-primary" style="width:100%; background:var(--color-purple-600); border-color:var(--color-purple-700);" onclick="showToast('<svg aria-hidden="true" class="h-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Target scenario saved to IQAC Planning Dossier')">
+                    <button class="btn btn-primary" style="width:100%; background:var(--color-purple-600); border-color:var(--color-purple-700);" onclick="showToast('Target scenario saved to IQAC Planning Dossier')">
                       Save as Strategic Quality Target
                     </button>
                   </div>
                 </div>
               </div>
-            </div>
+            </div> 
 
             <!-- ── SUBVIEW 6: SSR / AQAR AUDIT DOSSIER ── -->
             <div id="naac-subview-ssr" class="naac-subview" style="display:none;">
@@ -6409,6 +6458,8 @@ Available Nimbus Shell commands:
         <button class="btn btn-primary btn-sm" onclick="closeDrawer('modal-competitive-evidence')">Done</button>
       </div>
     </div>
+  </div>
+
   <!-- MODAL: SPRINT MODULE LEARNING WORKSPACE -->
   <div id="modal-sprint-module" class="drawer-overlay" onclick="closeDrawer('modal-sprint-module')" style="align-items:center; justify-content:center; padding:20px; z-index:9999;">
     <div style="background:var(--bg-surface, var(--bg-surface)); border:1px solid var(--border-color); border-radius:12px; width:560px; max-width:94vw; padding:24px; box-shadow:0 20px 48px var(--alpha-black-25);" onclick="event.stopPropagation()">
@@ -8483,7 +8534,7 @@ Available Nimbus Shell commands:
             <div>Cryptographic DVV Audit Hash:</div>
             <code style="font-size:0.7rem; color:var(--color-purple-600);">SHA256:e7b9${hexHash}41a2e9b89fa7</code>
           </div>
-          <button class="btn btn-sm btn-outline" onclick="showToast('<svg aria-hidden="true" class="h-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> DVV Evidence Dossier exported for Peer Team inspection')" style="background:var(--bg-surface); cursor:pointer;">
+          <button class="btn btn-sm btn-outline" onclick="showToast('DVV Evidence Dossier exported for Peer Team inspection')" style="background:var(--bg-surface); cursor:pointer;">
             Export Proof Package
           </button>
         </div>
