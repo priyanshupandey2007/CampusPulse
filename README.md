@@ -55,15 +55,50 @@ $$S = 0.25(I_{\text{acad}}) + 0.20(I_{\text{att}}) + 0.20(I_{\text{place}}) + 0.
 
 Weights strictly sum to 1.0, verified at startup by `scripts/boot_check.py`.
 
-## Safety floors and tier rules
+## Safety floors, configurable thresholds, and tier rules
+
+CampusPulse implements a two-tier safety architecture distinguishing between institutional policy alerts and emergency hard-floor circuit breakers:
+
+### 1. Two-Tier Alert & Safety Floor Framework
+
+| Threshold Level | Metric Target | Institutional Policy & Pedagogical Purpose | Operational Behavior |
+| :--- | :---: | :--- | :--- |
+| **Configurable Standard Alert** | $\text{Attendance} < 75.0\%$ | Statutory UGC/AICTE exam eligibility threshold. Configurable by institution (`/api/v1/config/thresholds`). | Flags student for advisory check-in, mentoring contact, and recovery planning. |
+| **Academic Warning Alert** | $\text{CGPA} < 6.0$ | Standard academic probation benchmark. | Triggers academic mentoring and tutoring clinic recommendation. |
+| **Backlog Warning Alert** | $\text{Backlogs} \ge 2$ | Course progression alert. | Reviews course registration and exam preparation plan. |
+| **Emergency Hard-Floor** | $\text{Attendance} < 57.0\%$ | Mathematical point-of-no-return for statutory exam eligibility. Safety circuit breaker. | Immediately overrides tier to **Priority Support [PINNED]**; pins student to top of advisor triage queue. |
+| **CGPA Emergency Hard-Floor** | $\text{CGPA} < 4.7$ | Semester progression stall limit. | Overrides tier to **Priority Support [PINNED]**. |
+| **Backlog Emergency Hard-Floor**| $\text{Backlogs} \ge 3$ | Imminent academic disqualification trigger. | Overrides tier to **Priority Support [PINNED]**. |
+
+### 2. Mathematical Derivation of the 57% Emergency Hard Floor
+
+*Why 57% attendance rather than a routine warning at 75%?*
+
+The 57.0% attendance trigger is a safety circuit-breaker derived from academic calendar mathematics:
+- In a standard Indian university semester of 15 instructional weeks (approx. 75 instructional days), mid-semester reviews occur at **Week 9** (60% completion, $t_1 = 0.60$), leaving 6 weeks (40% remaining, $t_2 = 0.40$).
+- A student at 57.0% attendance at Week 9 has accumulated:
+  $$0.60 \times 57.0\% = 34.2\% \text{ of semester total}$$
+- Even if that student achieves **100.0% perfect attendance** for every remaining lecture through Week 15:
+  $$\text{Max Attainable Final Attendance} = 34.2\% + (0.40 \times 100.0\%) = 74.2\%$$
+- Because $74.2\% < 75.0\%$, achieving the statutory 75.0% UGC/AICTE exam eligibility threshold without formal administrative condonation is **mathematically impossible**.
+- Therefore, below 57%, routine coaching cannot mathematically salvage eligibility; the student is pinned to `Priority Support` for emergency administrative intervention, medical/hardship documentation reviews, or formal condonation petitions.
+
+### 3. Configurable Alert Thresholds API
+
+Colleges can customize standard alerts and emergency floors via the API:
+- `GET /api/v1/config/thresholds`: Returns active alert thresholds, policy defaults, and derivation text.
+- `PUT /api/v1/config/thresholds`: Updates runtime thresholds with validation enforcing $\text{attendance\_emergency\_min} < \text{attendance\_standard\_min}$ and $\text{cgpa\_emergency\_min} < \text{cgpa\_warning\_min}$.
+- `POST /api/v1/config/thresholds/reset`: Restores statutory UGC/AICTE defaults.
+
+### 4. Safety Floors and Tier Precedence
 
 To keep high-risk students visible even when they score well on other dimensions, tier classification evaluates safety floors before score bands:
 
 1. Hard floor trigger:
-   $$\text{Attendance} < 57\% \quad \lor \quad \text{CGPA} < 4.7 \quad \lor \quad \text{Backlogs} \ge 3 \implies \mathbf{Priority\ Support\ [PINNED]}$$
+   $$\text{Attendance} < 57.0\% \quad \lor \quad \text{CGPA} < 4.7 \quad \lor \quad \text{Backlogs} \ge 3 \implies \mathbf{Priority\ Support\ [PINNED]}$$
    Students triggering a hard floor are pinned to the top of the advisor action list.
 2. Review band:
-   $$57\% \le \text{Attendance} \le 63\% \quad \lor \quad 4.7 \le \text{CGPA} \le 5.3 \implies \mathbf{Review}$$
+   $$57.0\% \le \text{Attendance} \le 63.0\% \quad \lor \quad 4.7 \le \text{CGPA} \le 5.3 \implies \mathbf{Review}$$
 3. Standard score bands:
    - On Track: $\text{Score} \ge 60$
    - Watchlist: $40 \le \text{Score} < 60$
@@ -93,15 +128,16 @@ Students are classified into five mutually exclusive segments to suggest relevan
 
 ## Machine learning governance (G1-G8)
 
-### Role of machine learning
+### Role of machine learning (Optional Audited Fairness Proxy)
 
-The core scoring pipeline uses deterministic formulas in `packages/domain/` to calculate student scores. Generative models and stochastic classifiers do not make automated academic tiering determinations.
+The core student success scoring engine is 100% deterministic and explainable, utilizing pure AST arithmetic formulas in `packages/domain/scores.py`. Generative models and stochastic classifiers do not compute or alter student scores, tiers, or priority rankings.
 
-Machine learning models serve as a secondary analysis layer:
-- Model registry (`/api/v1/ml/models`): Baselines (Random Forest, Gradient Boosting, Logistic Regression) trained to detect non-linear risk patterns.
-- Feature importance (`/api/v1/ml/feature-importance`): Ranks indicators against historical data to evaluate domain weights.
-- Agreement audit (`/api/v1/ml/evaluation`): Checks for proxy bias across departments and tracks model agreement against deterministic rules.
-- Guardrails G1-G8: Enforced in code. Machine learning outputs do not override deterministic tiers, segments, or hard safety floors.
+Machine learning operates strictly as an **optional, audited fairness proxy add-on**:
+- Model registry (`/api/v1/ml/models`): Baselines (Random Forest, Gradient Boosting, Logistic Regression) trained to detect non-linear risk patterns offline.
+- Feature importance (`/api/v1/ml/feature-importance`): Evaluates domain indicator importance against historical holdout data.
+- Demographic parity & fairness audit (`/api/v1/ml/evaluation`): Audits demographic parity and cross-cohort bias without using protected attributes.
+- Disagreement detector (`/api/v1/ml/agreement-check`): Detects when statistical proxy models diverge from deterministic rules to append advisory review notes (`confidence_note`).
+- Guardrails G1-G8: Strict programmatic enforcement. Machine learning proxy outputs never override deterministic scores, safety floors, or tier assignments.
 
 ## Local setup
 

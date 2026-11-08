@@ -1,0 +1,51 @@
+student_ref,name,department,batch,section,success_score,tier,momentum,segment
+stu_2be31afe7f2b,VANSHIKA,CSE,CSE 2029,D,36.08,priority_support,UNKNOWN,Struggling on All Fronts
+stu_08690bd6454b,Raaghav Madaan,CSE,CSE 2029,D,40.92,priority_support,UNKNOWN,Struggling on All Fronts
+stu_a8caec57102b,TUSHAR SINGH,CSE,CSE 2029,C,40.92,priority_support,UNKNOWN,Struggling on All Fronts
+stu_e445416c629e,Aryan Mann,CSE,CSE 2029,D,42.87,review,UNKNOWN,Balanced
+stu_696f9974bad8,JITEN .,CSE,CSE 2029,D,45.37,review,UNKNOWN,Balanced
+stu_9f9974d49a1b,SAHIL YADAV,CSE,CSE 2029,C,45.7,review,UNKNOWN,Balanced
+stu_38e1360104d2,ANNU SINGH,CSE,CSE 2029,C,46.2,review,UNKNOWN,Balanced
+stu_39c005e0e2f1,PARTH HELLAN,CSE,CSE 2029,D,51.26,watchlist,UNKNOWN,Balanced
+stu_0f0a2d4e0c80,HARSHIT JOON,CSE,CSE 2029,C,52.27,watchlist,UNKNOWN,Balanced
+stu_16b476c017ef,VANSH,CSE,CSE 2029,C,52.27,watchlist,UNKNOWN,Balanced
+stu_24b7672237ac,SOMAY SEHRAWAT,CSE,CSE 2029,C,52.27,watchlist,UNKNOWN,Balanced
+stu_6b9ae9610342,ASHWANI .,CSE,CSE 2029,D,52.27,watchlist,UNKNOWN,Balanced
+stu_b84ec92e22a0,AAROOSH DWIVEDI,CSE,CSE 2029,D,52.27,watchlist,UNKNOWN,Balanced
+stu_f3dfbe7f9ded,GAGAN DEEP JASUJA,CSE,CSE 2029,D,52.27,watchlist,UNKNOWN,Balanced
+stu_a2ec8e649315,RAUNAK KUMAR,CSE,CSE 2029,C,52.39,watchlist,UNKNOWN,Balanced
+stu_1869120cbf7a,PUNEET SINGH,CSE,CSE 2029,C,52.88,watchlist,UNKNOWN,Balanced
+stu_3f8ee8e3da2a,PULKIT JAKHAR,CSE,CSE 2029,D,52.91,watchlist,UNKNOWN,Balanced
+stu_04148c252da7,GEETIKA .,CSE,CSE 2029,C,53.42,watchlist,UNKNOWN,Balanced
+stu_1065b94b5679,TAMANNA .,CSE,CSE 2029,C,54.26,watchlist,UNKNOWN,Balanced
+stu_17a355d08605,ISHIKA .,CSE,CSE 2029,C,54.26,watchlist,UNKNOWN,Balanced
+stu_b055ad35bcd5,SHIVAM KUMAR,CSE,CSE 2029,C,54.85,watchlist,UNKNOWN,Balanced
+stu_f2dfd6e38000,VANSH RATHI,CSE,CSE 2029,D,56.05,watchlist,UNKNOWN,Balanced
+stu_c906766afc81,KANISHKA .,CSE,CSE 2029,D,56.61,watchlist,UNKNOWN,Balanced
+stu_f2e1e1be632e,MANU SINGH,CSE,CSE 2029,D,56.81,watchlist,UNKNOWN,Balanced
+stu_70e17b8c2b9a,PRASHANT .,CSE,CSE 2029,C,58.72,watchlist,UNKNOWN,Balanced
+stu_4684871f4430,HITESH KUMAR,CSE,CSE 2029,C,61.75,on_track,UNKNOWN,Balanced
+stu_ca1e37a9357f,MEHAK .,CSE,CSE 2029,C,63.04,on_track,UNKNOWN,Balanced
+stu_00362b128d7c,HARSHITA,CSE,CSE 2029,D,63.09,on_track,UNKNOWN,Balanced
+stu_7a28326c0c34,RIYA VISHWAKARMA,CSE,CSE 2029,D,64.33,on_track,UNKNOWN,Balanced
+stu_9a361575c374,VAIBHAV RAO,CSE,CSE 2029,C,64.39,on_track,UNKNOWN,Balanced
+stu_05b51b33e444,Sourav Das,CSE,CSE 2029,D,64.43,on_track,UNKNOWN,Balanced
+stu_31342b0589d3,KRINCE .,CSE,CSE 2029,C,64.46,on_track,UNKNOWN,Balanced
+stu_586647f50fb9,JATIN,CSE,CSE 2029,C,64.48,on_track,UNKNOWN,Balanced
+stu_be4ead1e1315,GARVIT .,CSE,CSE 2029,D,65.91,on_track,UNKNOWN,Balanced
+stu_7a5ec0385775,ADITYA .,CSE,CSE 2029,D,67.76,on_track,UNKNOWN,Balanced
+stu_b2b67e0edfaf,PRANJAL .,CSE,CSE 2029,C,71.63,on_track,UNKNOWN,Balanced
+stu_617604e0c43f,PUSHKAR .,CSE,CSE 2029,C,73.08,on_track,UNKNOWN,Balanced
+stu_7a5c763f317c,PRANVI SHARMA,CSE,CSE 2029,D,73.21,on_track,UNKNOWN,Balanced
+stu_4f8da241252e,Ishika,CSE,CSE 2029,D,73.38,on_track,UNKNOWN,Balanced
+stu_c1120c4577e5,RISHAV SINGH,CSE,CSE 2029,C,73.38,on_track,UNKNOWN,Balanced
+stu_2af37ff1afeb,MAMANT SONI,CSE,CSE 2029,C,73.53,on_track,UNKNOWN,Balanced
+stu_2fe34e884efc,MANNAT .,CSE,CSE 2029,D,73.71,on_track,UNKNOWN,Balanced
+stu_6c7debd8d6d2,PIHU .,CSE,CSE 2029,D,73.93,on_track,UNKNOWN,Balanced
+stu_06208a180e88,ANJALI RAO,CSE,CSE 2029,D,73.97,on_track,UNKNOWN,Balanced
+stu_0b1183d11a09,KRISHANT SETHI,CSE,CSE 2029,C,74.22,on_track,UNKNOWN,Balanced
+stu_74b9b150b368,Raushan Kumar,CSE,CSE 2029,D,74.39,on_track,UNKNOWN,Balanced
+stu_063875c25a73,PALAK KUMARI,CSE,CSE 2029,C,74.56,on_track,UNKNOWN,Balanced
+stu_714d7ded85e7,SHRUTI KUMARI,CSE,CSE 2029,D,74.69,on_track,UNKNOWN,Balanced
+stu_3d4c4a20ef5e,KARTIK .,CSE,CSE 2029,C,74.79,on_track,UNKNOWN,Balanced
+stu_48e0a25d13fa,ANGEL TYAGI,CSE,CSE 2029,C,74.79,on_track,UNKNOWN,Balanced

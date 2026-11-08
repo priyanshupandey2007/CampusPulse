@@ -28,14 +28,56 @@ $$\text{Success Score} = 0.25 \cdot I_{\text{academic}} + 0.20 \cdot I_{\text{at
 | Campus Engagement ($I_{\text{eng}}$) | 10% | $\text{clamp}\left(\frac{\text{WinsorizedSum}(\text{events}, \text{clubs}, \text{hackathons}, \text{certs})}{20} \times 100, 0, 100\right)$ | Extracurricular activities, winsorized at the 95th percentile to limit extreme outlier skew. |
 | Skills Profile ($I_{\text{skills}}$) | 10% | $0.60 \cdot \text{TechnicalAssessment} + 0.40 \cdot \text{SoftSkills}$ | Technical competency and interpersonal evaluation. |
 
-## 3. Tier classification and safety rules
+## 3. Tier classification, safety floors, and configurable thresholds
 
-To keep high-risk students visible even when they score well on other dimensions, tier classification evaluates safety floors before score bands:
+CampusPulse implements a two-tier safety architecture distinguishing between routine institutional policy alerts and emergency hard-floor circuit breakers.
+
+### 3.1 Two-Tier Alert & Safety Floor Framework
+
+| Threshold Level | Metric Target | Institutional Role & Policy Mapping | Operational Trigger |
+| :--- | :---: | :--- | :--- |
+| **Institutional Standard Alert** | $\text{Attendance} < 75.0\%$ | Statutory UGC/AICTE exam eligibility threshold. Configurable per institutional regulation. | Alerts advisor for early check-in, mentoring contact, and attendance recovery plan. |
+| **Academic Warning Alert** | $\text{CGPA} < 6.0$ | Academic probation boundary (standard grade scale threshold). | Schedules academic tutoring clinic and subject review. |
+| **Backlog Warning Alert** | $\text{Backlogs} \ge 2$ | Credit accumulation risk threshold. | Reviews course load and exam registration plan. |
+| **Emergency Hard-Floor** | $\text{Attendance} < 57.0\%$ | Mathematical point of exam ineligibility impossibility. Safety circuit breaker. | Immediately overrides tier to **Priority Support [PINNED]**; pins student to top of advisor queue. |
+| **CGPA Emergency Hard-Floor** | $\text{CGPA} < 4.7$ | Severe semester credit progression stall limit. | Overrides tier to **Priority Support [PINNED]**. |
+| **Backlog Emergency Hard-Floor**| $\text{Backlogs} \ge 3$ | Imminent academic disqualification/curriculum stall. | Overrides tier to **Priority Support [PINNED]**. |
+
+### 3.2 Mathematical Derivation of the 57% Emergency Hard Floor
+
+A central question in academic policy design is: *Why 57% attendance rather than a routine warning at 75%?*
+
+The 57.0% attendance cutoff is not an arbitrary heuristic—it represents the **mathematical point-of-no-return** in a standard collegiate semester.
+
+#### Formal Derivation:
+1. **Academic Calendar Baseline**: In a standard university term of 15 instructional weeks (approx. 75 teaching days), midterm performance reviews and advisor intervention cycles take place around **Week 9**.
+2. **Term Elapsed Proportion**: Week 9 represents exactly 60% of the instructional semester completed ($t_{\text{elapsed}} = \frac{9}{15} = 0.60$). The remaining period comprises 6 weeks or 40% of the term ($t_{\text{remaining}} = \frac{6}{15} = 0.40$).
+3. **Cumulative Attendance at Week 9**: A student possessing a 57.0% cumulative attendance rate at the Week 9 assessment point has accrued:
+   $$\text{Attended Share} = 0.60 \times 57.0\% = 34.2\% \text{ of the total semester instruction}$$
+4. **Best-Case Forward Trajectory**: Even if the student exhibits **flawless, 100.0% perfect attendance** for every single class across the remaining 6 weeks ($t_{\text{remaining}} = 0.40$):
+   $$\text{Max Attainable Final Attendance} = 34.2\% + (0.40 \times 100.0\%) = 34.2\% + 40.0\% = 74.2\%$$
+5. **The Impossibility Condition**:
+   $$74.2\% < 75.0\% \quad \text{(Statutory Minimum)}$$
+   Because 74.2% falls strictly below the statutory 75.0% threshold mandated by UGC and AICTE regulations, it is **mathematically impossible** for the student to achieve exam eligibility through regular class attendance alone.
+6. **Pedagogical Conclusion**: 
+   - A student between 57% and 75% attendance can still be mathematically rescued through faculty mentoring and attendance recovery agreements.
+   - Below 57%, routine coaching cannot mathematically salvage exam eligibility. The student must be **pinned to Priority Support** for formal administrative intervention: statutory condonation petitions, medical/hardship documentation reviews, or remedial supplementary schedules.
+
+### 3.3 Configurable Thresholds API & In-Memory Overlay
+
+Institutions operate under varying statutory regulations (e.g., medical condonation allowances, autonomous college rules). CampusPulse provides dynamic threshold management:
+- `GET /api/v1/config/thresholds`: Returns active alert thresholds, default institutional policy references, and the mathematical derivation.
+- `PUT /api/v1/config/thresholds`: Allows authorized administrators to customize alert boundaries (e.g., standard attendance $\in [60, 90]\%$, emergency floor $\in [40, 70]\%$) with strict validation guaranteeing that $\text{attendance\_emergency\_min} < \text{attendance\_standard\_min}$ and $\text{cgpa\_emergency\_min} < \text{cgpa\_warning\_min}$.
+- `POST /api/v1/config/thresholds/reset`: Restores canonical UGC/AICTE defaults.
+
+### 3.4 Tier Classification Precedence
+
+To guarantee zero false negatives for high-risk students, tier classification evaluates safety floors before score bands:
 
 1. Hard floor trigger:
-   $$\text{Attendance} < 57\% \quad \lor \quad \text{CGPA} < 4.7 \quad \lor \quad \text{Backlogs} \ge 3 \implies \mathbf{Priority\ Support\ [PINNED]}$$
+   $$\text{Attendance} < 57.0\% \quad \lor \quad \text{CGPA} < 4.7 \quad \lor \quad \text{Backlogs} \ge 3 \implies \mathbf{Priority\ Support\ [PINNED]}$$
 2. Review band:
-   $$57\% \le \text{Attendance} \le 63\% \quad \lor \quad 4.7 \le \text{CGPA} \le 5.3 \implies \mathbf{Review}$$
+   $$57.0\% \le \text{Attendance} \le 63.0\% \quad \lor \quad 4.7 \le \text{CGPA} \le 5.3 \implies \mathbf{Review}$$
 3. Score bands:
    $$\begin{cases} 
    \text{Score} \ge 60 \implies \mathbf{On\ Track} \\

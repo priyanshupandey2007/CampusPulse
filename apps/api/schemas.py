@@ -134,3 +134,8 @@ class PrivacyRightRequest(BaseModel):
 
 class DataPurgeRequest(BaseModel):
     retention_days: int = Field(365, ge=30, le=3650)
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: str = Field(..., min_length=3, max_length=128)
+
